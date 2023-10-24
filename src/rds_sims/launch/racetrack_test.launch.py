@@ -9,45 +9,62 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 def generate_launch_description():
 
   use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-  urdf_file_name = 'urdf/camera_bot.xacro'
+  urdf_file_name = 'models/urdf/test_model.urdf'
+    
+  racetrack_sdf_file_name = 'worlds/racetrack_test.sdf'
+
 
   print("urdf_file_name : {}".format(urdf_file_name))
 
+
+
   urdf = os.path.join(
-      get_package_share_directory('ros2_sim_pkg'),
+      get_package_share_directory('rds_sims'),
       urdf_file_name)
+      
+  racetrack_sdf = os.path.join(
+    get_package_share_directory('rds_sims'),
+    racetrack_sdf_file_name)
+
+  print("sdf_file_name : {}".format(racetrack_sdf))
+
 
   return LaunchDescription([
-
-        DeclareLaunchArgument(
-            'use_sim_time',
-            default_value='false',
-            description='Use simulation (Gazebo) clock if true'),
-
+        # LogInfo(msg="Launching Prius on a racetrack using Ignition Gazebo..."),
         ExecuteProcess(
-            cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_factory.so'],
-            output='screen'),
+            cmd=['ign', 'gazebo', racetrack_sdf_file_name],
+            output='screen'
+        ),
 
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            parameters=[{'use_sim_time': use_sim_time}],
-            arguments=[urdf]),
+    #     DeclareLaunchArgument(
+    #         'use_sim_time',
+    #         default_value='false',
+    #         description='Use simulation (Gazebo) clock if true'),
 
-        Node(
-            package='joint_state_publisher',
-            executable='joint_state_publisher',
-            name='joint_state_publisher',
-            output='screen',
-            parameters=[{'use_sim_time': use_sim_time}]
-            ),
+    #    ExecuteProcess(
+    #         cmd=['ign', 'gazebo', '--verbose', ],
+    #         output='screen'),
 
-        Node(
-            package='gazebo_ros',
-            executable='spawn_entity.py',
-            name='urdf_spawner',
-            output='screen',
-            arguments=["-topic", "/robot_description", "-entity", "cam_bot"])
+    #     Node(
+    #         package='robot_state_publisher',
+    #         executable='robot_state_publisher',
+    #         name='robot_state_publisher',
+    #         output='screen',
+    #         parameters=[{'use_sim_time': use_sim_time}],
+    #         arguments=[urdf]),
+
+    #     Node(
+    #         package='joint_state_publisher',
+    #         executable='joint_state_publisher',
+    #         name='joint_state_publisher',
+    #         output='screen',
+    #         parameters=[{'use_sim_time': use_sim_time}]
+    #         ),
+
+        # Node(
+        #     package='gazebo_ros',
+        #     executable='spawn_entity.py',
+        #     name='urdf_spawner',
+        #     output='screen',
+        #     arguments=["-topic", "/robot_description", "-entity", "cam_bot"])
   ])

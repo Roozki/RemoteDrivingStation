@@ -1,0 +1,3 @@
+<launch>
+  <node pkg="ros_gz_sim" exec="create" name="ignition_create" args="-world_name racetrack_test -file $(find-pkg-share rds_sims)/worlds/racetrack_test.sdf" output="screen"/>
+</launch>
