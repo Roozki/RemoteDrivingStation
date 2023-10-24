@@ -7,7 +7,17 @@
 https://fuel.gazebosim.org/1.0/OpenRobotics/models/Harmonic Terrain
 </uri>
 </include>
-
+<include>
+<uri>
+https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pickup
+</uri>
+</include>
+<include>
+<uri>
+https://fuel.gazebosim.org/1.0/OpenRobotics/models/Prius Hybrid with sensors
+</uri>         
+<pose>5 0 0 0 0 0</pose>
+</include>
 
 
     </world>
