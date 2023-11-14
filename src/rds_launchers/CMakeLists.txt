@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(rds_sims)
+project(rds_launchers)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -7,14 +7,9 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(autoware_auto_control_msgs REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-
-add_executable(carla_driver src/carla_driver.cpp)
-ament_target_dependencies(carla_driver rclcpp autoware_auto_control_msgs)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -27,36 +22,5 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-
-
-install(
-  DIRECTORY
-    launch/
-  DESTINATION share/${PROJECT_NAME}/launch
-)
-
-install(
-  DIRECTORY
-    rviz/
-  DESTINATION share/${PROJECT_NAME}/rviz
-)
-
-install(
-  DIRECTORY
-    models/
-  DESTINATION share/${PROJECT_NAME}/models
-)
-
-install(
-  DIRECTORY
-    worlds/
-  DESTINATION share/${PROJECT_NAME}/worlds
-)
-install(
-  TARGETS 
-  carla_driver
-  DESTINATION lib/${PROJECT_NAME}
-)
-
 
 ament_package()
