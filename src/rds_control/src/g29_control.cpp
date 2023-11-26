@@ -30,6 +30,7 @@ public:
         msg.longitudinal.acceleration = acceleration;
         msg.longitudinal.jerk = jerk;
         command_publisher_->publish(msg);
+        
     }
 
     void send_gear_command(int gear){
