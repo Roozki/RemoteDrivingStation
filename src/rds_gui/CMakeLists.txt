@@ -4,16 +4,18 @@ project(rds_gui)
 # Find packages
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(rclcpp REQUIRED)
+file(GLOB QWT_INCLUDE_DIR "/usr/include/qwt")
+file(GLOB QWT_LIBRARIES "/usr/lib/libqwt*")
 set(CMAKE_AUTOMOC ON) 
 # Include Qt and ROS2 directories
-include_directories(include/${PROJECT_NAME} ${rclcpp_INCLUDE_DIRS})
+include_directories(include/${PROJECT_NAME} ${rclcpp_INCLUDE_DIRS} ${QWT_INCLUDE_DIR})
 
 # Tell CMake to wrap the UI file to a header
 qt5_wrap_ui(UI_HEADERS ui/mainwindow.ui)
 
 # Add executable
 add_executable(rds_qt src/mainwindow.cpp src/main.cpp include/${PROJECT_NAME}/mainwindow.h include/${PROJECT_NAME}/ui_mainwindow.h ${UI_HEADERS})
-target_link_libraries(rds_qt Qt5::Widgets ${rclcpp_LIBRARIES})
+target_link_libraries(rds_qt Qt5::Widgets ${rclcpp_LIBRARIES} ${QWT_LIBRARIES})
 
 # Install rules, etc.
 install(TARGETS 
