@@ -4,6 +4,11 @@ project(rds_gui)
 # Find packages
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(autoware_auto_vehicle_msgs REQUIRED)
+find_package(autoware_auto_control_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+
+
 file(GLOB QWT_INCLUDE_DIR "/usr/include/qwt")
 file(GLOB QWT_LIBRARIES "/usr/lib/libqwt*")
 set(CMAKE_AUTOMOC ON) 
@@ -15,7 +20,8 @@ qt5_wrap_ui(UI_HEADERS ui/mainwindow.ui)
 
 # Add executable
 add_executable(rds_qt src/mainwindow.cpp src/main.cpp include/${PROJECT_NAME}/mainwindow.h include/${PROJECT_NAME}/ui_mainwindow.h ${UI_HEADERS})
-target_link_libraries(rds_qt Qt5::Widgets ${rclcpp_LIBRARIES} ${QWT_LIBRARIES})
+target_link_libraries(rds_qt Qt5::Widgets ${rclcpp_LIBRARIES} ${QWT_LIBRARIES}  )
+ament_target_dependencies(rds_qt autoware_auto_control_msgs autoware_auto_vehicle_msgs sensor_msgs)
 
 # Install rules, etc.
 install(TARGETS 

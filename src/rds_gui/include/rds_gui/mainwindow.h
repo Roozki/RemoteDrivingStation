@@ -4,9 +4,12 @@
 #include <QMainWindow>
 #include "ui_mainwindow.h"  // This will be generated from your .ui file
 #include <rclcpp/rclcpp.hpp>
+//#include "autoware_auto_control_msgs/msg/ackermann_control_command.hpp"
 #include "autoware_auto_control_msgs/msg/ackermann_control_command.hpp"
 #include "autoware_auto_vehicle_msgs/msg/gear_command.hpp"
-#include "sensor_msgs/msg/joy.hpp"
+// #include "autoware_auto_vehicle_msgs/msg/gear_command.hpp"
+// #include "autoware_auto_vehicle_msgs/msg/vehicle_status.hpp"
+#include "sensor_msgs/msg/joy.hpp" 
 
 class MainWindow : public QMainWindow, public rclcpp::Node {
     Q_OBJECT
@@ -17,7 +20,7 @@ public:
 private:
     Ui::MainWindow ui;  // Replace 'ArmControl' with the actual class name from your .ui file
 
-    rclcpp::Subscription
+    //rclcpp::Subscription velocitySub<autoware_auto_vehicle_msgs>();
 };
 
 #endif // MAIN_WINDOW_H
