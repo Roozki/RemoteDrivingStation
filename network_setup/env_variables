@@ -1,3 +1,8 @@
+#zerotier Stuff
 export RDS_INCLAP_ZT_IP=10.147.20.8
 export RDS_G15LAP_ZT_IP=10.147.20.5
 export RDS_ZT_NET_ID=d5e5fb6537518471
+
+
+#ROS2 stuff
+export ROS_DOMAIN_ID=5
