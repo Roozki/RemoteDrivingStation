@@ -12,7 +12,8 @@ def generate_launch_description():
     camera_node_1 = Node(
         package='camera_ros',
         executable='camera_node',
-        output='screen'
+        output='screen',
+        parameters=''
     )
     camera_node_2 = Node(
         package='camera_ros',
