@@ -13,7 +13,7 @@ def generate_launch_description():
         package='camera_ros',
         executable='camera_node',
         output='screen',
-        parameters=''
+        parameters=[{'camera': '/dev/media/media1'}]
     )
     camera_node_2 = Node(
         package='camera_ros',

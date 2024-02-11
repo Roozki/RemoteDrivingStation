@@ -4,4 +4,4 @@ float64 brake_pedal
 float64 clutch
 int16 gear
 bool handbreak
-string signal #for hazards, right, left signal 
+string signal
