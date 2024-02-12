@@ -35,7 +35,7 @@ void VehicleInterface::CommandCallback(const rds_msgs::msg::VehicleInterface::Sh
 
 void VehicleInterface::sendCommand(){
    char tx_msg[TX_UART_BUFF];
-   sprintf(tx_msg, "$C(%0.2f, %0.2f, %i, %i, %i, %i)\n", curr_vehicle_cmd.steering_angle, curr_vehicle_cmd.gas_pedal - curr_vehicle_cmd.brake_pedal, curr_vehicle_cmd.lights[0], curr_vehicle_cmd.lights[1], curr_vehicle_cmd.lights[2], curr_vehicle_cmd.lights[3], curr_vehicle_cmd.lights[4]);
+   sprintf(tx_msg, "$C(%0.2f, %0.2f, %i, %i, %i, %i, %i)\n", curr_vehicle_cmd.steering_angle, curr_vehicle_cmd.gas_pedal - curr_vehicle_cmd.brake_pedal, curr_vehicle_cmd.lights[0], curr_vehicle_cmd.lights[1], curr_vehicle_cmd.lights[2], curr_vehicle_cmd.lights[3], curr_vehicle_cmd.lights[4]);
 
    esp32.write(tx_msg);
    RCLCPP_ERROR(this->get_logger(), "Sent via serial: %s", tx_msg);
