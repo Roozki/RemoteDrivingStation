@@ -1,0 +1,6 @@
+[submodule "serial"]
+	path = serial
+	url = https://github.com/wjwwood/serial.git
+[submodule "src/external_pkgs/serial"]
+	path = src/external_pkgs/serial
+	url = https://github.com/wjwwood/serial.git

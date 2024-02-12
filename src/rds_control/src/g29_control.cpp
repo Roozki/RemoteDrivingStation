@@ -1,6 +1,4 @@
-//this bypasses autoware auto
 #include "g29_control.h"
-
 
 #include "rclcpp/rclcpp.hpp"
 #include "autoware_auto_control_msgs/msg/ackermann_control_command.hpp"
@@ -15,7 +13,7 @@ public:
         auto qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local();
         command_publisher_ = this->create_publisher<autoware_auto_control_msgs::msg::AckermannControlCommand>("/control/command/control_cmd", qos);
         gear_publisher_ = this->create_publisher<autoware_auto_vehicle_msgs::msg::GearCommand>("/control/command/gear_cmd", qos);
-
+        
         double period = 1.0/CONTROL_RATE;
         // timer_ = this->create_wall_timer(
         // std::chrono::duration<double>(period),std::bind(&ManualControlNode::test_send, this));

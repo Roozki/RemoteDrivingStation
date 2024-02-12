@@ -7,9 +7,16 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(rds_msgs REQUIRED)
+find_package(serial REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+include_directories(include)
+add_executable(vehicle_interface_node src/car_hardware_interface.cpp include/rds_hw_interfaces/car_hardware_interface.h)
+ament_target_dependencies(vehicle_interface_node rclcpp rds_msgs serial)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -23,4 +30,8 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+install(TARGETS
+  vehicle_interface_node
+  DESTINATION lib/${PROJECT_NAME}
+)
 ament_package()

@@ -3,7 +3,7 @@
 
 
 #include "rclcpp/rclcpp.hpp"
-#include "rds_msgs/msg/VehicleInterface.h"
+#include "rds_msgs/msg/vehicle_interface.hpp"
 #include "sensor_msgs/msg/joy.hpp"
 
 
@@ -13,8 +13,7 @@ public:
     ManualControlNode() : Node("g29_control") {
         auto qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local();
         command_publisher_ = this->create_publisher<autoware_auto_control_msgs::msg::AckermannControlCommand>("/control/command/control_cmd", qos);
-        gear_publisher_ = this->create_publisher<autoware_auto_vehicle_msgs::msg::GearCommand>("/control/command/gear_cmd", qos);
-
+        
         double period = 1.0/CONTROL_RATE;
         // timer_ = this->create_wall_timer(
         // std::chrono::duration<double>(period),std::bind(&ManualControlNode::test_send, this));
@@ -31,13 +30,6 @@ public:
         command_publisher_->publish(msg);
         
     }
-
-    void send_gear_command(int gear){
-        autoware_auto_vehicle_msgs::msg::GearCommand msg;
-        msg.command = gear;
-        gear_publisher_->publish(msg);
-    }
-
     
 
     // void test_send(){
@@ -52,8 +44,7 @@ private:
     int prev_paddleR = 0;
     int prev_paddleL = 0;
 
-    rclcpp::Publisher<autoware_auto_control_msgs::msg::AckermannControlCommand>::SharedPtr command_publisher_;
-    rclcpp::Publisher<autoware_auto_vehicle_msgs::msg::GearCommand>::SharedPtr gear_publisher_;
+    rclcpp::Publisher<rds_msgs::msg::VehicleInterface>::SharedPtr command_publisher_;
 
     rclcpp::TimerBase::SharedPtr timer_;
 

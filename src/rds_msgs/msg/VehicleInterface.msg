@@ -5,3 +5,4 @@ float64 clutch
 int16 gear
 bool handbreak
 string signal
+int16[] lights

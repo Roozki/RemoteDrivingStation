@@ -7,6 +7,8 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -23,10 +25,10 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-find_package(rosidl_default_generators REQUIRED)
 
-rosidl_generate_interfaces(${PROJECT_NAME}
+rosidl_generate_interfaces(${PROJECT_NAME} 
   "msg/VehicleInterface.msg"
+  "msg/VehicleStatus.msg"
  )
 
 
