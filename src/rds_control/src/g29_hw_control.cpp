@@ -12,7 +12,7 @@ class ManualControlNode : public rclcpp::Node {
 public:
     ManualControlNode() : Node("g29_control") {
         auto qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local();
-        command_publisher_ = this->create_publisher<autoware_auto_control_msgs::msg::AckermannControlCommand>("/control/command/control_cmd", qos);
+        command_publisher_ = this->create_publisher<rds_msgs::msg::VehicleInterface>("/vehicle_1/command", qos);
         
         double period = 1.0/CONTROL_RATE;
         // timer_ = this->create_wall_timer(
@@ -22,12 +22,12 @@ public:
     }
 
     void send_command(float steering_angle, float speed, float acceleration, float jerk) {
-        autoware_auto_control_msgs::msg::AckermannControlCommand msg;
-        msg.lateral.steering_tire_angle = steering_angle;
-        msg.longitudinal.speed = speed;
-        msg.longitudinal.acceleration = acceleration;
-        msg.longitudinal.jerk = jerk;
+        rds_msgs::msg::VehicleInterface msg;
+        msg.lights.resize(NUM_LIGHTS);
+        msg.steering_angle = steering_angle;
+        msg.gas_pedal = acceleration;
         command_publisher_->publish(msg);
+
         
     }
     
@@ -83,7 +83,7 @@ private:
         }
 
         send_command(steering_angle, speed, acceleration, jerk);
-        send_gear_command(gears[current_gear]);
+        //send_gear_command(gears[current_gear]);
     }
       rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr g29_subscriber_;
 };

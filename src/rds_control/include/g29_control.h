@@ -4,3 +4,4 @@
 #define GEAR_NEUTRAL 1
 #define GEAR_1 2 //or drive
 #define GEAR_2 3 //guessing this is how autoware deals with manual cars
+#define NUM_LIGHTS 5
