@@ -17,7 +17,8 @@ def generate_launch_description():
     joy_node = Node(
         package='joy',
         executable='joy_node',
-        output='screen'
+        output='screen',
+        parameters=[{'autorepeat_rate' : 20.0, 'coalesce_interval_ms' : 500}]
     )
     rviz_node = Node(
         package='rviz2',
