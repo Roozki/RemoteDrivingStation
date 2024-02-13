@@ -22,6 +22,6 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        camera_node_1,
-        camera_node_2
+        camera_node_1
+       // camera_node_2
     ])
