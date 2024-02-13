@@ -36,6 +36,7 @@ install(
 install(
   TARGETS 
   g29_control
+  g29_hw_control
   DESTINATION lib/${PROJECT_NAME}
 )
 
