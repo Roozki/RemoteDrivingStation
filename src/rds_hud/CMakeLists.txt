@@ -7,11 +7,20 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(cv_bridge REQUIRED)
+find_package(image_transport REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
+add_executable(hud_node src/heads_up_node.cpp)
+ament_target_dependencies(hud_node rclcpp image_transport cv_bridge)
 
+install(TARGETS
+hud_node
+DESTINATION lib/${PROJECT_NAME}
+)
 install(
   DIRECTORY
     launch/
