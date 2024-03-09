@@ -10,13 +10,17 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
+find_package(rds_msgs REQUIRED)
+find_package(OpenCV REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+include_directories(include ${OpenCV_INCLUDE_DIRS})  # Include the OpenCV header files
+
 
 add_executable(hud_node src/heads_up_node.cpp)
-ament_target_dependencies(hud_node rclcpp image_transport cv_bridge)
-
+ament_target_dependencies(hud_node rclcpp image_transport cv_bridge rds_msgs)
+target_link_libraries(hud_node ${OpenCV_LIBS})  # Link against the OpenCV libraries
 install(TARGETS
 hud_node
 DESTINATION lib/${PROJECT_NAME}

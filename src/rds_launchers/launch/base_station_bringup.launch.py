@@ -20,9 +20,14 @@ def generate_launch_description():
         output='screen',
         parameters=[{'autorepeat_rate' : 20.0, 'coalesce_interval_ms' : 500}]
     )
+    rds_hud_node = Node(
+        package='rds_hud',
+        executable='hud_node',
+        output='screen'
+    )
     rviz_node = Node(
-        package='rviz2',
-        executable='rviz2',
+        package='rqt_image_view',
+        executable='rqt_image_view',
         output='screen'
         #parameters=[{'config' : }]
     )
@@ -30,5 +35,6 @@ def generate_launch_description():
     return LaunchDescription([
         rds_g29_control,
         joy_node,
-        rviz_node
+        rds_hud_node
+       # rviz_node
     ])

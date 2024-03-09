@@ -16,6 +16,7 @@
   <depend>sensor_msgs</depend>
   <depend>image_transport</depend>
   <depend>rclcpp</depend>
+  <depend>rds_mgs</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
