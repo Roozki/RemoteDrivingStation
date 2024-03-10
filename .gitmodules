@@ -4,3 +4,6 @@
 [submodule "src/external_pkgs/serial"]
 	path = src/external_pkgs/serial
 	url = https://github.com/wjwwood/serial.git
+[submodule "src/external_pkgs/autoware_auto_msgs"]
+	path = src/external_pkgs/autoware_auto_msgs
+	url = https://github.com/tier4/autoware_auto_msgs.git
