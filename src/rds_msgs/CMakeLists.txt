@@ -29,6 +29,7 @@ endif()
 rosidl_generate_interfaces(${PROJECT_NAME} 
   "msg/VehicleInterface.msg"
   "msg/VehicleStatus.msg"
+  "msg/HudManage.msg"
  )
 
 

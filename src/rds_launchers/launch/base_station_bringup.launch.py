@@ -13,22 +13,25 @@ def generate_launch_description():
         package='rds_control',
         executable='g29_hw_control',
         output='screen',
-    )
+    )   
     joy_node = Node(
-        package='joy',
-        executable='joy_node',
+        package='joy_linux',
+        executable='joy_linux_node',
         output='screen',
-        parameters=[{'autorepeat_rate' : 20.0, 'coalesce_interval_ms' : 500}]
+        parameters=[{
+                      'autorepeat_rate' : 32.0,
+                      'coalesce_interval' : 0.03125,
+                      }]
     )
     rds_hud_node = Node(
         package='rds_hud',
         executable='hud_node',
-        output='screen'
+        output='log'
     )
     rviz_node = Node(
         package='rqt_image_view',
         executable='rqt_image_view',
-        output='screen'
+        output='log'
         #parameters=[{'config' : }]
     )
 
