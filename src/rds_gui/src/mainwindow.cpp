@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), rclcpp::Node("rds_gui") {
+ManageWindow::ManageWindow(QWidget *parent) : QMainWindow(parent), rclcpp::Node("rds_gui") {
     ui.setupUi(this);  // This sets up the GUI as designed in Qt Designer
 
     // Connect signals to slots here, for example:

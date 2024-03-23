@@ -18,4 +18,10 @@ int16[] lights
 #hazards       ->   3
 #back_driving  ->   4
 
+bool left_signal
+bool right_signal
+bool hazards
+bool front_lights
+bool rear_lights
+
 bool manual

@@ -3,11 +3,14 @@
 #include <rclcpp/rclcpp.hpp>
 
 int main(int argc, char *argv[]) {
-    rclcpp::init(argc, argv);  // Initialize ROS2
+    rclcpp::init(argc, argv);  // Initializte ROS2
     QApplication app(argc, argv);  // Initialize Qt
 
-    MainWindow window;
+    auto node = std::make_shared<ManageWindow>();
+    node->init();
+    ManageWindow window;
     window.show();
-
-    return app.exec();  // Start the Qt event loop
+    app.exec();
+    rclcpp::spin(node);
+    return 0;  // Start the Qt event loop
 }

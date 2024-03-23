@@ -5,22 +5,31 @@
 #include "ui_mainwindow.h"  // This will be generated from your .ui file
 #include <rclcpp/rclcpp.hpp>
 //#include "autoware_auto_control_msgs/msg/ackermann_control_command.hpp"
-#include "autoware_auto_control_msgs/msg/ackermann_control_command.hpp"
-#include "autoware_auto_vehicle_msgs/msg/gear_command.hpp"
+//#include "autoware_auto_control_msgs/msg/ackermann_control_command.hpp"
+//#include "autoware_auto_vehicle_msgs/msg/gear_command.hpp"
 // #include "autoware_auto_vehicle_msgs/msg/gear_command.hpp"
 // #include "autoware_auto_vehicle_msgs/msg/vehicle_status.hpp"
-#include "sensor_msgs/msg/joy.hpp" 
+//#include "sensor_msgs/msg/joy.hpp" 
+#include "rds_msgs/msg/vehicle_interface.hpp"
+#include "rds_msgs/msg/hud_manage.hpp"
 
-class MainWindow : public QMainWindow, public rclcpp::Node {
+class ManageWindow : public QMainWindow, public rclcpp::Node {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    ManageWindow(QWidget *parent = nullptr);
+    //auto node = rclcpp::Node();
+    void init(){
+        //node
+    }
 
 private:
     Ui::MainWindow ui;  // Replace 'ArmControl' with the actual class name from your .ui file
 
-    //rclcpp::Subscription velocitySub<autoware_auto_vehicle_msgs>();
+//rclcpp::Subscription velocitySub<autoware_auto_vehicle_msgs>();
+   // rclcpp::Subscription vehicle_1_sub<rds_msgs>
+   rclcpp::Subscription<rds_msgs::msg::VehicleInterface>::SharedPtr _Vehicle_1_subscriber;
+
 };
 
 #endif // MAIN_WINDOW_H
