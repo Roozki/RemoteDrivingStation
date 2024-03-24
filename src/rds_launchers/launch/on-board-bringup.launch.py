@@ -13,7 +13,7 @@ def generate_launch_description():
         package='camera_ros',
         executable='camera_node',
         output='screen',
-        parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS04-4:1.0-1bcf:2b8a'}]
+        parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS04-4:1.0-1bcf:2b8a'}],
         remappings=[
             ('/camera/image_raw', '/vehicle_1/rear_feed/image_raw'),  # Remap from /image_raw to /camera1/image_raw
             ('/camera/image_raw/compressed', '/vehicle_1/rear_feed/image_raw/compressed'),
