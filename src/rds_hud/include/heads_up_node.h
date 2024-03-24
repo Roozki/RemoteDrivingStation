@@ -39,9 +39,9 @@ public:
           //!                 TOPICS                  //
           //! ----------------------------------------//
 
-    hud_sub_ = it.subscribe("/camera/image_raw", 1, &HUDOverlayNode::imageCallback, this, &hints);
+    hud_sub_ = it.subscribe("/vehicle_1/main_feed/image_raw", 1, &HUDOverlayNode::imageCallback, this, &hints);
     hud_pub_ = it.advertise("/hud_overalay", 1);
-    hud_rearview = it.subscribe("/veh")
+    rearview_sub = it.subscribe("/vehicle_1/rear_feed/image_raw", 1, &HUDOverlayNode::rearImageCallback, this, &hints);
     RCLCPP_INFO(this->get_logger(), "meow");
     vehicle_1_control_subscriber_ = this->create_subscription<rds_msgs::msg::VehicleInterface>(
         "/vehicle_1/command", 4, std::bind(&HUDOverlayNode::commandCallback, this, std::placeholders::_1));
@@ -199,6 +199,11 @@ private:
     }
 
     return NETWORK_OK;
+  }
+  void rearImageCallback(const sensor_msgs::msg::Image::ConstSharedPtr &msg){
+    if(hud.initiated){
+    rear_frame = cv_bridge::toCvShare(msg, "bgr8")->image;
+    }
   }
   void imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr &msg)
   {
