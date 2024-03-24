@@ -18,7 +18,7 @@ find_package(OpenCV REQUIRED)
 include_directories(include ${OpenCV_INCLUDE_DIRS})  # Include the OpenCV header files
 
 
-add_executable(hud_node src/heads_up_node.cpp include/heads_up_node.h)
+add_executable(hud_node src/heads_up_node.cpp include/heads_up_node.h include/heads_up_definitions.h)
 ament_target_dependencies(hud_node rclcpp image_transport cv_bridge rds_msgs)
 target_link_libraries(hud_node ${OpenCV_LIBS})  # Link against the OpenCV libraries
 install(TARGETS

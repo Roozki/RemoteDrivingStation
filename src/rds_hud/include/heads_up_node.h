@@ -4,24 +4,15 @@
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/freetype.hpp>
 #include <sensor_msgs/msg/joy.hpp>
 #include <rds_msgs/msg/vehicle_interface.hpp>
 #include <rds_msgs/msg/vehicle_status.hpp>
 #include <rds_msgs/msg/hud_manage.hpp>
 #include <sstream>
 #include <cmath>
-
-#define GEAR_REVERSE -2
-#define GEAR_PARK -1
-#define GEAR_NEUTRAL 0
-#define GEAR_DRIVE 1
-#define NET_ERR -15
-#define NUM_NUMS 10 //num nums
-
-#define _W 1080 //width
-#define _H 1920 //height
-
-#define PI 3.14159265359
+#include <stdio.h>
+#include <heads_up_definitions.h>
 
 
 class HUDOverlayNode : public rclcpp::Node {
@@ -51,61 +42,137 @@ public:
         cv::namedWindow("RDS_HUD", cv::WINDOW_NORMAL);
     // Set the mouse callback function
     cv::setMouseCallback("RDS_HUD", HUDOverlayNode::onMouse, this);
+    ft2 = cv::freetype::createFreeType2();//for more fonts
 
     fancyPantsStartup();
 
     }
 private:
+    // Create a pointer to the FreeType2 library
+    cv::Ptr<cv::freetype::FreeType2> ft2;
 
     struct HUD_Struct{
         bool initiated = false;
         int32_t init_sec;
         uint32_t curr_nanosec;
         int blank = 10;
+        float vehicle_latency = NETWORK_ERROR;
         
 
     };
     HUD_Struct hud;
 
     void fancyPantsStartup(){
-      cv::Rect rect(0, 0, 1920, 1080);
+      //cv::Rect rect(0, 0, 1920, 1080);
+        cv::Mat blackScreen(1080, 1920, CV_8UC3, cv::Scalar(0, 0, 0));
+ 
+        //frame = ;
+        int mid_cols = blackScreen.cols/2;
+        int mid_rows = blackScreen.rows/2;
+        cv::putText(blackScreen, "PRESS ANY KEY TO START...", cv::Point(300, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(150,150,150), 2);
+        cv::imshow("RDS_HUD", blackScreen);
+        cv::waitKey(0);
+        cv::rectangle(blackScreen, cv::Point(0,0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
 
-        frame.cols = 1920;
-        frame.rows = 1080;
-        frame = frame(rect);
-        int mid_cols = frame.cols/2;
-        int mid_rows = frame.rows/2;
-        cv::rectangle(frame, cv::Point(0,0), cv::Point(frame.cols, frame.rows), cv::Scalar(0, 0, 0), -1);
-        cv::imshow("RDS_HUD", frame);
-        cv::waitKey(4000);
-        for(int i = 1; i < (frame.cols/4); i++){
+        for(int i = 20; i < (blackScreen.cols/4); i++){
         //cv::putText(frame, ".", cv::Point((frame.cols /2) - 500 + i*35, frame.rows /2), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(155, 155, 155), 8);
          int width = static_cast<int>(pow(i / 100.0, 8)); // Ensure proper casting and division
         
         // Ensure width does not exceed frame.cols
         //width = std::min(width, frame.cols);
 
-        cv::rectangle(frame, cv::Point(0,0), cv::Point(width, frame.rows), cv::Scalar(155, 155, 155), -1);
-        cv::putText(frame, "system start", cv::Point(mid_cols, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 3, cv::Scalar(0, 0, 0), 7);
+        cv::rectangle(blackScreen, cv::Point(0,0), cv::Point(width, blackScreen.rows), cv::Scalar(155, 155, 155), -1);
+        cv::putText(blackScreen, "RDS", cv::Point(mid_cols - 170, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 11, cv::Scalar(0, 0, 0), 10);
         //cv::waitKey(5);
-        cv::imshow("RDS_HUD", frame);
+        cv::imshow("RDS_HUD", blackScreen);
         cv::waitKey(1);
         }
-        cv::rectangle(frame, cv::Point(0,0), cv::Point(frame.cols, frame.rows), cv::Scalar(0, 0, 0), -1);
-        cv::putText(frame, "system start", cv::Point(mid_cols, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 3, cv::Scalar(115, 115, 255), 7);
-        cv::imshow("RDS_HUD", frame);
-        cv::waitKey(700);
-        cv::rectangle(frame, cv::Point(0,0), cv::Point(frame.cols, frame.rows), cv::Scalar(0, 0, 0), -1);
+        cv::rectangle(blackScreen, cv::Point(0,0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
+        cv::putText(blackScreen, "RDS", cv::Point(mid_cols - 170, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 11, cv::Scalar(115, 115, 155), 10);
+        cv::waitKey(100);
+        cv::imshow("RDS_HUD", blackScreen);
+        cv::putText(blackScreen, "drive", cv::Point(mid_cols - 180, mid_rows + 150), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(115, 115, 255), 6, cv::FONT_ITALIC);
+        cv::imshow("RDS_HUD", blackScreen);
+        cv::waitKey(1000);
+        cv::rectangle(blackScreen, cv::Point(0,0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
 
-        for(int i = 1; i<(frame.cols); i++){
+        for(int i = 40; i<(blackScreen.cols/4); i++){
             int _progress = static_cast<int>(pow(i/100.0, 10));
-            cv::rectangle(frame, cv::Point(0, 300), cv::Point(_progress, 450), cv::Scalar(200, 200, 200), -1);
-            cv::putText(frame, "RDS HEADS UP DISPLAY", cv::Point(200, 430), cv::FONT_HERSHEY_SIMPLEX, 3, cv::Scalar(255, 155, 155), 7);
-            cv::imshow("RDS_HUD", frame);
-             cv::waitKey(1);
+            cv::rectangle(blackScreen, cv::Point(0, 310), cv::Point(_progress, 450), cv::Scalar(200, 200, 200), -1);
+            cv::putText(blackScreen, "HEADS UP DISPLAY STARTUP", cv::Point(200, 420), cv::FONT_HERSHEY_SIMPLEX, 3, cv::Scalar(0, 0, 0), 3, 16);
+            cv::imshow("RDS_HUD", blackScreen);
+            cv::waitKey(1);
         }
+        //cv::rectangle(blackScreen, cv::Point(0,0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
+        cv::putText(blackScreen, "network: ", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(105,105,105), 3);
+        cv::imshow("RDS_HUD", blackScreen);
+        cv::waitKey(500);
+        std::string network_status_msg = "STANDBY";
+        cv::Scalar network_status_colour = cv::Scalar(150, 150, 0);
+        cv::putText(blackScreen, "network: ", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235,235,235), 3);
+        
+        cv::imshow("RDS_HUD", blackScreen);
+        for (int i = 0; i < 20; i++){
+            
+            cv::rectangle(blackScreen, cv::Point(499, 650), cv::Point(900, 750),cv::Scalar(0,0,0), -1);
+            cv::imshow("RDS_HUD", blackScreen);
+            cv::waitKey(70);
+            cv::putText(blackScreen, network_status_msg, cv::Point(500, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235,235,0), 3);
+            cv::imshow("RDS_HUD", blackScreen);
+            cv::waitKey(80);
+        }
+        //cv::waitKey(100);
+        if (networkCheck() == NETWORK_OK){
+            network_status_msg = "ONLINE, LATENCY: " +  std::to_string(static_cast<int>(hud.vehicle_latency));
+            network_status_colour = cv::Scalar(10, 255, 10);
+        } else {
+            network_status_msg = "OFFLINE!!";
+            network_status_colour = cv::Scalar(10, 10, 255);
+        }
+
+        cv::rectangle(blackScreen, cv::Point(499, 650), cv::Point(900, 750),cv::Scalar(0,0,0), -1);
+            
+
+        cv::putText(blackScreen, network_status_msg, cv::Point(500, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+        cv::imshow("RDS_HUD", blackScreen);
+        cv::waitKey(1000);
+            
+        cv::rectangle(blackScreen, cv::Point(0,0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
+        if(networkCheck() == NETWORK_OK){
+        cv::putText(blackScreen, "CLIENT READY", cv::Point(500, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+        }else{
+        cv::putText(blackScreen, "CLIENT FAILURE", cv::Point(500, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+
+        }
+        cv::imshow("RDS_HUD", blackScreen);
+        cv::waitKey(1000);
+
     }
 
+    //@brief 
+    /*
+    
+    */
+  int networkCheck(){
+        std::string ping_string;
+
+        char _buffer[128];
+        FILE *_cmd_out_pipe = popen("ping -c 1 8.8.8.8 | grep 'time=' | awk '{print $7}' | cut -d'=' -f2", "r"); //bash is OP
+        if (fgets(_buffer, 128, _cmd_out_pipe) != NULL ){
+                ping_string += _buffer;
+                size_t _endpos = ping_string.find_last_not_of("\t\r\n");
+                ping_string = ping_string.substr(0, _endpos + 1);
+                hud.vehicle_latency = std::stoi(ping_string);
+        }else {  
+            RCLCPP_ERROR(this->get_logger(), "Network Error!!");
+            return NETWORK_ERROR;
+            }
+    std::string output = "Network Test Success! latency: " + ping_string;
+    RCLCPP_WARN(this->get_logger(), output.c_str());
+
+    return NETWORK_OK;
+
+  }
   void imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr& msg) {
     try {
       frame = cv_bridge::toCvShare(msg, "bgr8")->image;
@@ -159,8 +226,6 @@ private:
         //left signal
     cv::Point leftArrowStart(frame.cols * 0.05, frame.rows / 2);
     cv::Point leftArrowEnd(frame.cols * 0.10, frame.rows / 2);
-
-
     
     cv::arrowedLine(frame, leftArrowEnd, leftArrowStart, cv::Scalar(20, 255, 20), 2, 3, 0, 2);
       }
@@ -207,38 +272,38 @@ private:
       } else {
         // cv::rectangle(overlay, cv::Point(0, 0), cv::Point(frame.cols, frame.rows - status_bar_height), cv::Scalar(0, 0, 0), -1); 
         
-        cv::rectangle(frame, cv::Point(0,0), cv::Point(frame.cols, frame.rows), cv::Scalar(0, 0, 0), -1);
-        cv::imshow("RDS_HUD", frame);
-        cv::waitKey(4000);
-        for(int i = 1; i < (frame.cols/4); i++){
-        //cv::putText(frame, ".", cv::Point((frame.cols /2) - 500 + i*35, frame.rows /2), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(155, 155, 155), 8);
-         int width = static_cast<int>(pow(i / 100.0, 8)); // Ensure proper casting and division
+        // cv::rectangle(frame, cv::Point(0,0), cv::Point(frame.cols, frame.rows), cv::Scalar(0, 0, 0), -1);
+        // cv::imshow("RDS_HUD", frame);
+        // cv::waitKey(4000);
+        // for(int i = 1; i < (frame.cols/4); i++){
+        // //cv::putText(frame, ".", cv::Point((frame.cols /2) - 500 + i*35, frame.rows /2), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(155, 155, 155), 8);
+        //  int width = static_cast<int>(pow(i / 100.0, 8)); // Ensure proper casting and division
         
-        // Ensure width does not exceed frame.cols
-        //width = std::min(width, frame.cols);
+        // // Ensure width does not exceed frame.cols
+        // //width = std::min(width, frame.cols);
 
-        cv::rectangle(frame, cv::Point(0,0), cv::Point(width, frame.rows), cv::Scalar(155, 155, 155), -1);
-        cv::putText(frame, "system start", cv::Point(mid_cols, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 3, cv::Scalar(0, 0, 0), 7);
-        //cv::waitKey(5);
-        cv::imshow("RDS_HUD", frame);
-        cv::waitKey(1);
-        }
-        cv::rectangle(frame, cv::Point(0,0), cv::Point(frame.cols, frame.rows), cv::Scalar(0, 0, 0), -1);
-        cv::putText(frame, "system start", cv::Point(mid_cols, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 3, cv::Scalar(115, 115, 255), 7);
-        cv::imshow("RDS_HUD", frame);
-        cv::waitKey(700);
-        cv::rectangle(frame, cv::Point(0,0), cv::Point(frame.cols, frame.rows), cv::Scalar(0, 0, 0), -1);
+        // cv::rectangle(frame, cv::Point(0,0), cv::Point(width, frame.rows), cv::Scalar(155, 155, 155), -1);
+        // cv::putText(frame, "RDS", cv::Point(mid_cols, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 4, cv::Scalar(0, 0, 0), 7);
+        // //cv::waitKey(5);
+        // cv::imshow("RDS_HUD", frame);
+        // cv::waitKey(1);
+        // }
+        // cv::rectangle(frame, cv::Point(0,0), cv::Point(frame.cols, frame.rows), cv::Scalar(0, 0, 0), -1);
+        // cv::putText(frame, "RDS", cv::Point(mid_cols, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 4, cv::Scalar(115, 115, 255), 7);
+        // cv::imshow("RDS_HUD", frame);
+        // cv::waitKey(700);
+        // cv::rectangle(frame, cv::Point(0,0), cv::Point(frame.cols, frame.rows), cv::Scalar(0, 0, 0), -1);
 
-        for(int i = 1; i<(frame.cols); i++){
-            int _progress = static_cast<int>(pow(i/100.0, 10));
-            cv::rectangle(frame, cv::Point(0, 300), cv::Point(_progress, 450), cv::Scalar(200, 200, 200), -1);
-            cv::putText(frame, "RDS HEADS UP DISPLAY", cv::Point(200, 430), cv::FONT_HERSHEY_SIMPLEX, 3, cv::Scalar(255, 155, 155), 7);
-            cv::imshow("RDS_HUD", frame);
-             cv::waitKey(1);
-        }
+        // for(int i = 1; i<(frame.cols); i++){
+        //     int _progress = static_cast<int>(pow(i/100.0, 10));
+        //     cv::rectangle(frame, cv::Point(0, 300), cv::Point(_progress, 450), cv::Scalar(200, 200, 200), -1);
+        //     cv::putText(frame, "RDS HEADS UP DISPLAY", cv::Point(200, 430), cv::FONT_HERSHEY_SIMPLEX, 3, cv::Scalar(255, 155, 155), 7);
+        //     cv::imshow("RDS_HUD", frame);
+        //      cv::waitKey(1);
+        // }
  
 
-
+        hud.initiated = true;
       }
 
       cv::imshow("RDS_HUD", frame);
@@ -290,7 +355,7 @@ void refreshMousePosition(int x, int y){
        mousePointText = "X: " + std::to_string(x) + ", Y: " + std::to_string(y);
 
         // Choose a point to position the text, ensuring it's within the window bounds
-       mouseX = std::min(x, _W - 200); // Adjust 200 based on the text width
+        mouseX = std::min(x, _W - 200); // Adjust 200 based on the text width
         mouseY = std::min(y, _H - 20);  // Adjust 20 based on the text height
 
 }
