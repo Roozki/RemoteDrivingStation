@@ -13,14 +13,14 @@
 class ManualControlNode : public rclcpp::Node {
 public:
     ManualControlNode() : Node("g29_control") {
-        auto qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local();
+        auto qos = rclcpp::QoS(rclcpp::KeepLast(3)).transient_local();
         command_publisher_ = this->create_publisher<rds_msgs::msg::VehicleInterface>("/vehicle_1/command", qos);
         
         double period = 1.0/CONTROL_RATE;
         // timer_ = this->create_wall_timer(
         // std::chrono::duration<double>(period),std::bind(&ManualControlNode::test_send, this));
         g29_subscriber_ = this->create_subscription<sensor_msgs::msg::Joy>(
-            "/joy", 100, std::bind(&ManualControlNode::joy_callback, this, std::placeholders::_1));
+            "/joy", 10, std::bind(&ManualControlNode::joy_callback, this, std::placeholders::_1));
     }
 
     void send_command(float steering_angle, float speed, float acceleration, float jerk, int gear) {
@@ -41,6 +41,10 @@ public:
     // }
 
 private:
+    struct Vehicle{
+        bool manual = false;
+    };
+    Vehicle vehicle;
     int gears[4] = {GEAR_REVERSE, GEAR_PARKING, GEAR_NEUTRAL, GEAR_1};
     int current_gear = 0;
     int prev_paddleR = 0;
@@ -131,14 +135,19 @@ private:
         //     lights[0] = 0;
         //     RCLCPP_ERROR(this->get_logger(), "test");
         // }}
+        //! ----------------------------------------//
+        //!                 SIGNIALS                //
+        //! ----------------------------------------//
         for(int i = 0; i < NUM_LIGHTS - 1; i++){
             if(lights[i] == 1){
             vehicle_msg.lights[i] = 1;
+            
             //publishFeedback();
             } else{
                 vehicle_msg.lights[i] = 0;
             }
         }
+        
 
         if(paddleR){
         if(prev_paddleR != paddleR){
@@ -155,9 +164,12 @@ private:
         if(current_gear < -2){
             current_gear = -2;
         }
-
-        if(current_gear > 5){
-            current_gear = 5;
+        int max_gear = 5;
+        if(vehicle.manual){
+            max_gear = 1;
+        }
+        if(current_gear > max_gear){
+            current_gear = max_gear;
         }
 
      if(false){
@@ -175,6 +187,8 @@ private:
     }
 
        // vehicle_msg.lights = lights;
+        vehicle_msg.left_signal = msg->buttons[3];
+        vehicle_msg.right_signal = msg->buttons[1];
         vehicle_msg.steering_angle = steering_angle;
         vehicle_msg.gas_pedal = gas;
         vehicle_msg.gear = current_gear;
