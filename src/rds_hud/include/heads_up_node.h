@@ -21,6 +21,7 @@ public:
   {
   }
   cv::Mat frame;
+  cv::Mat rear_frame;
 
   void init()
   {
@@ -33,8 +34,14 @@ public:
     image_transport::TransportHints hints(this, "compressed");
 
     image_transport::ImageTransport it(shared_from_this());
+//    image_transport::ImageTransport it(shared_from_this());
+          //! ----------------------------------------//
+          //!                 TOPICS                  //
+          //! ----------------------------------------//
+
     hud_sub_ = it.subscribe("/camera/image_raw", 1, &HUDOverlayNode::imageCallback, this, &hints);
     hud_pub_ = it.advertise("/hud_overalay", 1);
+    hud_rearview = it.subscribe("/veh")
     RCLCPP_INFO(this->get_logger(), "meow");
     vehicle_1_control_subscriber_ = this->create_subscription<rds_msgs::msg::VehicleInterface>(
         "/vehicle_1/command", 4, std::bind(&HUDOverlayNode::commandCallback, this, std::placeholders::_1));
@@ -51,7 +58,7 @@ public:
 private:
   // Create a pointer to the FreeType2 library
   cv::Ptr<cv::freetype::FreeType2> ft2;
-
+  int latency_refresh_count = 0;
   struct HUD_Struct
   {
     bool authorized = false;
@@ -186,8 +193,10 @@ private:
       RCLCPP_ERROR(this->get_logger(), "Network Error!!");
       return NETWORK_ERROR;
     }
+    if(!hud.initiated){
     std::string output = "Network Test Success! latency: " + ping_string;
     RCLCPP_WARN(this->get_logger(), output.c_str());
+    }
 
     return NETWORK_OK;
   }
@@ -204,6 +213,13 @@ private:
 
         if (hud.initiated)
         {
+          latency_refresh_count++;
+          if(latency_refresh_count > 30){
+            latency_refresh_count = 0;
+            networkCheck();
+
+          }
+          std::string latencyString = std::to_string(static_cast<int>(hud.vehicle_latency));
           cv::Rect rect(0, frame.rows - status_bar_height, frame.cols, status_bar_height);
 
           cv::Mat roi = frame(rect);
@@ -306,6 +322,9 @@ private:
           //!                 GEARS                   //
           //! ----------------------------------------//
           // cv::putText(frame, "GEAR", cv::Point(10, frame.rows - status_bar_height/2), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255,255,255), 3);
+          
+          cv::putText(frame, latencyString + "ms", cv::Point(frame.cols - 200, frame.rows - status_bar_height / 10), cv::FONT_HERSHEY_SIMPLEX, 3, cv::Scalar(200, 200, 0), 3);
+          
           cv::putText(frame, current_gear, cv::Point(190, frame.rows - status_bar_height / 10), cv::FONT_HERSHEY_SIMPLEX, 5, gear_colour, 3);
           cv::line(frame, cv::Point(0, frame.rows - status_bar_height), cv::Point(frame.cols, frame.rows - status_bar_height), CV_RGB(0, 0, 0), 4);
           cv::putText(frame, gas_pedal_string + "km/h", cv::Point(900, 1040), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2);
@@ -439,6 +458,7 @@ private:
   // sfloat current_gas_pedal;
   rds_msgs::msg::VehicleInterface vehicle_1_current_command;
   rds_msgs::msg::VehicleStatus vehicle_1_current_status;
+
   std::string current_gear = "NET_ERR";
 
   // Vehicle type (manual or Automatic)
@@ -453,6 +473,7 @@ private:
   int mouseY;
 
   image_transport::Subscriber hud_sub_;
+  image_transport::Subscriber rearview_sub;
   image_transport::Publisher hud_pub_;
   rclcpp::Subscription<rds_msgs::msg::VehicleInterface>::SharedPtr vehicle_1_control_subscriber_;
   rclcpp::Subscription<rds_msgs::msg::VehicleStatus>::SharedPtr vehicle_1_status_subscriber_;

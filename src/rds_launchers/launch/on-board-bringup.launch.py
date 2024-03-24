@@ -18,10 +18,14 @@ def generate_launch_description():
     camera_node_2 = Node(
         package='camera_ros',
         executable='camera_node',
-        output='screen'
+        output='screen',
+        remappings=[
+            ('/camera/image_raw', '/vehicle_1/main_feed/image_raw'),  # Remap from /image_raw to /camera1/image_raw
+            # Add more remappings here if needed
+        ],
     )
 
     return LaunchDescription([
-        camera_node_1
+        camera_node_2
        #camera_node_2
     ])
