@@ -52,6 +52,7 @@ private:
     cv::Ptr<cv::freetype::FreeType2> ft2;
 
     struct HUD_Struct{
+        bool authorized = false;
         bool initiated = false;
         int32_t init_sec;
         uint32_t curr_nanosec;
@@ -82,16 +83,16 @@ private:
         //width = std::min(width, frame.cols);
 
         cv::rectangle(blackScreen, cv::Point(0,0), cv::Point(width, blackScreen.rows), cv::Scalar(155, 155, 155), -1);
-        cv::putText(blackScreen, "RDS", cv::Point(mid_cols - 170, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 11, cv::Scalar(0, 0, 0), 10);
+        cv::putText(blackScreen, "RDS", cv::Point(mid_cols - 470, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 11, cv::Scalar(0, 0, 0), 10);
         //cv::waitKey(5);
         cv::imshow("RDS_HUD", blackScreen);
         cv::waitKey(1);
         }
         cv::rectangle(blackScreen, cv::Point(0,0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
-        cv::putText(blackScreen, "RDS", cv::Point(mid_cols - 170, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 11, cv::Scalar(115, 115, 155), 10);
+        cv::putText(blackScreen, "RDS", cv::Point(mid_cols - 470, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 11, cv::Scalar(115, 115, 155), 10);
         cv::waitKey(100);
         cv::imshow("RDS_HUD", blackScreen);
-        cv::putText(blackScreen, "drive", cv::Point(mid_cols - 180, mid_rows + 150), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(115, 115, 255), 6, cv::FONT_ITALIC);
+        cv::putText(blackScreen, "drive", cv::Point(mid_cols - 480, mid_rows + 200), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(115, 115, 255), 6, cv::FONT_ITALIC);
         cv::imshow("RDS_HUD", blackScreen);
         cv::waitKey(1000);
         cv::rectangle(blackScreen, cv::Point(0,0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
@@ -139,20 +140,28 @@ private:
             
         cv::rectangle(blackScreen, cv::Point(0,0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
         if(networkCheck() == NETWORK_OK){
-        cv::putText(blackScreen, "CLIENT READY", cv::Point(500, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
-        }else{
-        cv::putText(blackScreen, "CLIENT FAILURE", cv::Point(500, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+        cv::putText(blackScreen, "CLIENT READY, REQUESTING AUTHORIZATION...", cv::Point(400, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+          }else{
+        cv::putText(blackScreen, "CLIENT FAILURE... womp womp", cv::Point(400, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
 
         }
         cv::imshow("RDS_HUD", blackScreen);
-        cv::waitKey(1000);
+        cv::waitKey(100);
+        while(!hud.authorized){
+            //rclcpp::spin_some(HUDOverlayNode);
+            cv::waitKey(50);
+            hud.authorized = true;
+            //TODO authorize hub
+            
+        }
+        cv::putText(blackScreen, "CLIENT AUTHORIZED", cv::Point(400, 900), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+        cv::imshow("RDS_HUD", blackScreen);
+        cv::waitKey(800);
+      
+      
 
     }
-
-    //@brief 
-    /*
-    
-    */
+  
   int networkCheck(){
         std::string ping_string;
 
@@ -174,6 +183,7 @@ private:
 
   }
   void imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr& msg) {
+    if(hud.authorized){
     try {
       frame = cv_bridge::toCvShare(msg, "bgr8")->image;
         int mid_cols = frame.cols/2;
@@ -240,25 +250,32 @@ private:
 
       }
       //cv::putText(frame, "GEAR", cv::Point(10, frame.rows - status_bar_height/2), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255,255,255), 3);
-      cv::putText(frame, current_gear, cv::Point(190, frame.rows - status_bar_height/2), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255,0,255), 3);
+      cv::putText(frame, current_gear, cv::Point(190, frame.rows - status_bar_height/2), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255,0,255), 3);
       cv::line(frame, cv::Point(0, frame.rows - status_bar_height), cv::Point(frame.cols, frame.rows - status_bar_height), CV_RGB(0, 0, 0), 4);
-      cv::putText(frame, gas_pedal_string + "km/h", cv::Point(890, frame.rows - status_bar_height/2), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(0, 255, 0), 2);
+      cv::putText(frame, gas_pedal_string + "km/h", cv::Point(900, 1040), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2);
      // cv::putText(frame, , cv::Point(950, frame.rows - status_bar_height/2), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255,0,255), 3);
-      int spedometer_radius = 300;
-      cv::Point spedometerLineStart(frame.cols/2, frame.rows/2);
-      cv::Point spedometerLineEnd((frame.cols/2) - spedometer_radius, frame.rows/2);
+      int spedometer_radius = 100;
+      cv::Point spedometerLineStart(frame.cols/2, frame.rows - 20);
+      cv::Point spedometerLineEnd((frame.cols/2) - spedometer_radius, frame.rows - 20);
       //@TODO Need to add progress bar for gas
       //add kmph
       //add gear
         int sped_increment = 10;//40/NUM_NUMS;
         int max_sped = sped_increment*NUM_NUMS;
-      for(int i = 0; i < NUM_NUMS; i++){
-        float spedometer_draw_angle = (i*sped_increment * PI) / max_sped;
-      std::string sped_num = std::to_string(i*sped_increment); //+"km/h";
-      cv::putText(frame, sped_num, cv::Point(((spedometer_radius)*(-1)*cos(spedometer_draw_angle)) + spedometerLineEnd.x + spedometer_radius, ((spedometer_radius)*(-1)*sin(spedometer_draw_angle)) + spedometerLineEnd.y), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255,255,255), 1);
+        float spedometer_angle = ((0)*sped_increment * PI) / max_sped;
+      cv::putText(frame, "0", cv::Point(((spedometer_radius)*(-1)*cos(spedometer_angle)) + spedometerLineEnd.x + spedometer_radius, ((spedometer_radius)*(-1)*sin(spedometer_angle)) + spedometerLineEnd.y), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255,255,255), 2);
+      std::string sped_num;
+      for(int i = 1; i < NUM_NUMS; i++){
+      sped_num = std::to_string(i*sped_increment); //+"km/h";
+        spedometer_angle = ((i)*sped_increment * PI) / max_sped;
+      cv::putText(frame, sped_num, cv::Point(((spedometer_radius)*(-1)*cos(spedometer_angle)) + spedometerLineEnd.x + spedometer_radius, ((spedometer_radius)*(-1)*sin(spedometer_angle)) + spedometerLineEnd.y), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255,255,255), 2);
 
       }
-      float spedometer_angle = (vehicle_1_current_command.gas_pedal * PI) / max_sped;
+     sped_num = "100"; //+"km/h";
+
+      cv::putText(frame, sped_num, cv::Point(((spedometer_radius)*(-1)*cos(spedometer_angle)) + spedometerLineEnd.x + spedometer_radius, ((spedometer_radius)*(-1)*sin(PI)) + spedometerLineEnd.y), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255,255,255), 2);
+
+        spedometer_angle = (vehicle_1_current_command.gas_pedal * PI) / max_sped;
 
       spedometerLineEnd.x = ((spedometer_radius)*(-1)*cos(spedometer_angle)) + spedometerLineEnd.x + spedometer_radius;
       spedometerLineEnd.y = ((spedometer_radius)*(-1)*sin(spedometer_angle)) + spedometerLineEnd.y;
@@ -317,6 +334,7 @@ private:
       RCLCPP_ERROR(this->get_logger(), "Could not convert from '%s' to 'bgr8'.", msg->encoding.c_str());
   
   }
+    }
   }
 
     // void blackout(cv::mat frame, int ms_delay){
