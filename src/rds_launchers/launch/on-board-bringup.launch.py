@@ -26,6 +26,8 @@ def generate_launch_description():
         output='screen',
         remappings=[
             ('/camera/image_raw', '/vehicle_1/main_feed/image_raw'),  # Remap from /image_raw to /camera1/image_raw
+            ('/camera/image_raw/compressed', '/vehicle_1/main_feed/image_raw/compressed'),
+
             # Add more remappings here if needed
         ],
     )
