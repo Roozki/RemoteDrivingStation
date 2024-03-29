@@ -45,8 +45,8 @@ def generate_launch_description():
     
 
     return LaunchDescription([
-        #main_feed,
+        main_feed,
         gnss_serial_driver,
         gps_wgs84_initilizer
-        rear_feed
+        #rear_feed
     ])
