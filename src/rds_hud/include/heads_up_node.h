@@ -34,10 +34,10 @@ public:
     image_transport::TransportHints hints(this, "compressed");
 
     image_transport::ImageTransport it(shared_from_this());
-//    image_transport::ImageTransport it(shared_from_this());
-          //! ----------------------------------------//
-          //!                 TOPICS                  //
-          //! ----------------------------------------//
+    //    image_transport::ImageTransport it(shared_from_this());
+    //! ----------------------------------------//
+    //!                 TOPICS                  //
+    //! ----------------------------------------//
 
     hud_sub_ = it.subscribe("/vehicle_1/main_feed/image_raw", 1, &HUDOverlayNode::imageCallback, this, &hints);
     hud_pub_ = it.advertise("/hud_overalay", 1);
@@ -52,7 +52,7 @@ public:
     cv::setMouseCallback("RDS_HUD", HUDOverlayNode::onMouse, this);
     ft2 = cv::freetype::createFreeType2(); // for more fonts
 
-    fancyPantsStartup();
+    // fancyPantsStartup();
   }
 
 private:
@@ -69,10 +69,38 @@ private:
     float vehicle_latency = NETWORK_ERROR;
   };
   HUD_Struct hud;
+  //!
+  //!   DRIVE LINE
+  //!
+  void drawDriveLine(cv::Mat &img, cv::Point start, cv::Point control, cv::Point end, cv::Scalar color, int thickness)
+  {
+    // quadratic breazear... chatgpt
+    //also draws accell
+    const int numDriveLinePoints = 100;
+    std::vector<cv::Point> driveLinePoints;
 
+    for (int i = 0; i <= numDriveLinePoints; i++)
+    {
+      double t = i / (1.0 * static_cast<double>(numDriveLinePoints));
+      double a = pow((1.0 - t), 2.0);
+      double b = 2.0 * t * (1.0 - t);
+      double c = pow(t, 2.0);
+
+      cv::Point pt;
+      pt.x = static_cast<int>(a * start.x + b * control.x + c * end.x);
+      pt.y = static_cast<int>(a * start.y + b * control.y + c * end.y);
+      driveLinePoints.push_back(pt);
+    }
+
+    for (size_t i = 1; i < driveLinePoints.size(); i++)
+    {
+      cv::line(img, driveLinePoints[i - 1], driveLinePoints[i], color, thickness);
+    }
+  } // thanks chatgpt
   void fancyPantsStartup()
   {
-    // cv::Rect rect(0, 0, 1920, 1080);
+    // TODO swipe open camera feed, add gps start, net speed
+    //  cv::Rect rect(0, 0, 1920, 1080);
     cv::Mat blackScreen(1080, 1920, CV_8UC3, cv::Scalar(0, 0, 0));
 
     // frame = ;
@@ -193,20 +221,24 @@ private:
       RCLCPP_ERROR(this->get_logger(), "Network Error!!");
       return NETWORK_ERROR;
     }
-    if(!hud.initiated){
-    std::string output = "Network Test Success! latency: " + ping_string;
-    RCLCPP_WARN(this->get_logger(), output.c_str());
+    if (!hud.initiated)
+    {
+      std::string output = "Network Test Success! latency: " + ping_string;
+      RCLCPP_WARN(this->get_logger(), output.c_str());
     }
 
     return NETWORK_OK;
   }
-  void rearImageCallback(const sensor_msgs::msg::Image::ConstSharedPtr &msg){
-    if(hud.initiated){
-    rear_frame = cv_bridge::toCvShare(msg, "bgr8")->image;
+  void rearImageCallback(const sensor_msgs::msg::Image::ConstSharedPtr &msg)
+  {
+    if (hud.initiated)
+    {
+      rear_frame = cv_bridge::toCvShare(msg, "bgr8")->image;
     }
   }
   void imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr &msg)
   {
+    hud.authorized = true;
     if (hud.authorized)
     {
       try
@@ -219,11 +251,26 @@ private:
         if (hud.initiated)
         {
           latency_refresh_count++;
-          if(latency_refresh_count > 30){
+          if (latency_refresh_count > 30)
+          {
             latency_refresh_count = 0;
             networkCheck();
-
           }
+          //! ----------------------------------------//
+          //!               DRIVE LINE                //
+          //! ----------------------------------------//
+
+          cv::Point driveLineStart(frame.cols / 2, frame.rows - 100); // Start at the bottom center
+          cv::Point driveLineControl(frame.cols / 2, 3* frame.rows / 4.5);
+          
+
+          double driveLineRadians = (vehicle_1_current_command.steering_angle*70.0) * CV_PI / 180.0;
+          int driveLineEndOffset = std::tan(driveLineRadians)*100;
+          // Draw the curve
+          cv::Point driveLineEnd(driveLineStart.x + driveLineEndOffset*2, frame.rows/3 + (abs(driveLineEndOffset)));            // End at the top center
+
+          drawDriveLine(frame, driveLineStart, driveLineControl, driveLineEnd, cv::Scalar(0, 0, 0), 2);
+
           std::string latencyString = std::to_string(static_cast<int>(hud.vehicle_latency));
           cv::Rect rect(0, frame.rows - status_bar_height, frame.cols, status_bar_height);
 
@@ -275,20 +322,20 @@ private:
           //! ----------------------------------------//
           //!                 SIGNIALS                //
           //! ----------------------------------------//
-              vehicle_1_current_command.lights.resize(5);
+          vehicle_1_current_command.lights.resize(5);
 
           if (vehicle_1_current_command.left_signal == 1)
           {
             // #left signal
 
-              cv::Point leftArrowStart(frame.cols * 0.055, frame.rows / 2);
-              cv::Point leftArrowEnd(frame.cols * 0.05, frame.rows / 2);
+            cv::Point leftArrowStart(frame.cols * 0.055, frame.rows / 2);
+            cv::Point leftArrowEnd(frame.cols * 0.05, frame.rows / 2);
             if (msg->header.stamp.nanosec > 300000000)
             { // blinking
               if (msg->header.stamp.nanosec > 600000000)
               { // wtf code am i writing
                 ////cv::arrowedLine(frame, rightArrowEnd, rightArrowStart, cv::Scalar(20, 255, 20), 2, 3, 0, 2);
-                //do nothing
+                // do nothing
               }
               else
               {
@@ -299,18 +346,17 @@ private:
             {
               cv::arrowedLine(frame, leftArrowStart, leftArrowEnd, cv::Scalar(255, 255, 255), 10, 3, 0, 20);
             }
-            
           }
           else if (vehicle_1_current_command.right_signal == 1)
           {
-              cv::Point rightArrowStart(frame.cols * 0.945, frame.rows / 2);
-              cv::Point rightArrowEnd(frame.cols * 0.95, frame.rows / 2);
+            cv::Point rightArrowStart(frame.cols * 0.945, frame.rows / 2);
+            cv::Point rightArrowEnd(frame.cols * 0.95, frame.rows / 2);
             if (msg->header.stamp.nanosec > 300000000)
             { // blinking
               if (msg->header.stamp.nanosec > 600000000)
               { // wtf code am i writing
                 ////cv::arrowedLine(frame, rightArrowEnd, rightArrowStart, cv::Scalar(20, 255, 20), 2, 3, 0, 2);
-                //do nothing
+                // do nothing
               }
               else
               {
@@ -327,9 +373,9 @@ private:
           //!                 GEARS                   //
           //! ----------------------------------------//
           // cv::putText(frame, "GEAR", cv::Point(10, frame.rows - status_bar_height/2), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255,255,255), 3);
-          
+
           cv::putText(frame, latencyString + "ms", cv::Point(frame.cols - 200, frame.rows - status_bar_height / 10), cv::FONT_HERSHEY_SIMPLEX, 3, cv::Scalar(200, 200, 0), 3);
-          
+
           cv::putText(frame, current_gear, cv::Point(190, frame.rows - status_bar_height / 10), cv::FONT_HERSHEY_SIMPLEX, 5, gear_colour, 3);
           cv::line(frame, cv::Point(0, frame.rows - status_bar_height), cv::Point(frame.cols, frame.rows - status_bar_height), CV_RGB(0, 0, 0), 4);
           cv::putText(frame, gas_pedal_string + "km/h", cv::Point(900, 1040), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2);
@@ -367,11 +413,13 @@ private:
         }
         else
         {
-          // cv::rectangle(overlay, cv::Point(0, 0), cv::Point(frame.cols, frame.rows - status_bar_height), cv::Scalar(0, 0, 0), -1);
+
+          cv::rectangle(frame, cv::Point(0, 0), cv::Point(0, 0), cv::Scalar(0, 0, 0), -1);
 
           // cv::rectangle(frame, cv::Point(0,0), cv::Point(frame.cols, frame.rows), cv::Scalar(0, 0, 0), -1);
-          // cv::imshow("RDS_HUD", frame);
-          // cv::waitKey(4000);
+          cv::imshow("RDS_HUD", frame);
+          cv::waitKey(400);
+
           // for(int i = 1; i < (frame.cols/4); i++){
           // //cv::putText(frame, ".", cv::Point((frame.cols /2) - 500 + i*35, frame.rows /2), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(155, 155, 155), 8);
           //  int width = static_cast<int>(pow(i / 100.0, 8)); // Ensure proper casting and division
@@ -380,10 +428,10 @@ private:
           // //width = std::min(width, frame.cols);
 
           // cv::rectangle(frame, cv::Point(0,0), cv::Point(width, frame.rows), cv::Scalar(155, 155, 155), -1);
-          // cv::putText(frame, "RDS", cv::Point(mid_cols, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 4, cv::Scalar(0, 0, 0), 7);
+          cv::putText(frame, "CAM ONLINE", cv::Point(mid_cols - 300, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 4, cv::Scalar(0, 200, 0), 7);
           // //cv::waitKey(5);
-          // cv::imshow("RDS_HUD", frame);
-          // cv::waitKey(1);
+          cv::imshow("RDS_HUD", frame);
+          cv::waitKey(1000);
           // }
           // cv::rectangle(frame, cv::Point(0,0), cv::Point(frame.cols, frame.rows), cv::Scalar(0, 0, 0), -1);
           // cv::putText(frame, "RDS", cv::Point(mid_cols, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 4, cv::Scalar(115, 115, 255), 7);

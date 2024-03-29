@@ -79,7 +79,9 @@ private:
 
         float steering_angle;
         float speed;
-        float gas;
+        float gas_pedal;
+        float brake_pedal;
+        float clutch_pedal;
         float jerk;
 
 
@@ -175,22 +177,30 @@ private:
      if(false){
         steering_angle = msg->axes[0];
         speed = 99.0 - (msg->axes[3] + 1)*100;
-        gas = (msg->axes[2] + 1)*20 - (msg->axes[3] + 1)*20;
-        jerk = (msg->axes[2] + 1)*20 - (msg->axes[3] + 1)*20;
+        gas_pedal = (msg->axes[2] + 1.0)*2.0;//// - (msg->axes[3] + 1)*20;
+        brake_pedal = (msg->axes[3] + 1.0)*2.0;
+        clutch_pedal = (msg->axes[4] + 1.0)*2.0;
+       //// jerk = (msg->axes[2] + 1)*20 - (msg->axes[3] + 1)*20;
 
     }else{
         steering_angle = msg->axes[0];
      //   speed = 99.0 - (msg->axes[4] + 1)*100;
-        gas = (msg->axes[2] + 1)*20 - (msg->axes[5] + 1)*20;
-     //   jerk = (msg->axes[2] + 1)*20 - (msg->axes[3] + 1)*20;
+        gas_pedal = (msg->axes[2] + 1.0)*2.0;//// - (msg->axes[5] + 1)*20;
+        brake_pedal = (msg->axes[5] + 1)*20;
+        ////jerk = (msg->axes[2] + 1)*20 - (msg->axes[3] + 1)*20;
 
     }
-
+        if (gas_pedal < 0){
+            gas_pedal = 0;
+        }
+     //   
        // vehicle_msg.lights = lights;
         vehicle_msg.left_signal = msg->buttons[3];
         vehicle_msg.right_signal = msg->buttons[1];
         vehicle_msg.steering_angle = steering_angle;
-        vehicle_msg.gas_pedal = gas;
+        vehicle_msg.gas_pedal = gas_pedal;
+        vehicle_msg.brake_pedal = brake_pedal;
+        vehicle_msg.clutch = clutch_pedal;
         vehicle_msg.gear = current_gear;
         command_publisher_->publish(vehicle_msg);
 

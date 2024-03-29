@@ -21,8 +21,8 @@ public:
     //auto node = rclcpp::Node();
     void init(){
         //node
-        _Vehicle_1_subscriber = this->create_subscription<rds_msgs::msg::VehicleInterface>(
-            "/vehicle_1/command", 10, std::bind(&ManageWindow::CommandCallback, this, std::placeholders::_1));
+     //   _Vehicle_1_subscriber = this->create_subscription<rds_msgs::msg::VehicleInterface>(
+     //       "/vehicle_1/command", 10, std::bind(&ManageWindow::CommandCallback, this, std::placeholders::_1));
     }
 
 private:
