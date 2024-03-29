@@ -39,7 +39,7 @@ class VehicleInterface : public rclcpp::Node{
     //std::string port = "/dev/ttyACM0";
     unsigned long baud = 115200;
     //! set serial port
-    std::string port = "/dev/serial/by-id/usb-ZEPHYR_UBC_ROVER_Arm_500100C6224069D7-if00";
+    std::string port = "/dev/serial/by-id/...";
 
     serial::Serial esp32;
     serial::Timeout timeout_uart = serial::Timeout::simpleTimeout(1000); // E.g., 1000 ms or 1 second

@@ -11,12 +11,13 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QLCDNumber>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QWidget>
-#include "qwt_dial.h"
-#include "qwt_thermo.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -24,30 +25,22 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralwidget;
-    QLCDNumber *test_lcd;
     QLabel *label;
     QLabel *label_2;
+    QWidget *gridLayoutWidget;
+    QGridLayout *gridLayout;
+    QTextEdit *textEdit;
+    QLCDNumber *drivers_lcd;
     QLabel *label_3;
-    QwtDial *Dial;
-    QwtThermo *Thermo;
     QLabel *label_4;
-    QLabel *label_5;
-    QLabel *label_6;
-    QLabel *label_7;
-    QLabel *label_8;
-    QLabel *label_9;
-    QLabel *label_10;
-    QLabel *label_11;
-    QLabel *label_12;
-    QLabel *label_13;
-    QLabel *label_14;
-    QLabel *label_15;
+    QPushButton *AuthorizeDriver;
+    QPushButton *AuthorizeDriver_2;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(800, 600);
+        MainWindow->resize(1040, 1006);
         QPalette palette;
         QBrush brush(QColor(255, 255, 255, 255));
         brush.setStyle(Qt::SolidPattern);
@@ -114,18 +107,15 @@ public:
         MainWindow->setPalette(palette);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
-        test_lcd = new QLCDNumber(centralwidget);
-        test_lcd->setObjectName(QString::fromUtf8("test_lcd"));
-        test_lcd->setGeometry(QRect(640, 20, 141, 81));
         label = new QLabel(centralwidget);
         label->setObjectName(QString::fromUtf8("label"));
         label->setGeometry(QRect(20, 10, 231, 71));
         QFont font;
-        font.setFamily(QString::fromUtf8("Sans Serif"));
+        font.setFamily(QString::fromUtf8("Nimbus Sans L"));
         font.setPointSize(55);
-        font.setBold(true);
+        font.setBold(false);
         font.setItalic(true);
-        font.setWeight(75);
+        font.setWeight(50);
         label->setFont(font);
         label_2 = new QLabel(centralwidget);
         label_2->setObjectName(QString::fromUtf8("label_2"));
@@ -137,152 +127,165 @@ public:
         font1.setItalic(false);
         font1.setWeight(75);
         label_2->setFont(font1);
-        label_3 = new QLabel(centralwidget);
-        label_3->setObjectName(QString::fromUtf8("label_3"));
-        label_3->setGeometry(QRect(50, 420, 51, 91));
+        gridLayoutWidget = new QWidget(centralwidget);
+        gridLayoutWidget->setObjectName(QString::fromUtf8("gridLayoutWidget"));
+        gridLayoutWidget->setGeometry(QRect(40, 459, 436, 171));
+        gridLayout = new QGridLayout(gridLayoutWidget);
+        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+        gridLayout->setContentsMargins(0, 0, 0, 0);
+        textEdit = new QTextEdit(gridLayoutWidget);
+        textEdit->setObjectName(QString::fromUtf8("textEdit"));
+        QSizePolicy sizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(textEdit->sizePolicy().hasHeightForWidth());
+        textEdit->setSizePolicy(sizePolicy);
+        QFont font2;
+        font2.setFamily(QString::fromUtf8("Roboto Light"));
+        font2.setPointSize(19);
+        textEdit->setFont(font2);
+
+        gridLayout->addWidget(textEdit, 1, 0, 1, 1);
+
+        drivers_lcd = new QLCDNumber(gridLayoutWidget);
+        drivers_lcd->setObjectName(QString::fromUtf8("drivers_lcd"));
+        sizePolicy.setHeightForWidth(drivers_lcd->sizePolicy().hasHeightForWidth());
+        drivers_lcd->setSizePolicy(sizePolicy);
+        drivers_lcd->setMinimumSize(QSize(150, 70));
+        drivers_lcd->setSizeIncrement(QSize(45, 45));
+        drivers_lcd->setBaseSize(QSize(600, 899));
         QPalette palette1;
-        QBrush brush4(QColor(255, 255, 0, 255));
+        QBrush brush4(QColor(13, 71, 161, 255));
         brush4.setStyle(Qt::SolidPattern);
         palette1.setBrush(QPalette::Active, QPalette::WindowText, brush4);
+        palette1.setBrush(QPalette::Active, QPalette::Button, brush1);
+        palette1.setBrush(QPalette::Active, QPalette::Light, brush);
+        palette1.setBrush(QPalette::Active, QPalette::Midlight, brush);
+        QBrush brush5(QColor(127, 127, 127, 255));
+        brush5.setStyle(Qt::SolidPattern);
+        palette1.setBrush(QPalette::Active, QPalette::Dark, brush5);
+        QBrush brush6(QColor(170, 170, 170, 255));
+        brush6.setStyle(Qt::SolidPattern);
+        palette1.setBrush(QPalette::Active, QPalette::Mid, brush6);
         palette1.setBrush(QPalette::Active, QPalette::Text, brush4);
-        QBrush brush5(QColor(255, 255, 0, 128));
-        brush5.setStyle(Qt::NoBrush);
+        palette1.setBrush(QPalette::Active, QPalette::BrightText, brush);
+        palette1.setBrush(QPalette::Active, QPalette::ButtonText, brush4);
+        palette1.setBrush(QPalette::Active, QPalette::Base, brush1);
+        palette1.setBrush(QPalette::Active, QPalette::Window, brush1);
+        palette1.setBrush(QPalette::Active, QPalette::Shadow, brush1);
+        palette1.setBrush(QPalette::Active, QPalette::AlternateBase, brush);
+        palette1.setBrush(QPalette::Active, QPalette::ToolTipBase, brush2);
+        palette1.setBrush(QPalette::Active, QPalette::ToolTipText, brush1);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
-        palette1.setBrush(QPalette::Active, QPalette::PlaceholderText, brush5);
+        palette1.setBrush(QPalette::Active, QPalette::PlaceholderText, brush4);
 #endif
         palette1.setBrush(QPalette::Inactive, QPalette::WindowText, brush4);
+        palette1.setBrush(QPalette::Inactive, QPalette::Button, brush1);
+        palette1.setBrush(QPalette::Inactive, QPalette::Light, brush);
+        palette1.setBrush(QPalette::Inactive, QPalette::Midlight, brush);
+        palette1.setBrush(QPalette::Inactive, QPalette::Dark, brush5);
+        palette1.setBrush(QPalette::Inactive, QPalette::Mid, brush6);
         palette1.setBrush(QPalette::Inactive, QPalette::Text, brush4);
-        QBrush brush6(QColor(255, 255, 0, 128));
-        brush6.setStyle(Qt::NoBrush);
+        palette1.setBrush(QPalette::Inactive, QPalette::BrightText, brush);
+        palette1.setBrush(QPalette::Inactive, QPalette::ButtonText, brush4);
+        palette1.setBrush(QPalette::Inactive, QPalette::Base, brush1);
+        palette1.setBrush(QPalette::Inactive, QPalette::Window, brush1);
+        palette1.setBrush(QPalette::Inactive, QPalette::Shadow, brush1);
+        palette1.setBrush(QPalette::Inactive, QPalette::AlternateBase, brush);
+        palette1.setBrush(QPalette::Inactive, QPalette::ToolTipBase, brush2);
+        palette1.setBrush(QPalette::Inactive, QPalette::ToolTipText, brush1);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
-        palette1.setBrush(QPalette::Inactive, QPalette::PlaceholderText, brush6);
+        palette1.setBrush(QPalette::Inactive, QPalette::PlaceholderText, brush4);
 #endif
-        palette1.setBrush(QPalette::Disabled, QPalette::WindowText, brush1);
-        palette1.setBrush(QPalette::Disabled, QPalette::Text, brush1);
-        QBrush brush7(QColor(255, 255, 0, 128));
-        brush7.setStyle(Qt::NoBrush);
+        palette1.setBrush(QPalette::Disabled, QPalette::WindowText, brush4);
+        palette1.setBrush(QPalette::Disabled, QPalette::Button, brush1);
+        palette1.setBrush(QPalette::Disabled, QPalette::Light, brush);
+        palette1.setBrush(QPalette::Disabled, QPalette::Midlight, brush);
+        palette1.setBrush(QPalette::Disabled, QPalette::Dark, brush5);
+        palette1.setBrush(QPalette::Disabled, QPalette::Mid, brush6);
+        palette1.setBrush(QPalette::Disabled, QPalette::Text, brush4);
+        palette1.setBrush(QPalette::Disabled, QPalette::BrightText, brush);
+        palette1.setBrush(QPalette::Disabled, QPalette::ButtonText, brush4);
+        palette1.setBrush(QPalette::Disabled, QPalette::Base, brush1);
+        palette1.setBrush(QPalette::Disabled, QPalette::Window, brush1);
+        palette1.setBrush(QPalette::Disabled, QPalette::Shadow, brush1);
+        palette1.setBrush(QPalette::Disabled, QPalette::AlternateBase, brush);
+        palette1.setBrush(QPalette::Disabled, QPalette::ToolTipBase, brush2);
+        palette1.setBrush(QPalette::Disabled, QPalette::ToolTipText, brush1);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
-        palette1.setBrush(QPalette::Disabled, QPalette::PlaceholderText, brush7);
+        palette1.setBrush(QPalette::Disabled, QPalette::PlaceholderText, brush4);
 #endif
-        label_3->setPalette(palette1);
-        QFont font2;
-        font2.setFamily(QString::fromUtf8("Noto Sans CJK SC"));
-        font2.setPointSize(50);
-        font2.setBold(true);
-        font2.setItalic(false);
-        font2.setWeight(75);
-        label_3->setFont(font2);
-        Dial = new QwtDial(centralwidget);
-        Dial->setObjectName(QString::fromUtf8("Dial"));
-        Dial->setGeometry(QRect(460, 350, 191, 191));
-        QPalette palette2;
-        palette2.setBrush(QPalette::Active, QPalette::WindowText, brush);
-        palette2.setBrush(QPalette::Active, QPalette::Button, brush1);
-        palette2.setBrush(QPalette::Active, QPalette::Light, brush1);
-        palette2.setBrush(QPalette::Active, QPalette::Midlight, brush1);
-        palette2.setBrush(QPalette::Active, QPalette::Dark, brush1);
-        palette2.setBrush(QPalette::Active, QPalette::Mid, brush1);
-        palette2.setBrush(QPalette::Active, QPalette::Text, brush);
-        palette2.setBrush(QPalette::Active, QPalette::BrightText, brush);
-        palette2.setBrush(QPalette::Active, QPalette::ButtonText, brush);
-        palette2.setBrush(QPalette::Active, QPalette::Base, brush1);
-        palette2.setBrush(QPalette::Active, QPalette::Window, brush1);
-        palette2.setBrush(QPalette::Active, QPalette::Shadow, brush1);
-        palette2.setBrush(QPalette::Active, QPalette::AlternateBase, brush1);
-        palette2.setBrush(QPalette::Active, QPalette::ToolTipBase, brush2);
-        palette2.setBrush(QPalette::Active, QPalette::ToolTipText, brush1);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
-        palette2.setBrush(QPalette::Active, QPalette::PlaceholderText, brush3);
-#endif
-        palette2.setBrush(QPalette::Inactive, QPalette::WindowText, brush);
-        palette2.setBrush(QPalette::Inactive, QPalette::Button, brush1);
-        palette2.setBrush(QPalette::Inactive, QPalette::Light, brush1);
-        palette2.setBrush(QPalette::Inactive, QPalette::Midlight, brush1);
-        palette2.setBrush(QPalette::Inactive, QPalette::Dark, brush1);
-        palette2.setBrush(QPalette::Inactive, QPalette::Mid, brush1);
-        palette2.setBrush(QPalette::Inactive, QPalette::Text, brush);
-        palette2.setBrush(QPalette::Inactive, QPalette::BrightText, brush);
-        palette2.setBrush(QPalette::Inactive, QPalette::ButtonText, brush);
-        palette2.setBrush(QPalette::Inactive, QPalette::Base, brush1);
-        palette2.setBrush(QPalette::Inactive, QPalette::Window, brush1);
-        palette2.setBrush(QPalette::Inactive, QPalette::Shadow, brush1);
-        palette2.setBrush(QPalette::Inactive, QPalette::AlternateBase, brush1);
-        palette2.setBrush(QPalette::Inactive, QPalette::ToolTipBase, brush2);
-        palette2.setBrush(QPalette::Inactive, QPalette::ToolTipText, brush1);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
-        palette2.setBrush(QPalette::Inactive, QPalette::PlaceholderText, brush3);
-#endif
-        palette2.setBrush(QPalette::Disabled, QPalette::WindowText, brush1);
-        palette2.setBrush(QPalette::Disabled, QPalette::Button, brush1);
-        palette2.setBrush(QPalette::Disabled, QPalette::Light, brush1);
-        palette2.setBrush(QPalette::Disabled, QPalette::Midlight, brush1);
-        palette2.setBrush(QPalette::Disabled, QPalette::Dark, brush1);
-        palette2.setBrush(QPalette::Disabled, QPalette::Mid, brush1);
-        palette2.setBrush(QPalette::Disabled, QPalette::Text, brush1);
-        palette2.setBrush(QPalette::Disabled, QPalette::BrightText, brush);
-        palette2.setBrush(QPalette::Disabled, QPalette::ButtonText, brush1);
-        palette2.setBrush(QPalette::Disabled, QPalette::Base, brush1);
-        palette2.setBrush(QPalette::Disabled, QPalette::Window, brush1);
-        palette2.setBrush(QPalette::Disabled, QPalette::Shadow, brush1);
-        palette2.setBrush(QPalette::Disabled, QPalette::AlternateBase, brush1);
-        palette2.setBrush(QPalette::Disabled, QPalette::ToolTipBase, brush2);
-        palette2.setBrush(QPalette::Disabled, QPalette::ToolTipText, brush1);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
-        palette2.setBrush(QPalette::Disabled, QPalette::PlaceholderText, brush3);
-#endif
-        Dial->setPalette(palette2);
-        Dial->setLineWidth(4);
-        Thermo = new QwtThermo(centralwidget);
-        Thermo->setObjectName(QString::fromUtf8("Thermo"));
-        Thermo->setGeometry(QRect(690, 320, 60, 250));
-        label_4 = new QLabel(centralwidget);
+        drivers_lcd->setPalette(palette1);
+        QFont font3;
+        font3.setPointSize(1);
+        drivers_lcd->setFont(font3);
+        drivers_lcd->setLayoutDirection(Qt::LeftToRight);
+        drivers_lcd->setStyleSheet(QString::fromUtf8("QLCDNumber {\n"
+"    border: 2px solid rgb(255, 255, 255); /* Dark blue-grey border */\n"
+"    color: #0D47A1; /* Blue digits */\n"
+"    background-color: rgb(0, 0, 0); /* Light blue-grey background */\n"
+"    border-radius: 10px; /* Rounded corners */\n"
+"}"));
+        drivers_lcd->setFrameShape(QFrame::Box);
+        drivers_lcd->setFrameShadow(QFrame::Plain);
+        drivers_lcd->setLineWidth(1);
+        drivers_lcd->setSmallDecimalPoint(false);
+        drivers_lcd->setDigitCount(1);
+        drivers_lcd->setSegmentStyle(QLCDNumber::Outline);
+        drivers_lcd->setProperty("intValue", QVariant(-2));
+
+        gridLayout->addWidget(drivers_lcd, 0, 0, 1, 1);
+
+        label_3 = new QLabel(gridLayoutWidget);
+        label_3->setObjectName(QString::fromUtf8("label_3"));
+        QFont font4;
+        font4.setFamily(QString::fromUtf8("Roboto Light"));
+        font4.setPointSize(14);
+        font4.setBold(true);
+        font4.setItalic(false);
+        font4.setWeight(75);
+        label_3->setFont(font4);
+        label_3->setAlignment(Qt::AlignCenter);
+
+        gridLayout->addWidget(label_3, 1, 1, 1, 1);
+
+        label_4 = new QLabel(gridLayoutWidget);
         label_4->setObjectName(QString::fromUtf8("label_4"));
-        label_4->setGeometry(QRect(30, 210, 281, 71));
         label_4->setFont(font1);
-        label_5 = new QLabel(centralwidget);
-        label_5->setObjectName(QString::fromUtf8("label_5"));
-        label_5->setGeometry(QRect(30, 290, 231, 71));
-        label_5->setFont(font1);
-        label_6 = new QLabel(centralwidget);
-        label_6->setObjectName(QString::fromUtf8("label_6"));
-        label_6->setGeometry(QRect(470, 30, 281, 71));
-        label_6->setFont(font1);
-        label_7 = new QLabel(centralwidget);
-        label_7->setObjectName(QString::fromUtf8("label_7"));
-        label_7->setGeometry(QRect(290, 30, 141, 71));
-        label_7->setFont(font1);
-        label_8 = new QLabel(centralwidget);
-        label_8->setObjectName(QString::fromUtf8("label_8"));
-        label_8->setGeometry(QRect(470, 90, 231, 71));
-        label_8->setFont(font1);
-        label_9 = new QLabel(centralwidget);
-        label_9->setObjectName(QString::fromUtf8("label_9"));
-        label_9->setGeometry(QRect(540, 230, 231, 71));
-        label_9->setFont(font1);
-        label_10 = new QLabel(centralwidget);
-        label_10->setObjectName(QString::fromUtf8("label_10"));
-        label_10->setGeometry(QRect(40, 150, 231, 71));
-        label_10->setFont(font1);
-        label_11 = new QLabel(centralwidget);
-        label_11->setObjectName(QString::fromUtf8("label_11"));
-        label_11->setGeometry(QRect(200, 320, 231, 71));
-        label_11->setFont(font1);
-        label_12 = new QLabel(centralwidget);
-        label_12->setObjectName(QString::fromUtf8("label_12"));
-        label_12->setGeometry(QRect(180, 380, 231, 71));
-        label_12->setFont(font1);
-        label_13 = new QLabel(centralwidget);
-        label_13->setObjectName(QString::fromUtf8("label_13"));
-        label_13->setGeometry(QRect(190, 450, 231, 71));
-        label_13->setFont(font1);
-        label_14 = new QLabel(centralwidget);
-        label_14->setObjectName(QString::fromUtf8("label_14"));
-        label_14->setGeometry(QRect(190, 520, 231, 71));
-        label_14->setFont(font1);
-        label_15 = new QLabel(centralwidget);
-        label_15->setObjectName(QString::fromUtf8("label_15"));
-        label_15->setGeometry(QRect(400, 150, 391, 71));
-        label_15->setFont(font1);
+        label_4->setAlignment(Qt::AlignCenter);
+
+        gridLayout->addWidget(label_4, 0, 1, 1, 1);
+
+        AuthorizeDriver = new QPushButton(centralwidget);
+        AuthorizeDriver->setObjectName(QString::fromUtf8("AuthorizeDriver"));
+        AuthorizeDriver->setEnabled(true);
+        AuthorizeDriver->setGeometry(QRect(50, 724, 221, 101));
+        sizePolicy.setHeightForWidth(AuthorizeDriver->sizePolicy().hasHeightForWidth());
+        AuthorizeDriver->setSizePolicy(sizePolicy);
+        QFont font5;
+        font5.setPointSize(13);
+        AuthorizeDriver->setFont(font5);
+        AuthorizeDriver->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    border: 2px solid rgb(255, 255, 255); /* Dark blue-grey border */\n"
+"    color: rgb(255,255,255); /* Blue digits */\n"
+"    background-color: rgb(20, 20, 20); /* Light blue-grey background */\n"
+"    border-radius: 10px; /* Rounded corners */\n"
+"}"));
+        AuthorizeDriver_2 = new QPushButton(centralwidget);
+        AuthorizeDriver_2->setObjectName(QString::fromUtf8("AuthorizeDriver_2"));
+        AuthorizeDriver_2->setEnabled(true);
+        AuthorizeDriver_2->setGeometry(QRect(290, 724, 261, 101));
+        sizePolicy.setHeightForWidth(AuthorizeDriver_2->sizePolicy().hasHeightForWidth());
+        AuthorizeDriver_2->setSizePolicy(sizePolicy);
+        QFont font6;
+        font6.setPointSize(14);
+        AuthorizeDriver_2->setFont(font6);
+        AuthorizeDriver_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    border: 2px solid rgb(255, 255, 255); /* Dark blue-grey border */\n"
+"    color: rgb(255,255,255); /* Blue digits */\n"
+"    background-color: rgb(20, 20, 20); /* Light blue-grey background */\n"
+"    border-radius: 10px; /* Rounded corners */\n"
+"}"));
         MainWindow->setCentralWidget(centralwidget);
 
         retranslateUi(MainWindow);
@@ -294,20 +297,17 @@ public:
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
         label->setText(QCoreApplication::translate("MainWindow", "RDS", nullptr));
-        label_2->setText(QCoreApplication::translate("MainWindow", "DRIVE", nullptr));
-        label_3->setText(QCoreApplication::translate("MainWindow", "P", nullptr));
-        label_4->setText(QCoreApplication::translate("MainWindow", "distance driven", nullptr));
-        label_5->setText(QCoreApplication::translate("MainWindow", "fuel level", nullptr));
-        label_6->setText(QCoreApplication::translate("MainWindow", "outside temp", nullptr));
-        label_7->setText(QCoreApplication::translate("MainWindow", "oil level", nullptr));
-        label_8->setText(QCoreApplication::translate("MainWindow", "tire pressure", nullptr));
-        label_9->setText(QCoreApplication::translate("MainWindow", "navigator", nullptr));
-        label_10->setText(QCoreApplication::translate("MainWindow", "engine temp", nullptr));
-        label_11->setText(QCoreApplication::translate("MainWindow", "engine temp", nullptr));
-        label_12->setText(QCoreApplication::translate("MainWindow", "engine RPM", nullptr));
-        label_13->setText(QCoreApplication::translate("MainWindow", "E brake", nullptr));
-        label_14->setText(QCoreApplication::translate("MainWindow", "lights", nullptr));
-        label_15->setText(QCoreApplication::translate("MainWindow", "turn signal + hazards", nullptr));
+        label_2->setText(QCoreApplication::translate("MainWindow", "MANAGE", nullptr));
+        textEdit->setHtml(QCoreApplication::translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'Roboto Light'; font-size:19pt; font-weight:400; font-style:normal;\">\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Sans Serif'; font-size:14pt;\">DRIVERS</span></p>\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Sans Serif'; font-size:14pt;\">ONLINE</span></p></body></html>", nullptr));
+        label_3->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p align=\"center\">NETWORK </p><p align=\"center\">LATENCY</p></body></html>", nullptr));
+        label_4->setText(QCoreApplication::translate("MainWindow", "ERR", nullptr));
+        AuthorizeDriver->setText(QCoreApplication::translate("MainWindow", "Authorize Client", nullptr));
+        AuthorizeDriver_2->setText(QCoreApplication::translate("MainWindow", "Deauthorize Client", nullptr));
     } // retranslateUi
 
 };

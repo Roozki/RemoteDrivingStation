@@ -21,10 +21,12 @@ public:
     //auto node = rclcpp::Node();
     void init(){
         //node
+        _Vehicle_1_subscriber = this->create_subscription<rds_msgs::msg::VehicleInterface>(
+            "/vehicle_1/command", 10, std::bind(&ManageWindow::CommandCallback, this, std::placeholders::_1));
     }
 
 private:
-    Ui::MainWindow ui;  // Replace 'ArmControl' with the actual class name from your .ui file
+    Ui::MainWindow ui;  
 
 //rclcpp::Subscription velocitySub<autoware_auto_vehicle_msgs>();
    // rclcpp::Subscription vehicle_1_sub<rds_msgs>
