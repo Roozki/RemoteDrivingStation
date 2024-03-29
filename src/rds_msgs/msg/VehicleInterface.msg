@@ -1,6 +1,6 @@
-float64 steering_angle
-float64 gas_pedal
-float64 brake_pedal
+float64 steering_angle  # -1 to 1
+float64 gas_pedal       #  0 to 1, unless in reverse
+float64 brake_pedal     #  
 float64 clutch
 int16 gear
 #gears
@@ -25,3 +25,5 @@ bool front_lights
 bool rear_lights
 
 bool manual
+
+

@@ -6,3 +6,5 @@ int16 gear
 int16 rpm
 float64[] tire_psi
 bool manual
+int16 left_sonar
+int16 right_sonar

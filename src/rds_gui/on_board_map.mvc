@@ -1,0 +1,40 @@
+capture_directory: "~"
+fixed_frame: /map
+target_frame: /map
+fix_orientation: false
+rotate_90: false
+enable_antialiasing: true
+show_displays: true
+show_status_bar: true
+show_capture_tools: true
+window_width: 2506
+window_height: 1301
+view_scale: 0.723210931
+offset_x: 0
+offset_y: 0
+use_latest_transforms: true
+background: "#a0a0a4"
+image_transport: raw
+displays:
+  - type: mapviz_plugins/tile_map
+    name: new display
+    config:
+      visible: true
+      collapsed: false
+      custom_sources:
+        - base_url: https://c.tile.openstreetmap.org/{level}/{x}/{y}.png
+          max_zoom: 12
+          name: open
+          type: wmts
+      bing_api_key: AliZkrCViwhNUZU6dnCpJQRYNmINNGptT7uhD5zUR_Dg_7-89pgwzMyxBI251qWD
+      source: Bing Maps (terrain)
+  - type: mapviz_plugins/navsat
+    name: new display
+    config:
+      visible: true
+      collapsed: false
+      topic: /fix
+      color: "#00ff00"
+      draw_style: lines
+      position_tolerance: 0
+      buffer_size: 0

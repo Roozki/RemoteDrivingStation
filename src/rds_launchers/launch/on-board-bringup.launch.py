@@ -9,29 +9,44 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
-    camera_node_1 = Node(
+    rear_feed = Node(
         package='camera_ros',
         executable='camera_node',
         output='screen',
         parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS04-4:1.0-1bcf:2b8a'}],
         remappings=[
-            ('/camera/image_raw', '/vehicle_1/rear_feed/image_raw'),  # Remap from /image_raw to /camera1/image_raw
+            ('/camera/image_raw', '/vehicle_1/rear_feed/image_raw'),  
             ('/camera/image_raw/compressed', '/vehicle_1/rear_feed/image_raw/compressed'),
             # Add more remappings here if needed
         ],
     )
-    camera_node_2 = Node(
+    main_feed = Node(
         package='camera_ros',
         executable='camera_node',
         output='screen',
         remappings=[
-            ('/camera/image_raw', '/vehicle_1/main_feed/image_raw'),  # Remap from /image_raw to /camera1/image_raw
+            ('/camera/image_raw', '/vehicle_1/main_feed/image_raw'),  
             ('/camera/image_raw/compressed', '/vehicle_1/main_feed/image_raw/compressed'),
             # Add more remappings here if needed
         ],
     )
+    gnss_serial_driver = Node(
+        package='nmea_navsat_driver',
+        executable='nmea_serial_driver',
+        output='screen',
+        parameters=[{'port': '/dev/serial/by-id/usb-u-blox_AG_-_www.u-blox.com_u-blox_7_-_GPS_GNSS_Receiver-if00'}, {'frame_id': 'gps'}],
+
+    )
+    gps_wgs84_initilizer = Node(
+        package='swri_transform_util',
+        executable='initialize_origin.py',
+        output='screen',
+    )
+    
 
     return LaunchDescription([
-        camera_node_2
-       #camera_node_2
+        #main_feed,
+        gnss_serial_driver,
+        gps_wgs84_initilizer
+       #rear_feed
     ])

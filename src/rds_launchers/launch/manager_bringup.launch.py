@@ -8,26 +8,13 @@ from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
-    rviz_config_file = os.path.join(get_package_share_directory('rds_configs'), 'config', 'rviz_config.rviz')
+    rviz_config_file = os.path.join(get_package_share_directory('rds_configs'), 'config', 'manager_config.rviz')
+  
 
-    rds_g29_control = Node(
-        package='rds_control',
-        executable='g29_hw_control',
-        output='screen',
-    )   
-    joy_node = Node(
-        package='joy_linux',
-        executable='joy_linux_node',
-        output='screen',
-        parameters=[{
-                      'autorepeat_rate' : 32.0,
-                      'coalesce_interval' : 0.03125,
-                      }]
-    )
-    rds_hud_node = Node(
-        package='rds_hud',
-        executable='hud_node',
-        output='log'
+    rds_gui_node = Node(
+        package='rds_gui',
+        executable='rds_qt',
+        output='screen'
     )
     map_node = Node(
         package='rviz2',
@@ -44,9 +31,7 @@ def generate_launch_description():
         )
 
     return LaunchDescription([
-        rds_g29_control,
-        joy_node,
-        rds_hud_node,
+        rds_gui_node,
         map_node,
         robot_locker
     ])
