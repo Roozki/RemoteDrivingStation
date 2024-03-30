@@ -6,7 +6,7 @@ VehicleInterface::VehicleInterface() : Node("VehicleInterfaceNode"){
         command_subscriber = this->create_subscription<rds_msgs::msg::VehicleInterface>(
             "/vehicle_1/command", 10, std::bind(&VehicleInterface::CommandCallback, this, std::placeholders::_1));
 
-
+//TODO add net ping
         if(!SIMULATE){
         esp32.setPort(port);
         esp32.open();

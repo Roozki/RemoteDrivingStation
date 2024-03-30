@@ -7,6 +7,8 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(ament_index_cpp REQUIRED)
+
 find_package(rclcpp REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
@@ -32,6 +34,11 @@ install(
   DIRECTORY
     launch/
   DESTINATION share/${PROJECT_NAME}/launch
+)
+install(
+  DIRECTORY 
+    videos/
+  DESTINATION share/${PROJECT_NAME}/videos
 )
 
 if(BUILD_TESTING)

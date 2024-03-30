@@ -98,7 +98,7 @@ void sendSoundCommand(std::string file){
 
 std::string package_share_directory = ament_index_cpp::get_package_share_directory("rds_hud");
 std::string img_path = package_share_directory + "/images/";
-
+std::string mp4_path = package_share_directory + "/videos/";
   // Create a pointer to the FreeType2 library
   cv::Ptr<cv::freetype::FreeType2> ft2;
   int latency_refresh_count = 0;
@@ -144,12 +144,80 @@ std::string img_path = package_share_directory + "/images/";
     }
   } // thanks chatgpt
 
+  void drawPicture(std::string file, int x, int y){
+        // Load the PNG image
+    cv::Mat pngImage = cv::imread(file, cv::IMREAD_UNCHANGED);
+
+    // Ensure both images are loaded
+    if(frame.empty() || pngImage.empty()) {
+        std::cout << "Could not load one of the images!" << std::endl;
+        ////return -1;
+    }
+      // Separate the PNG image into BGR and alpha channels
+    std::vector<cv::Mat> pngChannels(4);
+    cv::split(pngImage, pngChannels);
+    cv::Mat bgr[3] = { pngChannels[0], pngChannels[1], pngChannels[2] };
+    cv::Mat colorImage;
+    cv::merge(bgr, 3, colorImage); // Merge the BGR channels back to an image
+    cv::Mat alphaImage = pngChannels[3]; // Alpha channel
+
+    // Select the region in the main image where the PNG will be placed
+    ////int x = 100; // Top-left x-coordinate of where the PNG image is to be placed
+    ////int y = 50; // Top-left y-coordinate of where the PNG image is to be placed
+    cv::Rect roi(x, y, pngImage.cols, pngImage.rows);
+
+    // Place the PNG image over the main image
+    for (int i = 0; i < pngImage.rows; ++i) {
+        for (int j = 0; j < pngImage.cols; ++j) {
+            if (alphaImage.at<uchar>(i, j) > 0) { // Check if the pixel is not transparent
+                frame.at<cv::Vec3b>(y + i, x + j) = colorImage.at<cv::Vec3b>(i, j);
+            }
+        }
+    }
+  }
+  void playMP4(){
+       // Path to the MP4 video file
+    std::string videoPath = mp4_path + "/startupigen.mp4";
+
+    // Open the video file
+    cv::VideoCapture capture(videoPath);
+    if (!capture.isOpened()) {
+        std::cerr << "Error opening video file!" << std::endl;
+    }
+
+    // Get the frames per second (fps) of the video
+    double fps = capture.get(cv::CAP_PROP_FPS);
+    int delay = 1000 / fps; // Delay between each frame in ms
+
+    //cv::Mat frame;
+    while (true) {
+        // Read the current frame
+        bool success = capture.read(frame);
+        if (!success) {
+            std::cout << "Reached the end of the video or failed to read a frame." << std::endl;
+            break; // Exit the loop if no more frames or if there's an error
+        }
+
+        // Display the frame
+        cv::imshow("RDS_HUD", frame);
+
+        // Wait for 'delay' ms or until a key is pressed; if 'Esc' is pressed, break out of the loop
+        if (cv::waitKey(delay) == 27) {
+            break;
+        }
+    }
+
+    // Release the video capture object
+    capture.release();
+  }
 
   void fancyPantsStartup()
   {
     // TODO swipe open camera feed, add gps start, net speed
     //  cv::Rect rect(0, 0, 1920, 1080);
     cv::Mat blackScreen(1080, 1920, CV_8UC3, cv::Scalar(0, 0, 0));
+
+
 
     // frame = ;
     int mid_cols = blackScreen.cols / 2;
@@ -158,30 +226,34 @@ std::string img_path = package_share_directory + "/images/";
     cv::imshow("RDS_HUD", blackScreen);
     cv::waitKey(0);
     cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(100);
+    ////playMP4();
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(1000);
+    // for (int i = 20; i < (blackScreen.cols / 4); i++)
+    // {
+      //   // cv::putText(frame, ".", cv::Point((frame.cols /2) - 500 + i*35, frame.rows /2), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(155, 155, 155), 8);
+      //   int width = static_cast<int>(pow(i / 100.0, 8)); // Ensure proper casting and division
 
-    for (int i = 20; i < (blackScreen.cols / 4); i++)
-    {
-      // cv::putText(frame, ".", cv::Point((frame.cols /2) - 500 + i*35, frame.rows /2), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(155, 155, 155), 8);
-      int width = static_cast<int>(pow(i / 100.0, 8)); // Ensure proper casting and division
+      //   // Ensure width does not exceed frame.cols
+      //   // width = std::min(width, frame.cols);
 
-      // Ensure width does not exceed frame.cols
-      // width = std::min(width, frame.cols);
-
-      cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(width, blackScreen.rows), cv::Scalar(155, 155, 155), -1);
-      cv::putText(blackScreen, "RDS", cv::Point(mid_cols - 470, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 11, cv::Scalar(0, 0, 0), 10);
-      // cv::waitKey(5);
-      cv::imshow("RDS_HUD", blackScreen);
-      cv::waitKey(1);
-    }
+      //   cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(width, blackScreen.rows), cv::Scalar(155, 155, 155), -1);
+      //   cv::putText(blackScreen, "RDS", cv::Point(mid_cols - 470, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 11, cv::Scalar(0, 0, 0), 10);
+      //   // cv::waitKey(5);
+      //   cv::imshow("RDS_HUD", blackScreen);
+      //   cv::waitKey(1);
+    // }
     cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
-    cv::putText(blackScreen, "RDS", cv::Point(mid_cols - 470, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 11, cv::Scalar(155, 155, 155), 10);
+    ////cv::putText(blackScreen, "RDS", cv::Point(mid_cols - 470, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 11, cv::Scalar(155, 155, 155), 10);
     //// cv::waitKey(100);
     //// cv::imshow("RDS_HUD", blackScreen);
     cv::putText(blackScreen, "drive", cv::Point(mid_cols - 480, mid_rows + 200), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(15, 15, 255), 6, cv::FONT_ITALIC);
     cv::imshow("RDS_HUD", blackScreen);
     cv::waitKey(1500);
     cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
-          sendSoundCommand("AI_engine_up.wav");
+     ////     sendSoundCommand("AI_engine_up.wav");
 
     for (int i = 40; i < (blackScreen.cols / 4); i++)
     {

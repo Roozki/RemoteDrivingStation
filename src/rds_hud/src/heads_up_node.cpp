@@ -26,7 +26,7 @@ void HUDOverlayNode::drawHud(){
           cv::Point driveLineStart(frame.cols / 2, frame.rows - 100); // Start at the bottom center
           cv::Point driveLineControl(frame.cols / 2, 3* frame.rows / 4.5);
           
-
+     
           double driveLineRadians = (vehicle_1_current_command.steering_angle*70.0) * CV_PI / 180.0;
           int driveLineEndOffset = std::tan(driveLineRadians)*100;
           // Draw the curve
