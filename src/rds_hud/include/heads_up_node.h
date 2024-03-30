@@ -9,6 +9,7 @@
 #include <rds_msgs/msg/vehicle_interface.hpp>
 #include <rds_msgs/msg/vehicle_status.hpp>
 #include <std_msgs/msg/header.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <rds_msgs/msg/hud_manage.hpp>
 #include <sstream>
 #include <cmath>
@@ -51,6 +52,11 @@ public:
     qos.durability(RMW_QOS_POLICY_DURABILITY_VOLATILE);
     qos.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
     qos.keep_last(1);
+    auto sound_qos = rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_sensor_data));
+    sound_qos.reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT);
+    sound_qos.durability(RMW_QOS_POLICY_DURABILITY_VOLATILE);
+    sound_qos.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
+    sound_qos.keep_last(10);
     // Set transport hints for compression
     image_transport::TransportHints hints(this, "compressed");
 
@@ -68,6 +74,9 @@ public:
         "/vehicle_1/command", 4, std::bind(&HUDOverlayNode::commandCallback, this, std::placeholders::_1));
     vehicle_1_status_subscriber_ = this->create_subscription<rds_msgs::msg::VehicleStatus>(
         "/vehicle_1/status", 4, std::bind(&HUDOverlayNode::statusCallback, this, std::placeholders::_1));
+    sound_pubber = this->create_publisher<std_msgs::msg::String>("/speaker/command", qos);
+
+   
     cv::namedWindow("RDS_HUD", cv::WINDOW_NORMAL);
     // Set the mouse callback function
     cv::setMouseCallback("RDS_HUD", HUDOverlayNode::onMouse, this);
@@ -75,35 +84,20 @@ public:
 
   
 
-    //fancyPantsStartup();
-    playSound("AI_engine_up.wav");
+    fancyPantsStartup();
   }
-  void playSound(const std::string& soundFileName) {
-        sf::SoundBuffer buffer;
-        if (!buffer.loadFromFile(sound_path + soundFileName)) {
-            std::cerr << "Failed to load sound file: " << soundFileName << std::endl;
-            return;
-        }else {
-            std::cerr << "Load Success: " << soundFileName << std::endl;
-          
-        }
 
-
-        speaker.setBuffer(buffer);
-        speaker.setVolume(50);
-        speaker.play();
-
-        sf::sleep(sf::milliseconds(1000));
-       
-        // You might want to wait for the sound to finish or manage sounds differently
-        // depending on your application's needs
-    }
 
 private:
-        sf::Sound speaker;
-  sf::SoundBuffer sfxBuffer;
+void sendSoundCommand(std::string file){
+  std_msgs::msg::String outmsg;
+  outmsg.data = file;
+  sound_pubber->publish(outmsg);
+}
+
+
 std::string package_share_directory = ament_index_cpp::get_package_share_directory("rds_hud");
-std::string sound_path = package_share_directory + "/sounds/";
+std::string img_path = package_share_directory + "/images/";
 
   // Create a pointer to the FreeType2 library
   cv::Ptr<cv::freetype::FreeType2> ft2;
@@ -187,6 +181,7 @@ std::string sound_path = package_share_directory + "/sounds/";
     cv::imshow("RDS_HUD", blackScreen);
     cv::waitKey(1500);
     cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
+          sendSoundCommand("AI_engine_up.wav");
 
     for (int i = 40; i < (blackScreen.cols / 4); i++)
     {
@@ -238,13 +233,18 @@ std::string sound_path = package_share_directory + "/sounds/";
     if (networkCheck() == NETWORK_OK)
     {
       cv::putText(blackScreen, "CLIENT READY, REQUESTING AUTHORIZATION...", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255, 255, 255), 3);
+      sendSoundCommand("AI_welcome.wav");
+
     }
     else if(OFFLINE_MODE){
       cv::putText(blackScreen, "CLIENT IN OFFLINE MODE", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+      sendSoundCommand("AI_welcome_attention.wav");
     }
     else
     {
       cv::putText(blackScreen, "CLIENT FAILURE... womp womp", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+      sendSoundCommand("AI_system_failure.wav");
+
     }
     cv::imshow("RDS_HUD", blackScreen);
     cv::waitKey(1000);
@@ -253,12 +253,14 @@ std::string sound_path = package_share_directory + "/sounds/";
       // rclcpp::spin_some(HUDOverlayNode);
       cv::waitKey(50);
       hud.authorized = true;
+
       // TODO authorize hub
       //! figure out how to spin
     }
     cv::putText(blackScreen, "CLIENT AUTHORIZED", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
     cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(1000);
+    cv::waitKey(2000);
+
   }
 
   int networkCheck()
@@ -389,6 +391,6 @@ std::string sound_path = package_share_directory + "/sounds/";
   image_transport::Publisher hud_pub_;
   rclcpp::Subscription<rds_msgs::msg::VehicleInterface>::SharedPtr vehicle_1_control_subscriber_;
   rclcpp::Subscription<rds_msgs::msg::VehicleStatus>::SharedPtr vehicle_1_status_subscriber_;
-
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr sound_pubber;
   std::mutex image_mutex_;
 };

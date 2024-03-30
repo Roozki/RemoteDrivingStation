@@ -42,11 +42,18 @@ def generate_launch_description():
             arguments=['0', '0', '0', '0', '0', '0', 'map', 'base_link'],
             # arguments are: x, y, z, roll, pitch, yaw, frame_id, child_frame_id
         )
+    speaker_node = Node(
+        package='rover_sounds',
+        executable='speaker_node',
+        name='speaker_node',
+        output='screen'
+    )
 
     return LaunchDescription([
         rds_g29_control,
         joy_node,
         rds_hud_node,
         map_node,
-        robot_locker
+        robot_locker,
+        speaker_node
     ])

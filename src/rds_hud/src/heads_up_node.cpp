@@ -4,7 +4,6 @@
 
 void HUDOverlayNode::drawHud(){
         std::unique_lock<std::mutex> lock(image_mutex_);
-        speaker.play();
 
         frame = cv_bridge::toCvCopy(last_frame_, "bgr8")->image;
         int mid_cols = frame.cols / 2;
