@@ -19,3 +19,6 @@
 
 #define NETWORK_ERROR -15
 #define NETWORK_OK 1
+
+#define OFFLINE_MODE true
+#define VEHICLE_MAX_THROTTLE 1.0

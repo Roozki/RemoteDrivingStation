@@ -185,8 +185,8 @@ private:
     }else{
         steering_angle = msg->axes[0];
      //   speed = 99.0 - (msg->axes[4] + 1)*100;
-        gas_pedal = (msg->axes[2] + 1.0)*2.0;//// - (msg->axes[5] + 1)*20;
-        brake_pedal = (msg->axes[5] + 1)*20;
+        gas_pedal = (-msg->axes[5] + 1.0)*2.0;//// - (msg->axes[5] + 1)*20;
+        brake_pedal = (-msg->axes[2] + 1)*20;
         ////jerk = (msg->axes[2] + 1)*20 - (msg->axes[3] + 1)*20;
 
     }
