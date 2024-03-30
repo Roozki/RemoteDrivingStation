@@ -133,11 +133,15 @@ void HUDOverlayNode::drawHud(){
             }
           }
           //! ----------------------------------------//
+          //!                 NETWORK                 //
+          //! ----------------------------------------//
+          cv::putText(frame, "NET: " + latencyString + "ms", cv::Point(frame.cols - 350, frame.rows - status_bar_height / 10), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(200, 200, 200), 3);
+
+          //! ----------------------------------------//
           //!                 GEARS                   //
           //! ----------------------------------------//
           // cv::putText(frame, "GEAR", cv::Point(10, frame.rows - status_bar_height/2), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255,255,255), 3);
 
-          cv::putText(frame, latencyString + "ms", cv::Point(frame.cols - 200, frame.rows - status_bar_height / 10), cv::FONT_HERSHEY_SIMPLEX, 3, cv::Scalar(200, 200, 0), 3);
 
           cv::putText(frame, current_gear, cv::Point(190, frame.rows - status_bar_height / 10), cv::FONT_HERSHEY_SIMPLEX, 5, gear_colour, 3);
           cv::line(frame, cv::Point(0, frame.rows - status_bar_height), cv::Point(frame.cols, frame.rows - status_bar_height), CV_RGB(0, 0, 0), 4);
@@ -164,7 +168,7 @@ void HUDOverlayNode::drawHud(){
 
           cv::putText(frame, sped_num, cv::Point(((spedometer_radius) * (-1) * cos(spedometer_angle)) + spedometerLineEnd.x + spedometer_radius, ((spedometer_radius) * (-1) * sin(PI)) + spedometerLineEnd.y), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 255, 255), 2);
 
-          spedometer_angle = (vehicle_1_current_command.gas_pedal * PI) / max_sped;
+          spedometer_angle = (vehicle_1_current_command.gas_pedal * PI);
 
           spedometerLineEnd.x = ((spedometer_radius) * (-1) * cos(spedometer_angle)) + spedometerLineEnd.x + spedometer_radius;
           spedometerLineEnd.y = ((spedometer_radius) * (-1) * sin(spedometer_angle)) + spedometerLineEnd.y;
@@ -172,6 +176,7 @@ void HUDOverlayNode::drawHud(){
           cv::line(frame, spedometerLineStart, spedometerLineEnd, cv::Scalar(255, 0, 0), 3);
 
           // DEBUG - show mouse position (helps to know where to put stuff)
+
           cv::putText(frame, mousePointText, cv::Point(mouseX + 10, mouseY + 10), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
         }
         else
@@ -182,29 +187,37 @@ void HUDOverlayNode::drawHud(){
         switch (hud.state){
           case 0:
             cv::rectangle(frame, cv::Point(0, 0), cv::Point(frame.rows, frame.cols), cv::Scalar(0, 0, 0), -1);
-            cv::imshow("RDS_HUD", frame);
-            cv::waitKey(400);
-            cv::putText(frame, "CAM ONLINE", cv::Point(mid_cols - 300, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 4, cv::Scalar(200, 200, 200), 7);
-            cv::imshow("RDS_HUD", frame);
-            cv::waitKey(1000);
+
+
             hud.state++;
             break;
           case 1:
-            if(hud.init_i < 60){
+            if(hud.init_i < 100){
+              hud.init_i = 100;
+            }
+            for (int i = 0; i < 3; i++){
+            if(hud.init_i < (frame.cols/3)){
               hud.init_i++;
-              cv::rectangle(frame, cv::Point(0, 0), cv::Point(frame.rows/2 - (frame.rows/30)*hud.init_i, frame.cols), cv::Scalar(0, 0, 0), -1);
-              cv::rectangle(frame, cv::Point(0, 0), cv::Point(frame.rows/2 + (frame.rows/30)*hud.init_i, frame.cols), cv::Scalar(0, 0, 0), -1);
-            }else{
+               int temp_width = static_cast<int>(pow(hud.init_i / 100.0, 8)); // Ensure proper casting and division
+              cv::rectangle(frame, cv::Point(0, 0), cv::Point(frame.cols - temp_width, frame.rows), cv::Scalar(0, 0, 0), -1);
+              ////cv::rectangle(frame, cv::Point(0, 0), cv::Point(frame.cols/2 + (frame.cols/30)*hud.init_i, frame.rows), cv::Scalar(0, 0, 0), -1);
+              cv::rectangle(frame, cv::Point(0, mid_rows - 100), cv::Point(frame.cols, mid_rows + 40), cv::Scalar(0, 0, 0), -1);
+            cv::putText(frame, "CAM ONLINE", cv::Point(mid_cols - 350, mid_rows + 20), cv::FONT_HERSHEY_SIMPLEX, 4, cv::Scalar(220, 220, 220), 7);
+            }
+            }
+            
+            if (hud.init_i >= frame.cols/3){
               hud.state++;
+              hud.initiated = true;
+
             }
             break;
           default:
             hud.initiated = true;
             break;
         }
-
-         
         }
+      
         
         cv::imshow("RDS_HUD", frame);
         cv::waitKey(1);
@@ -221,9 +234,18 @@ int main(int argc, char** argv) {
   auto node = std::make_shared<HUDOverlayNode>();
   node->init();
   rclcpp::Rate hud_refresh_rate(40);
+    for (int i = 0; i < 40; i++){
+    hud_refresh_rate.sleep();
+    rclcpp::spin_some(node);
+    }
+
+    if(node->hud.fancyPantsDone != 1){
+      node->fancyPantsStartup();
+    }
   while (rclcpp::ok()){
-    if(node->hud.initiated){
-      RCLCPP_ERROR(node->get_logger(), "frame success");
+ 
+    if(node->hud.ready){
+     //// RCLCPP_ERROR(node->get_logger(), "frame success");
     node->drawHud();
 
     }else{
@@ -231,7 +253,9 @@ int main(int argc, char** argv) {
 
     }
     rclcpp::spin_some(node);
+
     hud_refresh_rate.sleep();
+
   }
   rclcpp::shutdown();
   return 0;

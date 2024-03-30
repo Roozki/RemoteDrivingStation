@@ -1,3 +1,4 @@
+bool online
 float64 velocity
 int16 gas_level
 int16 oil_level

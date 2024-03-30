@@ -40,6 +40,12 @@ install(
     videos/
   DESTINATION share/${PROJECT_NAME}/videos
 )
+install(
+  DIRECTORY 
+    images/
+  DESTINATION share/${PROJECT_NAME}/images
+)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

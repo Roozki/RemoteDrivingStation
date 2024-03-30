@@ -19,6 +19,7 @@
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <ament_index_cpp/get_package_share_directory.hpp>
+#include <sensor_msgs/msg/nav_sat_fix.hpp>
 
 
 
@@ -30,8 +31,11 @@ public:
   }
   struct HUD_Struct
   {
+    bool fancyPantsDone = false;
+    int systems_online = 0;
     bool authorized = false;
     bool initiated = false;
+    bool ready = false;
     int state = 0;
     int init_stage = 0;
     int init_i = 0;
@@ -43,6 +47,8 @@ public:
   HUD_Struct hud;
   cv::Mat frame;
   cv::Mat rear_frame;
+  cv::Mat blackScreen;
+
   void drawHud();
 
   void init()
@@ -75,6 +81,9 @@ public:
     vehicle_1_status_subscriber_ = this->create_subscription<rds_msgs::msg::VehicleStatus>(
         "/vehicle_1/status", 4, std::bind(&HUDOverlayNode::statusCallback, this, std::placeholders::_1));
     sound_pubber = this->create_publisher<std_msgs::msg::String>("/speaker/command", qos);
+    
+    gnss_subber = this->create_subscription<sensor_msgs::msg::NavSatFix>(
+      "/fix", 1, std::bind(&HUDOverlayNode::gnssCallback, this, std::placeholders::_1));
 
    
     cv::namedWindow("RDS_HUD", cv::WINDOW_NORMAL);
@@ -84,11 +93,288 @@ public:
 
   
 
-    fancyPantsStartup();
+    ////fancyPantsStartup();
+  }
+  //!---------------------------------------------------------//
+  //!                       FANCY PANTS                       //
+  //!---------------------------------------------------------//
+  void fancyPantsStartup()
+  {
+    rclcpp::Rate tempRate(50);
+    // TODO swipe open camera feed, add gps start, net speed
+    //  cv::Rect rect(0, 0, 1920, 1080);
+    blackScreen = cv::Mat(1080, 1920, CV_8UC3, cv::Scalar(0, 0, 0));
+
+
+    // frame = ;
+    int mid_cols = blackScreen.cols / 2;
+    int mid_rows = blackScreen.rows / 2;
+    cv::putText(blackScreen, "PRESS ANY KEY TO START...", cv::Point(300, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(150, 150, 150), 2);
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(0);
+
+    ////cv::waitKey(100);
+    cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(10);
+    // for (int i = 20; i < (blackScreen.cols / 4); i++)
+    // {
+      //   // cv::putText(frame, ".", cv::Point((frame.cols /2) - 500 + i*35, frame.rows /2), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(155, 155, 155), 8);
+      //   int width = static_cast<int>(pow(i / 100.0, 8)); // Ensure proper casting and division
+
+      //   // Ensure width does not exceed frame.cols
+      //   // width = std::min(width, frame.cols);
+
+      //   cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(width, blackScreen.rows), cv::Scalar(155, 155, 155), -1);
+      //   cv::putText(blackScreen, "RDS", cv::Point(mid_cols - 470, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 11, cv::Scalar(0, 0, 0), 10);
+      //   // cv::waitKey(5);
+      //   cv::imshow("RDS_HUD", blackScreen);
+      //   cv::waitKey(1);
+    // }
+    ////cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
+    ////cv::putText(blackScreen, "RDS", cv::Point(mid_cols - 470, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 11, cv::Scalar(155, 155, 155), 10);
+    //// cv::waitKey(100);
+    //// cv::imshow("RDS_HUD", blackScreen);
+    ////cv::putText(blackScreen, "drive", cv::Point(mid_cols - 480, mid_rows + 200), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(15, 15, 255), 6, cv::FONT_ITALIC);
+   // drawPicture("rdslogo.png", mid_rows, mid_cols);
+    ////cv::imshow("RDS_HUD", blackScreen);
+    ////cv::waitKey(1500);
+    cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
+     ////     sendSoundCommand("AI_engine_up.wav");
+    sendSoundCommand("bleep.wav");
+
+    for (int i = 40; i < (blackScreen.cols / 4); i++)
+    {
+      int _progress = static_cast<int>(pow(i / 100.0, 10));
+      cv::rectangle(blackScreen, cv::Point(0, 310), cv::Point(_progress, 450), cv::Scalar(200, 200, 200), -1);
+      cv::putText(blackScreen, "HEADS UP DISPLAY STARTUP", cv::Point(200, 420), cv::FONT_HERSHEY_SIMPLEX, 3, cv::Scalar(0, 0, 0), 3, 16);
+      cv::imshow("RDS_HUD", blackScreen);
+      cv::waitKey(1);
+    }
+    // cv::rectangle(blackScreen, cv::Point(0,0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
+    cv::putText(blackScreen, "network: ", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(105, 105, 105), 3);
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(200);
+    cv::putText(blackScreen, "gps: ", cv::Point(200, 800), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(105, 105, 105), 3);
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(200);
+    cv::putText(blackScreen, "car: ", cv::Point(200, 900), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(105, 105, 105), 3);
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(200);
+    cv::putText(blackScreen, "control: ", cv::Point(200, 1000), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(105, 105, 105), 3);
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(200);
+    std::string network_status_msg = "STANDBY";
+    std::string gps_status_msg = "STANDBY";
+    std::string car_status_msg = "STANDBY";
+    std::string control_status_msg = "STANDBY";
+   
+    cv::Scalar gps_status_colour = cv::Scalar(150, 150, 0);
+    cv::Scalar car_status_colour = cv::Scalar(150, 150, 0);
+    cv::Scalar control_status_colour = cv::Scalar(150, 150, 0);
+    cv::Scalar network_status_colour = cv::Scalar(150, 150, 0);
+    cv::putText(blackScreen, "network: ", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 235), 3);
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(200);
+
+    cv::putText(blackScreen, "gps: ", cv::Point(200, 800), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 235), 3);
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(200);
+    cv::putText(blackScreen, "car: ", cv::Point(200, 900), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 235), 3);
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(200);
+    cv::putText(blackScreen, "control: ", cv::Point(200, 1000), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 235), 3);
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(200);
+    for (int i = 0; i < 5; i++)
+    {
+      
+      cv::rectangle(blackScreen, cv::Point(600, 650), cv::Point(1079, 1450), cv::Scalar(0, 0, 0), -1);
+      
+      
+      cv::imshow("RDS_HUD", blackScreen);
+      cv::waitKey(70);
+      
+      cv::putText(blackScreen, network_status_msg, cv::Point(600, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
+      cv::putText(blackScreen, gps_status_msg, cv::Point(600, 800), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
+      cv::putText(blackScreen, car_status_msg, cv::Point(600, 900), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
+      cv::putText(blackScreen, control_status_msg, cv::Point(600, 1000), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
+      
+      
+      cv::imshow("RDS_HUD", blackScreen);
+      cv::waitKey(80);
+    }
+    //! network check
+    // cv::waitKey(100);
+    if (networkCheck() == NETWORK_OK)
+    {
+      hud.systems_online++;
+      network_status_msg = "ONLINE, LATENCY: " + std::to_string(static_cast<int>(hud.vehicle_latency)) + "ms";
+      network_status_colour = cv::Scalar(10, 255, 10);
+    }
+    else
+    {
+      network_status_msg = "OFFLINE!!";
+      network_status_colour = cv::Scalar(10, 10, 255);
+    }
+
+
+    cv::rectangle(blackScreen, cv::Point(599, 650), cv::Point(900, 750), cv::Scalar(0, 0, 0), -1);
+
+    cv::putText(blackScreen, network_status_msg, cv::Point(500, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(10);
+        for (int i = 0; i < 5; i++)
+    {
+      
+      cv::rectangle(blackScreen, cv::Point(600, 750), cv::Point(1080, 1450), cv::Scalar(0, 0, 0), -1);
+      
+      
+      cv::imshow("RDS_HUD", blackScreen);
+      cv::waitKey(70);
+      
+      //cv::putText(blackScreen, network_status_msg, cv::Point(500, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
+      cv::putText(blackScreen, gps_status_msg, cv::Point(600, 800), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
+      cv::putText(blackScreen, car_status_msg, cv::Point(600, 900), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
+      cv::putText(blackScreen, control_status_msg, cv::Point(600, 1000), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
+      
+      
+      cv::imshow("RDS_HUD", blackScreen);
+      cv::waitKey(80);
+    }
+    //! gps check
+    
+    if (vehicle_1_current_gnss.status.service == GPS_OK)
+    {
+      hud.systems_online++;
+      gps_status_msg = "SATELLITES FIXED";
+      gps_status_colour = cv::Scalar(10, 255, 10);
+    }
+    else
+    {
+      gps_status_msg = "OFFLINE";
+      gps_status_colour = cv::Scalar(10, 10, 255);
+    }
+    cv::rectangle(blackScreen, cv::Point(599, 750), cv::Point(1080, 850), cv::Scalar(0, 0, 0), -1);
+    cv::putText(blackScreen, gps_status_msg, cv::Point(600, 800), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(10);
+    for (int i = 0; i < 5; i++)
+    {
+      
+      cv::rectangle(blackScreen, cv::Point(600, 850), cv::Point(1080, 1450), cv::Scalar(0, 0, 0), -1);
+      
+      
+      cv::imshow("RDS_HUD", blackScreen);
+      cv::waitKey(70);
+      
+      cv::putText(blackScreen, car_status_msg, cv::Point(600, 900), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
+      cv::putText(blackScreen, control_status_msg, cv::Point(600, 1000), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
+      
+      
+      cv::imshow("RDS_HUD", blackScreen);
+      cv::waitKey(80);
+    }
+        //! controls check
+    
+    if (vehicle_1_current_status.online == true)
+    {
+      hud.systems_online++; 
+
+      car_status_msg = "CAR CONNECTED";
+      car_status_colour = cv::Scalar(10, 255, 10);
+    }
+    else
+    {
+      car_status_msg = "OFFLINE";
+      car_status_colour = cv::Scalar(10, 10, 255);
+    }
+    cv::rectangle(blackScreen, cv::Point(599, 850), cv::Point(1080, 950), cv::Scalar(0, 0, 0), -1);
+
+        cv::putText(blackScreen, car_status_msg, cv::Point(600, 900), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(10);
+        for (int i = 0; i < 5; i++)
+    {
+      
+      cv::rectangle(blackScreen, cv::Point(600, 950), cv::Point(1080, 1450), cv::Scalar(0, 0, 0), -1);
+      
+      
+      cv::imshow("RDS_HUD", blackScreen);
+      cv::waitKey(70);
+      
+      cv::putText(blackScreen, control_status_msg, cv::Point(600, 1000), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
+      
+      
+      cv::imshow("RDS_HUD", blackScreen);
+      cv::waitKey(80);
+    }
+    hud.systems_online++; 
+    hud.systems_online++;
+    cv::rectangle(blackScreen, cv::Point(599, 950), cv::Point(1080, 1050), cv::Scalar(0, 0, 0), -1);
+
+      control_status_msg = "READY";
+      control_status_colour = cv::Scalar(10, 10, 255);
+      cv::putText(blackScreen, control_status_msg, cv::Point(600, 1000), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
+
+      cv::imshow("RDS_HUD", blackScreen);
+      cv::waitKey(80);
+
+
+
+
+//!final start messages
+    cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
+    if (hud.systems_online > 3)
+    {
+      cv::putText(blackScreen, "WELCOME DRIVER", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255, 255, 255), 3);
+      sendSoundCommand("AI_welcome.wav");
+
+    }
+    else if(OFFLINE_MODE){
+      cv::putText(blackScreen, "CLIENT IN OFFLINE MODE", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+      sendSoundCommand("AI_welcome_attention.wav");
+    }
+    else if (hud.systems_online <=3 && networkCheck() == NETWORK_OK){
+      cv::putText(blackScreen, "WELCOME DRIVER", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255, 255, 255), 3);
+      sendSoundCommand("AI_welcome_attention.wav");
+
+    }
+    else
+    {
+      cv::putText(blackScreen, "SYSTEM RESTART REQUIRED", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+      sendSoundCommand("AI_system_failure.wav");
+
+    }
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(1000);
+    while (!hud.authorized)
+    {
+      // rclcpp::spin_some(HUDOverlayNode);
+      cv::waitKey(50);
+      hud.authorized = true;
+
+      // TODO authorize hub
+      //! figure out how to spin
+    }
+    if(hud.systems_online > 3){
+      cv::putText(blackScreen, "ALL SYSTEMS ONLINE", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+    }else if(networkCheck() == NETWORK_OK){
+      network_status_colour = cv::Scalar(0, 200, 200);
+      cv::putText(blackScreen, "SOME SYSTEMS NEED ATTENTION", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+
+    }else{
+            cv::putText(blackScreen, "ALL SYSTEMS OFFLINE", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+
+    }
+    cv::imshow("RDS_HUD", blackScreen);
+    cv::waitKey(2000);
+    hud.fancyPantsDone = true;
   }
 
 
 private:
+
 void sendSoundCommand(std::string file){
   std_msgs::msg::String outmsg;
   outmsg.data = file;
@@ -108,15 +394,15 @@ std::string mp4_path = package_share_directory + "/videos/";
   //!------------------------------
   void drawDriveLine(cv::Mat &img, cv::Point start, cv::Point control, cv::Point end, cv::Scalar color, int thickness)
   {
-    int steering_thickness = 5;
-    int rpm_thickness = 3;
+    int steering_thickness = 7;
+    int rpm_thickness = 5;
     cv::Scalar steering_colour = cv::Scalar(0,0,0);
     cv::Scalar rpm_colour = cv::Scalar(255, 255, 255);
     // quadratic breazear... chatgpt
     //also draws accell
     const int numDriveLinePoints = 100;
     std::vector<cv::Point> driveLinePoints;
-    double rpm_line_percent = ((vehicle_1_current_command.gas_pedal *(VEHICLE_MAX_THROTTLE)) / static_cast<double>(numDriveLinePoints));
+    double rpm_line_percent = (vehicle_1_current_command.gas_pedal * static_cast<double>(numDriveLinePoints));
 
     for (int i = 0; i <= numDriveLinePoints; i++)
     {
@@ -136,20 +422,22 @@ std::string mp4_path = package_share_directory + "/videos/";
     for (size_t i = 1; i < driveLinePoints.size(); i++)
     {
       
-      cv::line(img, driveLinePoints[i - 1], driveLinePoints[i], color, steering_thickness);
-     // if(i <= rpm_line_percent){
-      cv::line(img, driveLinePoints[i - 1], driveLinePoints[i], color, rpm_thickness);
-      //}
+      cv::line(img, driveLinePoints[i - 1], driveLinePoints[i], steering_colour, steering_thickness);
+      if(i <= rpm_line_percent){
+  
+      cv::line(img, driveLinePoints[i - 1], driveLinePoints[i], rpm_colour, rpm_thickness);
+      }
 
     }
   } // thanks chatgpt
 
   void drawPicture(std::string file, int x, int y){
         // Load the PNG image
-    cv::Mat pngImage = cv::imread(file, cv::IMREAD_UNCHANGED);
+        std::string file_path = img_path + file;
+    cv::Mat pngImage = cv::imread(file_path, cv::IMREAD_UNCHANGED);
 
     // Ensure both images are loaded
-    if(frame.empty() || pngImage.empty()) {
+    if(blackScreen.empty() || frame.empty() || pngImage.empty()) {
         std::cout << "Could not load one of the images!" << std::endl;
         ////return -1;
     }
@@ -170,7 +458,11 @@ std::string mp4_path = package_share_directory + "/videos/";
     for (int i = 0; i < pngImage.rows; ++i) {
         for (int j = 0; j < pngImage.cols; ++j) {
             if (alphaImage.at<uchar>(i, j) > 0) { // Check if the pixel is not transparent
-                frame.at<cv::Vec3b>(y + i, x + j) = colorImage.at<cv::Vec3b>(i, j);
+                if(hud.initiated){
+                  frame.at<cv::Vec3b>(y + i, x + j) = colorImage.at<cv::Vec3b>(i, j);
+                }else{
+                  blackScreen.at<cv::Vec3b>(y + i, x + j) = colorImage.at<cv::Vec3b>(i, j);
+                }
             }
         }
     }
@@ -211,129 +503,6 @@ std::string mp4_path = package_share_directory + "/videos/";
     capture.release();
   }
 
-  void fancyPantsStartup()
-  {
-    // TODO swipe open camera feed, add gps start, net speed
-    //  cv::Rect rect(0, 0, 1920, 1080);
-    cv::Mat blackScreen(1080, 1920, CV_8UC3, cv::Scalar(0, 0, 0));
-
-
-
-    // frame = ;
-    int mid_cols = blackScreen.cols / 2;
-    int mid_rows = blackScreen.rows / 2;
-    cv::putText(blackScreen, "PRESS ANY KEY TO START...", cv::Point(300, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(150, 150, 150), 2);
-    cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(0);
-    cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
-    cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(100);
-    ////playMP4();
-    cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(1000);
-    // for (int i = 20; i < (blackScreen.cols / 4); i++)
-    // {
-      //   // cv::putText(frame, ".", cv::Point((frame.cols /2) - 500 + i*35, frame.rows /2), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(155, 155, 155), 8);
-      //   int width = static_cast<int>(pow(i / 100.0, 8)); // Ensure proper casting and division
-
-      //   // Ensure width does not exceed frame.cols
-      //   // width = std::min(width, frame.cols);
-
-      //   cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(width, blackScreen.rows), cv::Scalar(155, 155, 155), -1);
-      //   cv::putText(blackScreen, "RDS", cv::Point(mid_cols - 470, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 11, cv::Scalar(0, 0, 0), 10);
-      //   // cv::waitKey(5);
-      //   cv::imshow("RDS_HUD", blackScreen);
-      //   cv::waitKey(1);
-    // }
-    cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
-    ////cv::putText(blackScreen, "RDS", cv::Point(mid_cols - 470, mid_rows), cv::FONT_HERSHEY_SIMPLEX, 11, cv::Scalar(155, 155, 155), 10);
-    //// cv::waitKey(100);
-    //// cv::imshow("RDS_HUD", blackScreen);
-    cv::putText(blackScreen, "drive", cv::Point(mid_cols - 480, mid_rows + 200), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(15, 15, 255), 6, cv::FONT_ITALIC);
-    cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(1500);
-    cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
-     ////     sendSoundCommand("AI_engine_up.wav");
-
-    for (int i = 40; i < (blackScreen.cols / 4); i++)
-    {
-      int _progress = static_cast<int>(pow(i / 100.0, 10));
-      cv::rectangle(blackScreen, cv::Point(0, 310), cv::Point(_progress, 450), cv::Scalar(200, 200, 200), -1);
-      cv::putText(blackScreen, "HEADS UP DISPLAY STARTUP", cv::Point(200, 420), cv::FONT_HERSHEY_SIMPLEX, 3, cv::Scalar(0, 0, 0), 3, 16);
-      cv::imshow("RDS_HUD", blackScreen);
-      cv::waitKey(1);
-    }
-    // cv::rectangle(blackScreen, cv::Point(0,0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
-    cv::putText(blackScreen, "network: ", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(105, 105, 105), 3);
-    cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(500);
-    std::string network_status_msg = "STANDBY";
-    cv::Scalar network_status_colour = cv::Scalar(150, 150, 0);
-    cv::putText(blackScreen, "network: ", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 235), 3);
-
-    cv::imshow("RDS_HUD", blackScreen);
-    for (int i = 0; i < 20; i++)
-    {
-
-      cv::rectangle(blackScreen, cv::Point(499, 650), cv::Point(900, 750), cv::Scalar(0, 0, 0), -1);
-      cv::imshow("RDS_HUD", blackScreen);
-      cv::waitKey(70);
-      cv::putText(blackScreen, network_status_msg, cv::Point(500, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
-      cv::imshow("RDS_HUD", blackScreen);
-      cv::waitKey(80);
-    }
-    //! network check
-    // cv::waitKey(100);
-    if (networkCheck() == NETWORK_OK)
-    {
-      network_status_msg = "ONLINE, LATENCY: " + std::to_string(static_cast<int>(hud.vehicle_latency)) + "ms";
-      network_status_colour = cv::Scalar(10, 255, 10);
-    }
-    else
-    {
-      network_status_msg = "OFFLINE!!";
-      network_status_colour = cv::Scalar(10, 10, 255);
-    }
-
-    cv::rectangle(blackScreen, cv::Point(499, 650), cv::Point(900, 750), cv::Scalar(0, 0, 0), -1);
-
-    cv::putText(blackScreen, network_status_msg, cv::Point(500, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
-    cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(1000);
-
-    cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
-    if (networkCheck() == NETWORK_OK)
-    {
-      cv::putText(blackScreen, "CLIENT READY, REQUESTING AUTHORIZATION...", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255, 255, 255), 3);
-      sendSoundCommand("AI_welcome.wav");
-
-    }
-    else if(OFFLINE_MODE){
-      cv::putText(blackScreen, "CLIENT IN OFFLINE MODE", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
-      sendSoundCommand("AI_welcome_attention.wav");
-    }
-    else
-    {
-      cv::putText(blackScreen, "CLIENT FAILURE... womp womp", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
-      sendSoundCommand("AI_system_failure.wav");
-
-    }
-    cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(1000);
-    while (!hud.authorized)
-    {
-      // rclcpp::spin_some(HUDOverlayNode);
-      cv::waitKey(50);
-      hud.authorized = true;
-
-      // TODO authorize hub
-      //! figure out how to spin
-    }
-    cv::putText(blackScreen, "CLIENT AUTHORIZED", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
-    cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(2000);
-
-  }
 
   int networkCheck()
   {
@@ -380,7 +549,7 @@ std::string mp4_path = package_share_directory + "/videos/";
      {
         last_frame_ = *msg; // Assume copy assignment is defined
         //last_frame
-        hud.initiated = true;
+        hud.ready = true;
 
         
       }
@@ -416,6 +585,9 @@ std::string mp4_path = package_share_directory + "/videos/";
   {
     status = msg->status;
   }
+  void gnssCallback(const sensor_msgs::msg::NavSatFix::ConstSharedPtr &msg){
+    vehicle_1_current_gnss = *msg;
+  }
   // Callback function for mouse events
   static void onMouse(int event, int x, int y, int flags, void *userdata)
   {
@@ -438,12 +610,14 @@ std::string mp4_path = package_share_directory + "/videos/";
     mouseX = std::min(x, _W - 200); // Adjust 200 based on the text width
     mouseY = std::min(y, _H - 20);  // Adjust 20 based on the text height
   }
+
   
   // Display Values
   int status_bar_height = 150;
   // sfloat current_gas_pedal;
   rds_msgs::msg::VehicleInterface vehicle_1_current_command;
   rds_msgs::msg::VehicleStatus vehicle_1_current_status;
+  sensor_msgs::msg::NavSatFix vehicle_1_current_gnss;
 
   std::string current_gear = "NET_ERR";
 
@@ -464,5 +638,6 @@ std::string mp4_path = package_share_directory + "/videos/";
   rclcpp::Subscription<rds_msgs::msg::VehicleInterface>::SharedPtr vehicle_1_control_subscriber_;
   rclcpp::Subscription<rds_msgs::msg::VehicleStatus>::SharedPtr vehicle_1_status_subscriber_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr sound_pubber;
+  rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr gnss_subber;
   std::mutex image_mutex_;
 };

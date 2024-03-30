@@ -20,8 +20,8 @@ def generate_launch_description():
         executable='joy_linux_node',
         output='screen',
         parameters=[{
-                      'autorepeat_rate' : 32.0,
-                      'coalesce_interval' : 0.03125,
+                      'autorepeat_rate' : 100.0,
+                      'coalesce_interval' : 0.01,
                       }]
     )
     rds_hud_node = Node(

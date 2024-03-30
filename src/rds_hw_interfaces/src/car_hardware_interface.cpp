@@ -69,6 +69,10 @@ void VehicleInterface::parseUart(std::string buffer){
     rds_msgs::msg::VehicleStatus outMsg;
     outMsg.left_sonar = vehicle.right_sonar;
     outMsg.right_sonar = vehicle.left_sonar;
+            if(vehicle.initiated != 1){
+            vehicle.initiated = 1;
+        }
+    outMsg.online = true;
     feedback_publisher->publish(outMsg);
     
 }
@@ -91,10 +95,10 @@ void VehicleInterface::serialRx(){
         // }
         if (buffer.size() > 0){
         if(buffer.find("Car Ready") != std::string::npos){
-        vehicle.initiated = true;
        // fresh_rx_angle = true;
      }else if(buffer.find("C") != std::string::npos){
         parseUart(buffer);
+
      }
 
 

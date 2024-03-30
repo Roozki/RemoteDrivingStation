@@ -35,7 +35,7 @@ public:
 
 
         speaker.setBuffer(buffer);
-        speaker.setVolume(50);
+        speaker.setVolume(100);
         speaker.play();
         while(speaker.getStatus() == sf::Sound::Playing){
              sf::sleep(sf::milliseconds(10));
