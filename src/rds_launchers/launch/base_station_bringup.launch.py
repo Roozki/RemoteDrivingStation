@@ -8,8 +8,15 @@ from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
-    rviz_config_file = os.path.join(get_package_share_directory('rds_configs'), 'config', 'rviz_config.rviz')
+    urdf_file = os.path.join(get_package_share_directory('rds_description'), 'urdf', 'gps_marker_cybertruck.urdf.xacro')
 
+    rviz_config_file = os.path.join(get_package_share_directory('rds_configs'), 'config', 'rviz_config.rviz')
+    robot_gps_marker = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_gps_marker_publisher',
+        parameters=[{'robot_description': open(urdf_file).read()}],
+    )
     rds_g29_control = Node(
         package='rds_control',
         executable='g29_hw_control',
@@ -29,6 +36,12 @@ def generate_launch_description():
         executable='hud_node',
         output='log'
     )
+    gps_accuracy_pubber = Node(
+        package='rds_gps_py',
+        executable='marker_publisher',
+        output='screen'
+
+    )
     map_node = Node(
         package='rviz2',
         executable='rviz2',
@@ -39,7 +52,7 @@ def generate_launch_description():
             package='tf2_ros',
             executable='static_transform_publisher',
             name='static_broadcaster_base_link_to_map',
-            arguments=['0', '0', '0', '0', '0', '0', 'map', 'base_link'],
+            arguments=['0', '0', '0', '0', '0', '0', 'map', 'marker_base_link'],
             # arguments are: x, y, z, roll, pitch, yaw, frame_id, child_frame_id
         )
     speaker_node = Node(
@@ -50,6 +63,8 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        gps_accuracy_pubber,
+        robot_gps_marker,
         rds_g29_control,
         joy_node,
         rds_hud_node,

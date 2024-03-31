@@ -19,6 +19,72 @@ void HUDOverlayNode::drawHud(){
             latency_refresh_count = 0;
             networkCheck();
           }
+           //! ----------------------------------------//
+          //!             REARVIEW CAM                //
+          //! ----------------------------------------//
+          //! + reverse change
+          int rear_view_width = 400;
+          int rear_view_height = 200;
+          if(last_rear_frame_.width == NULL){
+        cv::Mat placeholderFrame(rear_view_width, rear_view_height, CV_8UC3, cv::Scalar(0, 0, 0));  // Adjust the size as needed
+
+        // Set the text properties
+        std::string rear_cam_offline_text = "REAR CAM OFFLINE";
+        int fontFace = cv::FONT_HERSHEY_SIMPLEX;
+        double fontScale = 0.5;
+        int thickness = 1;
+        cv::Scalar textColor(255, 255, 255);  // White text
+
+        // Get the text size to center the text on the placeholder frame
+        int baseline = 0;
+        cv::Size textSize = cv::getTextSize(rear_cam_offline_text, fontFace, fontScale, thickness, &baseline);
+        cv::Point textOrg((placeholderFrame.cols - textSize.width) / 2, (placeholderFrame.rows + textSize.height) / 2);
+
+        // Draw the text on the placeholder frame
+        cv::putText(placeholderFrame, rear_cam_offline_text, textOrg, fontFace, fontScale, textColor, thickness);
+        placeholderFrame.copyTo(rear_frame);
+          }else{
+          rear_frame = cv_bridge::toCvCopy(last_rear_frame_, "bgr8")->image;
+
+
+
+          }
+          if(current_gear == "R"){
+            cv::Mat temp_buff_frame = frame.clone();;
+            // cv::resize(rear_frame, temp_buff_frame, cv::Size(frame.cols, frame.rows));
+            // cv::resize(frame, rear_frame, cv::Size(rear_view_width, rear_view_height));
+            // cv::resize(temp_buff_frame, frame, cv::Size(rear_view_width, rear_view_height));
+            // // Swap the feeds in reverse
+
+            // Resize the rear frame to fill the main frame
+            cv::resize(rear_frame, frame, frame.size()); 
+
+            // Resize the original main frame (now stored in temp) to fit the rearview mirror size and position
+            cv::Mat smallMainFrame;
+            cv::resize(temp_buff_frame, smallMainFrame, cv::Size(rear_view_width, rear_view_height)); // Ensure rear_view_width and rear_view_height are defined
+
+            // Create a black border for the smaller main frame, to maintain the "mirror" effect
+            cv::copyMakeBorder(smallMainFrame, smallMainFrame, 10, 10, 10, 10, cv::BORDER_CONSTANT, cv::Scalar(0, 0, 0));
+
+            // Define the position of the smaller main frame on the new main frame (which now shows the rear view)
+            cv::Rect small_main_roi(cv::Point(mid_cols - rear_view_width/2, 20), smallMainFrame.size()); // Adjust the position as needed
+
+            // Place the smaller main frame onto the new main frame
+            smallMainFrame.copyTo(frame(small_main_roi));
+          } else {
+                     // Resize the rearview frame to fit it as a "mirror" on the main frame
+          cv::resize(rear_frame, resizedRearView, cv::Size(rear_view_width, rear_view_height));  // Adjust size as needed
+
+        // Create a black border for the rearview "mirror"
+          cv::copyMakeBorder(resizedRearView, resizedRearView, 10, 10, 10, 10, cv::BORDER_CONSTANT, cv::Scalar(0, 0, 0));
+
+        // Define where to overlay the rearview frame on the main frame
+          cv::Rect rear_roi(cv::Point(mid_cols - rear_view_width/2, 20), resizedRearView.size());  // Adjust position as needed
+
+        // Overlay the rearview frame onto the main frame
+          resizedRearView.copyTo(frame(rear_roi));
+          }
+
           //! ----------------------------------------//
           //!               DRIVE LINE                //
           //! ----------------------------------------//
@@ -81,6 +147,15 @@ void HUDOverlayNode::drawHud(){
             break;
           }
           // TODO add hazards
+
+          //! ----------------------------------------//
+          //!           STATUS INDICATORS             //
+          //! ----------------------------------------//
+
+
+
+
+
 
           //! ----------------------------------------//
           //!                 SIGNIALS                //
@@ -178,6 +253,8 @@ void HUDOverlayNode::drawHud(){
           // DEBUG - show mouse position (helps to know where to put stuff)
 
           cv::putText(frame, mousePointText, cv::Point(mouseX + 10, mouseY + 10), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(255, 255, 255), 2);
+
+         
         }
         else
         {
@@ -195,18 +272,19 @@ void HUDOverlayNode::drawHud(){
             if(hud.init_i < 100){
               hud.init_i = 100;
             }
-            for (int i = 0; i < 3; i++){
-            if(hud.init_i < (frame.cols/3)){
+            for (int i = 0; i < 6; i++){
+            if(hud.init_i < (frame.cols/6.5)){
               hud.init_i++;
                int temp_width = static_cast<int>(pow(hud.init_i / 100.0, 8)); // Ensure proper casting and division
               cv::rectangle(frame, cv::Point(0, 0), cv::Point(frame.cols - temp_width, frame.rows), cv::Scalar(0, 0, 0), -1);
               ////cv::rectangle(frame, cv::Point(0, 0), cv::Point(frame.cols/2 + (frame.cols/30)*hud.init_i, frame.rows), cv::Scalar(0, 0, 0), -1);
-              cv::rectangle(frame, cv::Point(0, mid_rows - 100), cv::Point(frame.cols, mid_rows + 40), cv::Scalar(0, 0, 0), -1);
-            cv::putText(frame, "CAM ONLINE", cv::Point(mid_cols - 350, mid_rows + 20), cv::FONT_HERSHEY_SIMPLEX, 4, cv::Scalar(220, 220, 220), 7);
+          //    cv::rectangle(frame, cv::Point(0, mid_rows - 100), cv::Point(frame.cols, mid_rows + 40), cv::Scalar(0, 0, 0), -1);
+        //    cv::putText(frame, "CAM ONLINE", cv::Point(mid_cols - 350, mid_rows + 20), cv::FONT_HERSHEY_SIMPLEX, 4, cv::Scalar(220, 220, 220), 7);
+
             }
             }
             
-            if (hud.init_i >= frame.cols/3){
+            if (hud.init_i >= frame.cols/6.5){
               hud.state++;
               hud.initiated = true;
 
@@ -240,12 +318,13 @@ int main(int argc, char** argv) {
     }
 
     if(node->hud.fancyPantsDone != 1){
-      node->fancyPantsStartup();
+     //node->fancyPantsStartup();
+     node->hud.fancyPantsDone = 1;
     }
   while (rclcpp::ok()){
  
     if(node->hud.ready){
-     //// RCLCPP_ERROR(node->get_logger(), "frame success");
+     ///// RCLCPP_ERROR(node->get_logger(), "frame success");
     node->drawHud();
 
     }else{

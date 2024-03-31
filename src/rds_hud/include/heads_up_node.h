@@ -48,6 +48,7 @@ public:
   cv::Mat frame;
   cv::Mat rear_frame;
   cv::Mat blackScreen;
+  cv::Mat resizedRearView;
 
   void drawHud();
 
@@ -116,7 +117,9 @@ public:
     ////cv::waitKey(100);
     cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
     cv::imshow("RDS_HUD", blackScreen);
+    sendSoundCommand("bleep.wav");
     cv::waitKey(10);
+    playMP4();
     // for (int i = 20; i < (blackScreen.cols / 4); i++)
     // {
       //   // cv::putText(frame, ".", cv::Point((frame.cols /2) - 500 + i*35, frame.rows /2), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(155, 155, 155), 8);
@@ -141,7 +144,6 @@ public:
     ////cv::waitKey(1500);
     cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
      ////     sendSoundCommand("AI_engine_up.wav");
-    sendSoundCommand("bleep.wav");
 
     for (int i = 40; i < (blackScreen.cols / 4); i++)
     {
@@ -421,9 +423,11 @@ std::string mp4_path = package_share_directory + "/videos/";
 
     for (size_t i = 1; i < driveLinePoints.size(); i++)
     {
-      
+      //drawTransparentLine(frame, driveLinePoints[i - 1], driveLinePoints[i], steering_colour, steering_thickness, 0.4);
+
       cv::line(img, driveLinePoints[i - 1], driveLinePoints[i], steering_colour, steering_thickness);
       if(i <= rpm_line_percent){
+      //drawTransparentLine(frame, driveLinePoints[i - 1], driveLinePoints[i], rpm_colour, rpm_thickness, 0.2);
   
       cv::line(img, driveLinePoints[i - 1], driveLinePoints[i], rpm_colour, rpm_thickness);
       }
@@ -502,6 +506,23 @@ std::string mp4_path = package_share_directory + "/videos/";
     // Release the video capture object
     capture.release();
   }
+void drawTransparentLine(cv::Mat& image, cv::Point pt1, cv::Point pt2, cv::Scalar color, int thickness, double alpha) {
+    // Create a temporary RGBA image with the same dimensions as the original image
+    cv::Mat rgbaImage(image.size(), CV_8UC4, cv::Scalar(0,0,0,0));
+
+    // Draw the line on the RGBA image
+    cv::line(rgbaImage, pt1, pt2, cv::Scalar(color[0], color[1], color[2], alpha * 255), thickness);
+
+    // Split the RGBA image into separate channels (including alpha)
+    cv::Mat channels[4];
+    cv::split(rgbaImage, channels);
+
+    // Create a mask from the alpha channel
+    cv::Mat mask = channels[3];
+
+    // Copy the line to the original image using the mask
+    rgbaImage.copyTo(image, mask);
+}
 
 
   int networkCheck()
@@ -534,7 +555,7 @@ std::string mp4_path = package_share_directory + "/videos/";
   {
     if (hud.initiated)
     {
-      rear_frame = cv_bridge::toCvShare(msg, "bgr8")->image;
+      last_rear_frame_ = *msg;
     }
   }
   void imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr &msg)
@@ -563,6 +584,7 @@ std::string mp4_path = package_share_directory + "/videos/";
   }
   std_msgs::msg::Header last_frame;
   sensor_msgs::msg::Image last_frame_;
+  sensor_msgs::msg::Image last_rear_frame_;
 
 
   // void blackout(cv::mat frame, int ms_delay){
