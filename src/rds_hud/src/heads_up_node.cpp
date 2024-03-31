@@ -112,6 +112,10 @@ void HUDOverlayNode::drawHud(){
           std::ostringstream oss;
           oss << std::fixed << std::setprecision(0) << vehicle_1_current_command.gas_pedal; // Set precision to 0 decimal places
           std::string gas_pedal_string = oss.str();
+          oss.clear();
+          oss << std::fixed << std::setprecision(0) << (vehicle_1_current_status.velocity *(36/10)); // Set precision to 0 decimal places
+          std::string velocity_string = oss.str();
+
           cv::rectangle(overlay, cv::Point(0, 0), cv::Point(frame.cols, frame.rows - status_bar_height), cv::Scalar(0, 0, 0), -1);
           cv::addWeighted(overlay, 0.4, roi, 1 - 0.4, 0, roi);
           switch (vehicle_1_current_command.gear)
@@ -154,8 +158,8 @@ void HUDOverlayNode::drawHud(){
           //! ----------------------------------------//
 
           
-          drawHazardsSign(frame, cv::Point(1300, frame.rows - status_bar_height + 20), vehicle_1_current_command.hazards);
-          drawSignalStatus(frame, cv::Point(400, frame.rows - status_bar_height + 40), vehicle_1_current_command.left_signal, vehicle_1_current_command.right_signal);
+          drawHazardsSign(frame, cv::Point(1400, frame.rows - status_bar_height + 20), vehicle_1_current_command.hazards);
+          drawSignalStatus(frame, cv::Point(400, frame.rows - status_bar_height + 30), vehicle_1_current_command.left_signal, vehicle_1_current_command.right_signal);
 
 
           //! ----------------------------------------//
@@ -226,7 +230,9 @@ void HUDOverlayNode::drawHud(){
           //!             SPEDOMETER + RPM            //
           //! ----------------------------------------//
         
-          cv::putText(frame, gas_pedal_string + "km/h", cv::Point(900, 1040), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2);
+          cv::putText(frame, velocity_string + "km/h", cv::Point(597, 1006), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2);
+          cv::putText(frame, gas_pedal_string + "rev/min", cv::Point(1242, 1006), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2);
+
           // cv::putText(frame, , cv::Point(950, frame.rows - status_bar_height/2), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255,0,255), 3);
           int spedometer_radius = 100;
           int rpm_radius = 100;
@@ -281,7 +287,7 @@ void HUDOverlayNode::drawHud(){
           rpmLineEnd.y = ((rpm_radius) * (-1) * sin(rpm_angle)) + rpmLineEnd.y;
 
           cv::line(frame, spedometerLineStart, spedometerLineEnd, cv::Scalar(255, 0, 0), 3);
-          cv::line(frame, rpmLineStart, rpmLineEnd, cv::Scalar(255, 0, 0), 3);
+          cv::line(frame, rpmLineStart, rpmLineEnd, cv::Scalar(0, 0, 220), 3);
 
 
           // DEBUG - show mouse position (helps to know where to put stuff)
@@ -352,8 +358,8 @@ int main(int argc, char** argv) {
     }
 
     if(node->hud.fancyPantsDone != 1){
-     //node->fancyPantsStartup();
-     node->hud.fancyPantsDone = 1;
+     node->fancyPantsStartup();
+     //node->hud.fancyPantsDone = 1;
     }
   while (rclcpp::ok()){
  

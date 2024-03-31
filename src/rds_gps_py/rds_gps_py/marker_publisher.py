@@ -22,8 +22,9 @@ class GPSMarkerPublisher(Node):
         # Use the position covariance to determine the marker size
         # Here, we simply take the average of the diagonal elements in the covariance matrix (variances)
         # Covariance matrix is represented as a flat array in row-major order, first 3 elements are the diagonal
-        covariance_diagonal = msg.position_covariance[0:3]
-        self.last_covariance = np.mean(covariance_diagonal)
+        covariance_lat = msg.position_covariance[0]
+        covariance_long = msg.position_covariance[3]
+        self.last_covariance = (covariance_long+covariance_lat)*4
 
     def publish_marker(self):
         marker = Marker()
@@ -41,7 +42,7 @@ class GPSMarkerPublisher(Node):
         marker.scale.x = scale
         marker.scale.y = scale
         marker.scale.z = 0.1  # Keep a fixed height for the marker
-        marker.color.a = 1.0  # Don't forget to set the alpha!
+        marker.color.a = 0.5  # Don't forget to set the alpha!
         marker.color.r = 0.0
         marker.color.g = 1.0
         marker.color.b = 0.0

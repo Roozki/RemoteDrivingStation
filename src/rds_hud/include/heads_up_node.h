@@ -156,16 +156,16 @@ public:
     // cv::rectangle(blackScreen, cv::Point(0,0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
     cv::putText(blackScreen, "network: ", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(105, 105, 105), 3);
     cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(200);
+    cv::waitKey(50);
     cv::putText(blackScreen, "gps: ", cv::Point(200, 800), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(105, 105, 105), 3);
     cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(200);
+    cv::waitKey(50);
     cv::putText(blackScreen, "car: ", cv::Point(200, 900), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(105, 105, 105), 3);
     cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(200);
+    cv::waitKey(50);
     cv::putText(blackScreen, "control: ", cv::Point(200, 1000), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(105, 105, 105), 3);
     cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(200);
+    cv::waitKey(50);
     std::string network_status_msg = "STANDBY";
     std::string gps_status_msg = "STANDBY";
     std::string car_status_msg = "STANDBY";
@@ -177,17 +177,17 @@ public:
     cv::Scalar network_status_colour = cv::Scalar(150, 150, 0);
     cv::putText(blackScreen, "network: ", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 235), 3);
     cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(200);
+    cv::waitKey(100);
 
     cv::putText(blackScreen, "gps: ", cv::Point(200, 800), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 235), 3);
     cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(200);
+    cv::waitKey(100);
     cv::putText(blackScreen, "car: ", cv::Point(200, 900), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 235), 3);
     cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(200);
+    cv::waitKey(100);
     cv::putText(blackScreen, "control: ", cv::Point(200, 1000), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 235), 3);
     cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(200);
+    cv::waitKey(100);
     for (int i = 0; i < 5; i++)
     {
       
@@ -195,7 +195,7 @@ public:
       
       
       cv::imshow("RDS_HUD", blackScreen);
-      cv::waitKey(70);
+      cv::waitKey(50);
       
       cv::putText(blackScreen, network_status_msg, cv::Point(600, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
       cv::putText(blackScreen, gps_status_msg, cv::Point(600, 800), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
@@ -204,7 +204,7 @@ public:
       
       
       cv::imshow("RDS_HUD", blackScreen);
-      cv::waitKey(80);
+      cv::waitKey(60);
     }
     //! network check
     // cv::waitKey(100);
@@ -233,7 +233,7 @@ public:
       
       
       cv::imshow("RDS_HUD", blackScreen);
-      cv::waitKey(70);
+      cv::waitKey(50);
       
       //cv::putText(blackScreen, network_status_msg, cv::Point(500, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
       cv::putText(blackScreen, gps_status_msg, cv::Point(600, 800), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
@@ -242,7 +242,7 @@ public:
       
       
       cv::imshow("RDS_HUD", blackScreen);
-      cv::waitKey(80);
+      cv::waitKey(60);
     }
     //! gps check
     
@@ -268,14 +268,14 @@ public:
       
       
       cv::imshow("RDS_HUD", blackScreen);
-      cv::waitKey(70);
+      cv::waitKey(50);
       
       cv::putText(blackScreen, car_status_msg, cv::Point(600, 900), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
       cv::putText(blackScreen, control_status_msg, cv::Point(600, 1000), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
       
       
       cv::imshow("RDS_HUD", blackScreen);
-      cv::waitKey(80);
+      cv::waitKey(60);
     }
         //! controls check
     
@@ -303,13 +303,13 @@ public:
       
       
       cv::imshow("RDS_HUD", blackScreen);
-      cv::waitKey(70);
+      cv::waitKey(50);
       
       cv::putText(blackScreen, control_status_msg, cv::Point(600, 1000), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
       
       
       cv::imshow("RDS_HUD", blackScreen);
-      cv::waitKey(80);
+      cv::waitKey(60);
     }
     hud.systems_online++; 
     hud.systems_online++;
@@ -320,7 +320,7 @@ public:
       cv::putText(blackScreen, control_status_msg, cv::Point(600, 1000), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 0), 3);
 
       cv::imshow("RDS_HUD", blackScreen);
-      cv::waitKey(80);
+      cv::waitKey(180);
 
 
 
@@ -351,7 +351,7 @@ public:
 
     }
     cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(1000);
+    cv::waitKey(1200);
     while (!hud.authorized)
     {
       // rclcpp::spin_some(HUDOverlayNode);
@@ -374,7 +374,7 @@ public:
 
     }
     cv::imshow("RDS_HUD", blackScreen);
-    cv::waitKey(2000);
+    cv::waitKey(2500);
     hud.fancyPantsDone = true;
   }
 
