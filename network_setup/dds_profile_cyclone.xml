@@ -6,7 +6,7 @@
   <Domain Id="5">
     <General>
 	<Interfaces>
-        	<NetworkInterface address="10.147.20.8" priority="0" />
+        	<NetworkInterface address="10.147.20.11" priority="0" />
       	</Interfaces>
 	<AllowMulticast>true</AllowMulticast>
       <EnableMulticastLoopback>true</EnableMulticastLoopback>
@@ -18,6 +18,7 @@
         	<Peer Address="${DEAN}"/>
 		<Peer Address="${RDS_INCLAP_ZT_IP}"/>
       		<Peer Address="${RIGIP}"/>
+		<Peer Address="${RDS_G15LAP_ZT_IP}"/>
       </Peers>
     </Discovery>
   </Domain>
