@@ -12,6 +12,7 @@ def generate_launch_description():
     rear_feed = Node(
         package='camera_ros',
         executable='camera_node',
+        name='rear_feed_node',
         output='screen',
         parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS04-4:1.0-1bcf:2b8a'}],
         remappings=[
@@ -23,6 +24,7 @@ def generate_launch_description():
     main_feed = Node(
         package='camera_ros',
         executable='camera_node',
+        name='main_feed_node',
         output='screen',
         remappings=[
             ('/camera/image_raw', '/vehicle_1/main_feed/image_raw'),  

@@ -318,8 +318,8 @@ int main(int argc, char** argv) {
     }
 
     if(node->hud.fancyPantsDone != 1){
-     //node->fancyPantsStartup();
-     node->hud.fancyPantsDone = 1;
+     node->fancyPantsStartup();
+     //node->hud.fancyPantsDone = 1;
     }
   while (rclcpp::ok()){
  

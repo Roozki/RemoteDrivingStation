@@ -143,7 +143,7 @@ public:
     ////cv::imshow("RDS_HUD", blackScreen);
     ////cv::waitKey(1500);
     cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
-     ////     sendSoundCommand("AI_engine_up.wav");
+      sendSoundCommand("AI_engine_up.wav");
 
     for (int i = 40; i < (blackScreen.cols / 4); i++)
     {
@@ -329,8 +329,10 @@ public:
     cv::rectangle(blackScreen, cv::Point(0, 0), cv::Point(blackScreen.cols, blackScreen.rows), cv::Scalar(0, 0, 0), -1);
     if (hud.systems_online > 3)
     {
-      cv::putText(blackScreen, "WELCOME DRIVER", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255, 255, 255), 3);
       sendSoundCommand("AI_welcome.wav");
+      cv::waitKey(10);
+      cv::putText(blackScreen, "WELCOME DRIVER", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255, 255, 255), 3);
+    
 
     }
     else if(OFFLINE_MODE){
@@ -359,7 +361,9 @@ public:
       // TODO authorize hub
       //! figure out how to spin
     }
+    cv::waitKey(400);
     if(hud.systems_online > 3){
+      
       cv::putText(blackScreen, "ALL SYSTEMS ONLINE", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
     }else if(networkCheck() == NETWORK_OK){
       network_status_colour = cv::Scalar(0, 200, 200);
