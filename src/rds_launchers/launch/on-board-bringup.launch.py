@@ -26,7 +26,7 @@ def generate_launch_description():
         package='camera_ros',
         executable='camera_node',
         #name='main_feed_node',
-        parameters=[{'camera': '\_SB_.PCIO.XHC_.RHUB.HS03-3:1.0-4c4a:4a55'}],
+        #parameters=[{'camera': '\_SB_.PCIO.XHC_.RHUB.HS03-3:1.0-4c4a:4a55'}],
 	output='screen',
         remappings=[
             ('/camera/image_raw', '/vehicle_1/main_feed/image_raw'),  
