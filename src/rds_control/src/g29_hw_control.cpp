@@ -50,7 +50,14 @@ private:
     int prev_paddleR = 0;
     int prev_paddleL = 0;
     int prev_signalR = 0;
+    bool signalL = false;
+    bool curr_signalL = false;
+    bool signalR = false;
+    bool curr_signalR = false;
     int prev_signalL = 0;
+    bool prev_hazards = 0;
+    bool hazards = false;
+    bool curr_hazards = false;
     rclcpp::Publisher<rds_msgs::msg::VehicleInterface>::SharedPtr command_publisher_;
 
     rclcpp::TimerBase::SharedPtr timer_;
@@ -102,11 +109,15 @@ private:
         } else { //use joy_linux not joy
         paddleR = msg->buttons[4];
         paddleL = msg->buttons[5];
-            lights[0] = msg->buttons[3];
-            lights[1] = msg->buttons[1];
+            //lights[0] = msg->buttons[3];
+            //lights[1] = msg->buttons[1];
             lights[2] = msg->buttons[2];
             lights[3] = msg->buttons[8];
             lights[4] = msg->buttons[7];
+            curr_hazards = msg->buttons[8];
+            curr_signalL = msg->buttons[3];
+            curr_signalR = msg->buttons[1];
+            
         }
 
         if(paddleL == 0){
@@ -138,18 +149,40 @@ private:
         //     RCLCPP_ERROR(this->get_logger(), "test");
         // }}
         //! ----------------------------------------//
-        //!                 SIGNIALS                //
+        //!                 LIGHTS                  //
         //! ----------------------------------------//
-        for(int i = 0; i < NUM_LIGHTS - 1; i++){
-            if(lights[i] == 1){
-            vehicle_msg.lights[i] = 1;
-            
-            //publishFeedback();
-            } else{
-                vehicle_msg.lights[i] = 0;
+
+        if(curr_signalL){
+            if(curr_signalL != prev_signalL){
+                signalL = !signalL;
             }
         }
         
+        if(curr_signalR){
+            if(curr_signalR != prev_signalR){
+                signalR = !signalR;
+            }
+        }
+        if(curr_hazards){
+            if(curr_hazards != prev_hazards){
+                hazards = !hazards;
+            }
+        }
+
+        prev_hazards = curr_hazards;
+        prev_signalL = curr_signalL;
+        prev_signalR = curr_signalR;
+
+        if(signalR && !signalL){
+            lights[0] = 1;
+        }else{
+            lights[0] = 0;
+        }
+        if(signalL && !signalR){
+            lights[1] = 1;
+        }else{
+            lights[1] = 0;
+        }
 
         if(paddleR){
         if(prev_paddleR != paddleR){
@@ -187,21 +220,33 @@ private:
      //   speed = 99.0 - (msg->axes[4] + 1)*100;
         gas_pedal = (-msg->axes[5] + 1.0)/2.0;//// - (msg->axes[5] + 1)*20;
         brake_pedal = (-msg->axes[2] + 1.0)/2.0;
+
         ////jerk = (msg->axes[2] + 1)*20 - (msg->axes[3] + 1)*20;
 
     }
         if (gas_pedal < 0){
             gas_pedal = 0;
         }
+        //! fillup msg
+         for(int i = 0; i < NUM_LIGHTS - 1; i++){
+            if(lights[i] == 1){
+            vehicle_msg.lights[i] = 1;
+            
+            //publishFeedback();
+            } else{
+                vehicle_msg.lights[i] = 0;
+            }
+        }
      //   
        // vehicle_msg.lights = lights;
-        vehicle_msg.left_signal = msg->buttons[3];
-        vehicle_msg.right_signal = msg->buttons[1];
+        vehicle_msg.left_signal = signalL;
+        vehicle_msg.right_signal = signalR;
         vehicle_msg.steering_angle = steering_angle;
         vehicle_msg.gas_pedal = gas_pedal;
         vehicle_msg.brake_pedal = brake_pedal;
         vehicle_msg.clutch = clutch_pedal;
         vehicle_msg.gear = current_gear;
+        vehicle_msg.hazards = hazards;
         command_publisher_->publish(vehicle_msg);
 
         //send_command(steering_angle, speed, acceleration, jerk, current_gear);

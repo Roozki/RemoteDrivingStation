@@ -89,7 +89,7 @@ void HUDOverlayNode::drawHud(){
           //!               DRIVE LINE                //
           //! ----------------------------------------//
 
-          cv::Point driveLineStart(frame.cols / 2, frame.rows - 100); // Start at the bottom center
+          cv::Point driveLineStart(frame.cols / 2, frame.rows - status_bar_height); // Start at the bottom center
           cv::Point driveLineControl(frame.cols / 2, 3* frame.rows / 4.5);
           
      
@@ -99,6 +99,7 @@ void HUDOverlayNode::drawHud(){
           cv::Point driveLineEnd(driveLineStart.x + driveLineEndOffset*2, frame.rows/3 + (abs(driveLineEndOffset)));            // End at the top center
 
           drawDriveLine(frame, driveLineStart, driveLineControl, driveLineEnd, cv::Scalar(0, 0, 0), 2);
+
 
           std::string latencyString = std::to_string(static_cast<int>(hud.vehicle_latency));
           cv::Rect rect(0, frame.rows - status_bar_height, frame.cols, status_bar_height);
@@ -152,9 +153,9 @@ void HUDOverlayNode::drawHud(){
           //!           STATUS INDICATORS             //
           //! ----------------------------------------//
 
-
-
-
+          
+          drawHazardsSign(frame, cv::Point(1300, frame.rows - status_bar_height + 20), vehicle_1_current_command.hazards);
+          drawSignalStatus(frame, cv::Point(400, frame.rows - status_bar_height + 40), vehicle_1_current_command.left_signal, vehicle_1_current_command.right_signal);
 
 
           //! ----------------------------------------//
@@ -162,7 +163,7 @@ void HUDOverlayNode::drawHud(){
           //! ----------------------------------------//
           vehicle_1_current_command.lights.resize(5);
 
-          if (vehicle_1_current_command.left_signal == 1)
+          if (vehicle_1_current_command.left_signal == 1 || vehicle_1_current_command.hazards)
           {
             // #left signal
 
@@ -185,7 +186,7 @@ void HUDOverlayNode::drawHud(){
               cv::arrowedLine(frame, leftArrowStart, leftArrowEnd, cv::Scalar(255, 255, 255), 10, 3, 0, 20);
             }
           }
-          else if (vehicle_1_current_command.right_signal == 1)
+          if (vehicle_1_current_command.right_signal == 1 || vehicle_1_current_command.hazards)
           {
             cv::Point rightArrowStart(frame.cols * 0.945, frame.rows / 2);
             cv::Point rightArrowEnd(frame.cols * 0.95, frame.rows / 2);
@@ -220,35 +221,68 @@ void HUDOverlayNode::drawHud(){
 
           cv::putText(frame, current_gear, cv::Point(190, frame.rows - status_bar_height / 10), cv::FONT_HERSHEY_SIMPLEX, 5, gear_colour, 3);
           cv::line(frame, cv::Point(0, frame.rows - status_bar_height), cv::Point(frame.cols, frame.rows - status_bar_height), CV_RGB(0, 0, 0), 4);
+        
+          //! ----------------------------------------//
+          //!             SPEDOMETER + RPM            //
+          //! ----------------------------------------//
+        
           cv::putText(frame, gas_pedal_string + "km/h", cv::Point(900, 1040), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(255, 255, 255), 2);
           // cv::putText(frame, , cv::Point(950, frame.rows - status_bar_height/2), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255,0,255), 3);
           int spedometer_radius = 100;
-          cv::Point spedometerLineStart(frame.cols / 2, frame.rows - 20);
-          cv::Point spedometerLineEnd((frame.cols / 2) - spedometer_radius, frame.rows - 20);
+          int rpm_radius = 100;
+
+          cv::Point spedometerLineStart(frame.cols / 3, frame.rows - 20);
+          cv::Point spedometerLineEnd((frame.cols / 3) - spedometer_radius, frame.rows - 20);
+          cv::Point rpmLineStart(2*frame.cols / 3, frame.rows - 20);
+          cv::Point rpmLineEnd((2*frame.cols / 3) - rpm_radius, frame.rows - 20);
           //@TODO Need to add progress bar for gas
           // add kmph
           // add gear
+          int rpm_increment = 10; // 40/NUM_NUMS;
+          int max_rpm = rpm_increment * NUM_RPM_NUMS;
           int sped_increment = 10; // 40/NUM_NUMS;
           int max_sped = sped_increment * NUM_NUMS;
+          float rpm_angle = ((0) * rpm_increment * PI) / max_rpm;
+
           float spedometer_angle = ((0) * sped_increment * PI) / max_sped;
           cv::putText(frame, "0", cv::Point(((spedometer_radius) * (-1) * cos(spedometer_angle)) + spedometerLineEnd.x + spedometer_radius, ((spedometer_radius) * (-1) * sin(spedometer_angle)) + spedometerLineEnd.y), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 255, 255), 2);
+          cv::putText(frame, "0", cv::Point(((rpm_radius) * (-1) * cos(rpm_angle)) + rpmLineEnd.x + rpm_radius, ((rpm_radius) * (-1) * sin(rpm_angle)) + rpmLineEnd.y), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 255, 255), 2);
+          
           std::string sped_num;
+          std::string rpm_num;
+
           for (int i = 1; i < NUM_NUMS; i++)
           {
             sped_num = std::to_string(i * sped_increment); //+"km/h";
             spedometer_angle = ((i)*sped_increment * PI) / max_sped;
             cv::putText(frame, sped_num, cv::Point(((spedometer_radius) * (-1) * cos(spedometer_angle)) + spedometerLineEnd.x + spedometer_radius, ((spedometer_radius) * (-1) * sin(spedometer_angle)) + spedometerLineEnd.y), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 255, 255), 2);
           }
+          for (int i = 1; i < NUM_RPM_NUMS; i++)
+          {
+            rpm_num = std::to_string(i * rpm_increment); //+ "rev/min";
+            rpm_angle = ((i)*rpm_increment * PI) / max_rpm;
+            cv::putText(frame, rpm_num, cv::Point(((rpm_radius) * (-1) * cos(rpm_angle)) + rpmLineEnd.x + rpm_radius, ((rpm_radius) * (-1) * sin(rpm_angle)) + rpmLineEnd.y), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 255, 255), 2);
+          }
           sped_num = "100"; //+"km/h";
+          rpm_num = "100"; //+"km/h";
+
 
           cv::putText(frame, sped_num, cv::Point(((spedometer_radius) * (-1) * cos(spedometer_angle)) + spedometerLineEnd.x + spedometer_radius, ((spedometer_radius) * (-1) * sin(PI)) + spedometerLineEnd.y), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 255, 255), 2);
+          cv::putText(frame, rpm_num, cv::Point(((rpm_radius) * (-1) * cos(rpm_angle)) + rpmLineEnd.x + rpm_radius, ((rpm_radius) * (-1) * sin(PI)) + rpmLineEnd.y), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255, 255, 255), 2);
 
-          spedometer_angle = (vehicle_1_current_command.gas_pedal * PI);
+          rpm_angle = (vehicle_1_current_command.gas_pedal * PI);
+          spedometer_angle = ((vehicle_1_current_status.velocity / max_sped) * PI);
+
 
           spedometerLineEnd.x = ((spedometer_radius) * (-1) * cos(spedometer_angle)) + spedometerLineEnd.x + spedometer_radius;
           spedometerLineEnd.y = ((spedometer_radius) * (-1) * sin(spedometer_angle)) + spedometerLineEnd.y;
+         
+          rpmLineEnd.x = ((rpm_radius) * (-1) * cos(rpm_angle)) + rpmLineEnd.x + rpm_radius;
+          rpmLineEnd.y = ((rpm_radius) * (-1) * sin(rpm_angle)) + rpmLineEnd.y;
 
           cv::line(frame, spedometerLineStart, spedometerLineEnd, cv::Scalar(255, 0, 0), 3);
+          cv::line(frame, rpmLineStart, rpmLineEnd, cv::Scalar(255, 0, 0), 3);
+
 
           // DEBUG - show mouse position (helps to know where to put stuff)
 
@@ -318,8 +352,8 @@ int main(int argc, char** argv) {
     }
 
     if(node->hud.fancyPantsDone != 1){
-     node->fancyPantsStartup();
-     //node->hud.fancyPantsDone = 1;
+     //node->fancyPantsStartup();
+     node->hud.fancyPantsDone = 1;
     }
   while (rclcpp::ok()){
  

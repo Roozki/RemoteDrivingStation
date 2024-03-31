@@ -637,6 +637,73 @@ void drawTransparentLine(cv::Mat& image, cv::Point pt1, cv::Point pt2, cv::Scala
     mouseY = std::min(y, _H - 20);  // Adjust 20 based on the text height
   }
 
+void drawHazardsSign(cv::Mat &image, const cv::Point &position, bool isActive) {
+    // Define the rectangle dimensions and properties
+    cv::Rect rect(position, cv::Size(180, 50)); // Adjust size as needed
+    int thickness = 2; // Thickness of the rectangle border
+
+    // Define colors
+    cv::Scalar rectColor(255, 255, 255); // White rectangle
+    cv::Scalar textColorOn(255, 255, 255); // Red border color
+    cv::Scalar borderColorOff(100, 100, 100); // grey border color
+    cv::Scalar textColorOff(128, 128, 128); // Gray text for "off" state
+    cv::Scalar borderColorOn(0, 255, 0); // Green text for "on" state
+
+    // Draw the rectangle with border
+    cv::rectangle(image, rect, isActive ? borderColorOn : borderColorOff, thickness);
+    //cv::rectangle(image, rect, rectColor, cv::FILLED, cv::LINE_8, thickness);
+
+    // Set text properties
+    std::string text = "HAZARDS";
+    int fontFace = cv::FONT_HERSHEY_SIMPLEX;
+    double fontScale = 0.7;
+    int textThickness = 2;
+    int baseline = 0;
+    cv::Size textSize = cv::getTextSize(text, fontFace, fontScale, textThickness, &baseline);
+
+    // Calculate text position to center it within the rectangle
+    cv::Point textOrg(rect.x + (rect.width - textSize.width) / 2,
+                      rect.y + (rect.height + textSize.height) / 2);
+
+    // Draw the text
+    cv::putText(image, text, textOrg, fontFace, fontScale, isActive ? textColorOn : textColorOff, textThickness);
+}
+void drawSignalStatus(cv::Mat &image, const cv::Point &position, bool isLeftActive, bool isRightActive) {
+    // Base position for the "SIGNAL" text and L/R indicators
+    cv::Point basePosition = position + cv::Point(0, 0); // Adjust the vertical offset as needed
+
+    // Define text properties
+    std::string signalText = "SIGNAL";
+    std::string leftText = "<";
+    std::string rightText = ">";
+    int fontFace = cv::FONT_HERSHEY_SIMPLEX;
+    double fontScale = 0.7;
+    double SigfontScale = 1.3;
+    int textThickness = 2;
+    int SigtextThickness = 3;
+
+    cv::Scalar activeColor(0, 255, 0); // Green for active
+    cv::Scalar inactiveColor(128, 128, 128); // Gray for inactive
+
+    // Draw the "SIGNAL" text
+    cv::putText(image, signalText, basePosition, fontFace, fontScale, inactiveColor, textThickness);
+
+    // Calculate offsets for L and R indicators based on text size
+    int baseline = 0;
+    cv::Size textSizeL = cv::getTextSize(leftText, fontFace, SigfontScale, SigtextThickness, &baseline);
+    cv::Size textSizeR = cv::getTextSize(rightText, fontFace, SigfontScale, SigtextThickness, &baseline);
+
+    // Positions for L and R indicators
+    cv::Point leftPosition = basePosition + cv::Point(-textSizeL.width + 10, textSizeL.height + 15); // Adjust spacing as needed
+    cv::Point rightPosition = basePosition + cv::Point(textSizeR.width + 30, textSizeR.height + 15);
+
+    // Draw L and R indicators
+    cv::putText(image, leftText, leftPosition, fontFace, fontScale, isLeftActive ? activeColor : inactiveColor, textThickness);
+    cv::putText(image, rightText, rightPosition, fontFace, fontScale, isRightActive ? activeColor : inactiveColor, textThickness);
+}
+
+
+
   
   // Display Values
   int status_bar_height = 150;
