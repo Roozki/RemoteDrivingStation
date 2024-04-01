@@ -14,7 +14,9 @@ def generate_launch_description():
         executable='camera_node',
         #name='rear_feed_node',
         output='screen',
-        parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55'}],
+        parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT1-1:1.0-4c4a:4a55'}], #on g15 direct 
+        #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT2-2.3:1.0-4c4a:4a55'}], #on g15 hub 
+        #parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55'}],
         #parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS04-4:1.0-1bcf:2b8a'}], #webcam
         remappings=[
             ('/camera/image_raw', '/vehicle_1/rear_feed/image_raw'),  
@@ -26,7 +28,9 @@ def generate_launch_description():
         package='camera_ros',
         executable='camera_node',
         #name='main_feed_node',
-        #parameters=[{'camera': '\_SB_.PCIO.XHC_.RHUB.HS03-3:1.0-4c4a:4a55'}],
+       # parameters=[{'camera': '\_SB_.PCIO.XHC_.RHUB.HS03-3:1.0-4c4a:4a55'}],
+        parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT2-2.3:1.0-4c4a:4a55'}], #on g15
+
 	output='screen',
         remappings=[
             ('/camera/image_raw', '/vehicle_1/main_feed/image_raw'),  
