@@ -7,6 +7,9 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
+#\_SB_.PCI0.XHC_.RHUB.HS01-1.3:1.0-4c4a:4a55
+#\_SB_.PCI0.XHC_.RHUB.HS01-1.4:1.0-4c4a:4a55
+#\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55
 
 def generate_launch_description():
     rear_feed = Node(
@@ -17,8 +20,10 @@ def generate_launch_description():
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT1-1:1.0-4c4a:4a55'}], #on g15 direct 
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT2-2.3:1.0-4c4a:4a55'}], #on g15 hub 
         #parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55'}],
-        parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS03-3.4:1.0-4c4a:4a55'},
-		    {'format': 'MJPEG'}], #onboard hub
+        parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55'},
+		    {'format': 'MJPEG'},
+		    {'height': 480},
+		    {'width' : 720}], #onboard hub
 	#    parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS04-4:1.0-1bcf:2b8a'},
         #            {'format': 'MJPEG'}], #webcam
         remappings=[
@@ -31,7 +36,7 @@ def generate_launch_description():
         package='camera_ros',
         executable='camera_node',
         #name='main_feed_node',
-        parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS03-3.3:1.0-4c4a:4a55'},
+        parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS02-2.4:1.0-4c4a:4a55'},
                     {'format': 'MJPEG'}], #onboard hub
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT2-2.3:1.0-4c4a:4a55'}], #on g15
 	output='screen',
