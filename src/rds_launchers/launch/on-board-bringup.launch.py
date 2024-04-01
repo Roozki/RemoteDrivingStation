@@ -18,7 +18,8 @@ def generate_launch_description():
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT2-2.3:1.0-4c4a:4a55'}], #on g15 hub 
         #parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55'}],
         #parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS03-3.4:1.0-4c4a:4a55'}], #onboard hub
-	parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS04-4:1.0-1bcf:2b8a'}], #webcam
+	    parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS04-4:1.0-1bcf:2b8a'}
+                    {'format': 'MJPEG'}], #webcam
         remappings=[
             ('/camera/image_raw', '/vehicle_1/rear_feed/image_raw'),  
             ('/camera/image_raw/compressed', '/vehicle_1/rear_feed/image_raw/compressed'),
@@ -29,7 +30,8 @@ def generate_launch_description():
         package='camera_ros',
         executable='camera_node',
         #name='main_feed_node',
-        parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS03-3.3:1.0-4c4a:4a55'}], #onboard hub
+        parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS03-3.3:1.0-4c4a:4a55'},
+                    {'format': 'MJPEG'}], #onboard hub
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT2-2.3:1.0-4c4a:4a55'}], #on g15
 	output='screen',
         remappings=[
