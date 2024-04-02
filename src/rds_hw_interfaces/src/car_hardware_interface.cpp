@@ -56,19 +56,19 @@ void VehicleInterface::serialTx(){
    char tx_msg[TX_UART_BUFF]; 
 
   
-    curr_vehicle_cmd.gas_pedal = curr_vehicle_cmd.gas_pedal - curr_vehicle_cmd.brake_pedal;
+  //  curr_vehicle_cmd.gas_pedal = curr_vehicle_cmd.gas_pedal - curr_vehicle_cmd.brake_pedal;
 
-    if (curr_vehicle_cmd.gas_pedal < 0){
-         curr_vehicle_cmd.gas_pedal = 0;
-    }
-   if(curr_vehicle_cmd.gear == GEAR_REVERSE){
-    curr_vehicle_cmd.gas_pedal = -curr_vehicle_cmd.gas_pedal;
-   } else if(curr_vehicle_cmd.gear == GEAR_NEUTRAL || curr_vehicle_cmd.gear == GEAR_PARKING){
-    curr_vehicle_cmd.gas_pedal = 0.0;
-   }
-   if(!curr_vehicle_cmd.engine_running){
-    curr_vehicle_cmd.gas_pedal = 0.0;
-   }
+    // if (curr_vehicle_cmd.gas_pedal < 0){
+    //      curr_vehicle_cmd.gas_pedal = 0;
+    // }
+//    if(curr_vehicle_cmd.gear == GEAR_REVERSE){
+//     curr_vehicle_cmd.gas_pedal = -curr_vehicle_cmd.gas_pedal;
+//    } else if(curr_vehicle_cmd.gear == GEAR_NEUTRAL || curr_vehicle_cmd.gear == GEAR_PARKING){
+//     curr_vehicle_cmd.gas_pedal = 0.0;
+//    }
+//    if(!curr_vehicle_cmd.engine_running){
+//     curr_vehicle_cmd.gas_pedal = 0.0;
+//    }
 
    sprintf(tx_msg, "$C(%0.2f, %0.2f, %i, %i, %i, %i, %i)\n", curr_vehicle_cmd.steering_angle, curr_vehicle_cmd.gas_pedal, curr_vehicle_cmd.left_signal, curr_vehicle_cmd.right_signal, curr_vehicle_cmd.hazards, curr_vehicle_cmd.front_lights, curr_vehicle_cmd.rear_lights);
    esp32.write(tx_msg);
