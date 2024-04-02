@@ -54,7 +54,7 @@ void VehicleInterface::CommandCallback(const rds_msgs::msg::VehicleInterface::Sh
 
 void VehicleInterface::serialTx(){
    char tx_msg[TX_UART_BUFF]; 
-    float vel;
+    float vel = 0;
    if (curr_vehicle_cmd.gear >= GEAR_1){
     vel = curr_vehicle_cmd.gas_pedal - curr_vehicle_cmd.brake_pedal;
         if (vel < 0){
@@ -68,7 +68,7 @@ void VehicleInterface::serialTx(){
    if(curr_vehicle_cmd.engine_running == false){
     vel = 0.0;
    }
-   sprintf(tx_msg, "$C(%0.2f, %0.2f, %i, %i, %i, %i, %i)\n", curr_vehicle_cmd.steering_angle, vel, curr_vehicle_cmd.lights[0], curr_vehicle_cmd.lights[1], curr_vehicle_cmd.lights[2], curr_vehicle_cmd.lights[3], curr_vehicle_cmd.lights[4]);
+   sprintf(tx_msg, "$C(%0.2f, %0.2f, %i, %i, %i, %i, %i)\n", curr_vehicle_cmd.steering_angle, vel, curr_vehicle_cmd.left_signal, curr_vehicle_cmd.right_signal, curr_vehicle_cmd.hazards, curr_vehicle_cmd.front_lights, curr_vehicle_cmd.rear_lights);
    esp32.write(tx_msg);
    RCLCPP_ERROR(this->get_logger(), "Sent via serial: %s", tx_msg);
    esp32.flushOutput();

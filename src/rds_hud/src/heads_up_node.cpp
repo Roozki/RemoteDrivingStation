@@ -160,8 +160,8 @@ void HUDOverlayNode::drawHud(){
           //!           STATUS INDICATORS             //
           //! ----------------------------------------//
 
-          
-          drawHazardsSign(frame, cv::Point(1400, frame.rows - status_bar_height + 20), vehicle_1_current_command.hazards);
+          drawEngineOfflineSign(frame, cv::Point(mid_cols - 500, mid_rows - 50), vehicle_1_current_command.engine_running);
+          drawHazardsSign(frame, cv::Point(1550, frame.rows - status_bar_height + 20), vehicle_1_current_command.hazards);
           drawSignalStatus(frame, cv::Point(mid_cols, frame.rows - status_bar_height + 30), vehicle_1_current_command.left_signal, vehicle_1_current_command.right_signal);
 
 

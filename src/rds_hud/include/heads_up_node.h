@@ -119,7 +119,7 @@ public:
     cv::imshow("RDS_HUD", blackScreen);
     sendSoundCommand("bleep.wav");
     cv::waitKey(10);
-    playMP4();
+    //playMP4();
     // for (int i = 20; i < (blackScreen.cols / 4); i++)
     // {
       //   // cv::putText(frame, ".", cv::Point((frame.cols /2) - 500 + i*35, frame.rows /2), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(155, 155, 155), 8);
@@ -636,7 +636,38 @@ void drawTransparentLine(cv::Mat& image, cv::Point pt1, cv::Point pt2, cv::Scala
     mouseX = std::min(x, _W - 200); // Adjust 200 based on the text width
     mouseY = std::min(y, _H - 20);  // Adjust 20 based on the text height
   }
+void drawEngineOfflineSign(cv::Mat &image, const cv::Point &position, bool isRunning) {
+    // Define the rectangle dimensions and properties
+    if(!isRunning){
+    cv::Rect rect(position, cv::Size(800, 100)); // Adjust size as needed
+    int thickness = 5; // Thickness of the rectangle border
 
+    // Define colors
+    cv::Scalar rectColor(0, 0, 0); // White rectangle
+    cv::Scalar textColorOn(255, 255, 255); // Red border color
+    cv::Scalar borderColorOn(0, 0, 255); // Green text for "on" state
+
+    // Draw the rectangle with border
+    
+    cv::rectangle(image, rect, borderColorOn, thickness);
+    //cv::rectangle(image, rect, rectColor, cv::FILLED, cv::LINE_8, thickness);
+
+    // Set text properties
+    std::string text = "ENGINE OFFLINE";
+    int fontFace = cv::FONT_HERSHEY_SIMPLEX;
+    double fontScale = 3;
+    int textThickness = 2;
+    int baseline = 0;
+    cv::Size textSize = cv::getTextSize(text, fontFace, fontScale, textThickness, &baseline);
+
+    // Calculate text position to center it within the rectangle
+    cv::Point textOrg(rect.x + (rect.width - textSize.width) / 2,
+                      rect.y + (rect.height + textSize.height) / 2);
+
+    // Draw the text
+    cv::putText(image, text, textOrg, fontFace, fontScale, textColorOn, textThickness);
+    }
+}
 void drawHazardsSign(cv::Mat &image, const cv::Point &position, bool isActive) {
     // Define the rectangle dimensions and properties
     cv::Rect rect(position, cv::Size(180, 50)); // Adjust size as needed

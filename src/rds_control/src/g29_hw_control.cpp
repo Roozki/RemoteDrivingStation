@@ -224,18 +224,19 @@ private:
         }
 
         if(paddleR){
-        if(prev_paddleR != paddleR){
-            prev_paddleR = paddleR;
-            current_gear++;
-        }
-        }else if(paddleL){
-        if(prev_paddleL != paddleL){
-            prev_paddleL = paddleL;
-            current_gear--;
-        }
+            if(prev_paddleR != paddleR){
+                prev_paddleR = paddleR;
+                current_gear++;
+            }
+        }else if(paddleL && current_gear != GEAR_REVERSE){
+            if(prev_paddleL != paddleL){
+                prev_paddleL = paddleL;
+                current_gear--;
+            }
         }
         
-        if(current_gear != GEAR_PARKING)
+        
+        if(current_gear == GEAR_REVERSE)
             if(current_gear < GEAR_REVERSE){
                 current_gear = GEAR_REVERSE;
             }
@@ -293,7 +294,7 @@ private:
         //send_command(steering_angle, speed, acceleration, jerk, current_gear);
         //send_gear_command(gears[current_gear]);
     }
-      rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr g29_subscriber_;
+        rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr g29_subscriber_;
 };
 
 int main(int argc, char *argv[]) {
