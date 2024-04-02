@@ -56,7 +56,7 @@ void VehicleInterface::serialTx(){
    char tx_msg[TX_UART_BUFF]; 
 
   
-  //  curr_vehicle_cmd.gas_pedal = curr_vehicle_cmd.gas_pedal - curr_vehicle_cmd.brake_pedal;
+   curr_vehicle_cmd.gas_pedal = curr_vehicle_cmd.gas_pedal - curr_vehicle_cmd.brake_pedal;
 
     // if (curr_vehicle_cmd.gas_pedal < 0){
     //      curr_vehicle_cmd.gas_pedal = 0;
