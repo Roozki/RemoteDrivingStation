@@ -36,7 +36,7 @@ def generate_launch_description():
         package='camera_ros',
         executable='camera_node',
         #name='main_feed_node',
-        parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS02-2.4:1.0-4c4a:4a55'},
+        parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS02-2.1:1.0-4c4a:4a55'},
                     {'format': 'MJPEG'}], #onboard hub
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT2-2.3:1.0-4c4a:4a55'}], #on g15
 	output='screen',

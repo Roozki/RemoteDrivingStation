@@ -49,13 +49,24 @@ private:
     int current_gear = 0;
     int prev_paddleR = 0;
     int prev_paddleL = 0;
-    int prev_signalR = 0;
     //int prev_lights[]
+    //lights -- i found it easier to just fully split them up. should make a struct or smt 
+    int  front_lights = 0;
+    bool prev_front_lights = false;
+    bool curr_front_lights = false;
+
+    int brake_lights = 0;
+    bool prev_brake_lights = false;
+    bool curr_brake_lights = false;
+
+    int prev_signalL = 0;
     bool signalL = false;
     bool curr_signalL = false;
+
+    int prev_signalR = 0;
     bool signalR = false;
     bool curr_signalR = false;
-    int prev_signalL = 0;
+
     bool prev_hazards = 0;
     bool hazards = false;
     bool curr_hazards = false;
@@ -106,6 +117,7 @@ private:
             lights[2] = msg->buttons[2];
             lights[3] = msg->buttons[3];
             lights[4] = msg->buttons[2];
+            curr_
             curr_hazards = msg->buttons[3];
             curr_signalL = msg->buttons[1];
             curr_signalR = msg->buttons[2];
