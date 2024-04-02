@@ -280,6 +280,7 @@ private:
         vehicle_msg.steering_angle = steering_angle;
         vehicle_msg.gas_pedal = gas_pedal;
         vehicle_msg.brake_pedal = brake_pedal;
+        vehicle_msg.front_lights = front_lights;
         if(brake_pedal > 0.0){
             vehicle_msg.rear_lights = true;
         } else {
