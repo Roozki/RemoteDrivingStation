@@ -207,10 +207,16 @@ private:
                 hazards = !hazards;
             }
         }
+        if(curr_front_lights){
+            if(curr_front_lights != prev_front_lights){
+                front_lights = !front_lights;
+            }
+        }
 
         prev_hazards = curr_hazards;
         prev_signalL = curr_signalL;
         prev_signalR = curr_signalR;
+        prev_front_lights = curr_front_lights;
 
         if(signalR && !signalL){
             lights[0] = 1;
