@@ -7,7 +7,7 @@
 #include "sensor_msgs/msg/joy.hpp"
 #include "sensor_msgs/msg/joy_feedback_array.hpp"
 
-#define ps4 false
+#define g29 true 
 
 
 class ManualControlNode : public rclcpp::Node {
@@ -97,7 +97,7 @@ private:
         
         int paddleR = 0;
         int paddleL = 0;
-        if(false){
+        if(g29){
             paddleR = msg->buttons[4];
             paddleL = msg->buttons[5];
             lights[0] = msg->buttons[13];
@@ -105,6 +105,9 @@ private:
             lights[2] = msg->buttons[2];
             lights[3] = msg->buttons[3];
             lights[4] = msg->buttons[2];
+            curr_hazards = msg->buttons[3];
+            curr_signalL = msg->buttons[1];
+            curr_signalR = msg->buttons[2];
 
         } else { //use joy_linux not joy
         paddleR = msg->buttons[4];
@@ -207,12 +210,12 @@ private:
             current_gear = max_gear;
         }
 
-     if(false){
+     if(g29){ //16 900
         steering_angle = -msg->axes[0];
-        speed = 99.0 - (msg->axes[3] + 1)*100;
+        //speed = 99.0 - (msg->axes[3] + 1)*100;
         gas_pedal = (msg->axes[2] + 1.0)/2.0;//// - (msg->axes[3] + 1)*20;
         brake_pedal = (msg->axes[3] + 1.0)/2.0;
-        clutch_pedal = (msg->axes[4] + 1.0)/2.0;
+        clutch_pedal = (msg->axes[1] + 1.0)/2.0;
        //// jerk = (msg->axes[2] + 1)*20 - (msg->axes[3] + 1)*20;
 
     }else{

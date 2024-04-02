@@ -119,7 +119,7 @@ public:
     cv::imshow("RDS_HUD", blackScreen);
     sendSoundCommand("bleep.wav");
     cv::waitKey(10);
-    playMP4();
+    //playMP4();
     // for (int i = 20; i < (blackScreen.cols / 4); i++)
     // {
       //   // cv::putText(frame, ".", cv::Point((frame.cols /2) - 500 + i*35, frame.rows /2), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(155, 155, 155), 8);

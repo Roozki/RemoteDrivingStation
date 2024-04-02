@@ -14,7 +14,7 @@ void HUDOverlayNode::drawHud(){
         if (hud.initiated)
         {
           latency_refresh_count++;
-          if (latency_refresh_count > 30)
+          if (latency_refresh_count > 90)
           {
             latency_refresh_count = 0;
             networkCheck();
