@@ -20,7 +20,7 @@ public:
         // timer_ = this->create_wall_timer(
         // std::chrono::duration<double>(period),std::bind(&ManualControlNode::test_send, this));
         g29_subscriber_ = this->create_subscription<sensor_msgs::msg::Joy>(
-            "/joy", 10, std::bind(&ManualControlNode::joy_callback, this, std::placeholders::_1));
+            "/joy", 3, std::bind(&ManualControlNode::joy_callback, this, std::placeholders::_1));
     }
 
     void send_command(float steering_angle, float speed, float acceleration, float jerk, int gear) {

@@ -4,7 +4,7 @@ VehicleInterface::VehicleInterface() : Node("VehicleInterfaceNode"){
     auto qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local();
     feedback_publisher = this->create_publisher<rds_msgs::msg::VehicleStatus>("/vehicle_1/status", qos);
         command_subscriber = this->create_subscription<rds_msgs::msg::VehicleInterface>(
-            "/vehicle_1/command", 10, std::bind(&VehicleInterface::CommandCallback, this, std::placeholders::_1));
+            "/vehicle_1/command", 1, std::bind(&VehicleInterface::CommandCallback, this, std::placeholders::_1));
 
 //TODO add net ping
         if(!SIMULATE){
