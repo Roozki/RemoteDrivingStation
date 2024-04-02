@@ -55,13 +55,13 @@ void VehicleInterface::CommandCallback(const rds_msgs::msg::VehicleInterface::Sh
 void VehicleInterface::serialTx(){
    char tx_msg[TX_UART_BUFF]; 
 
-   if (curr_vehicle_cmd.gear == GEAR_1){
+  
     curr_vehicle_cmd.gas_pedal = curr_vehicle_cmd.gas_pedal - curr_vehicle_cmd.brake_pedal;
 
-        if (curr_vehicle_cmd.gas_pedal < 0){
-            curr_vehicle_cmd.gas_pedal = 0;
-        }
-   } else if(curr_vehicle_cmd.gear == GEAR_REVERSE){
+    if (curr_vehicle_cmd.gas_pedal < 0){
+         curr_vehicle_cmd.gas_pedal = 0;
+    }
+   if(curr_vehicle_cmd.gear == GEAR_REVERSE){
     curr_vehicle_cmd.gas_pedal = -curr_vehicle_cmd.gas_pedal;
    } else if(curr_vehicle_cmd.gear == GEAR_NEUTRAL || curr_vehicle_cmd.gear == GEAR_PARKING){
     curr_vehicle_cmd.gas_pedal = 0.0;
