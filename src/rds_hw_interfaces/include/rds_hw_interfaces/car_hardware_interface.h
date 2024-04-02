@@ -9,7 +9,7 @@
 #define NUM_LIGHTS 5
 #define TX_UART_BUFF 128
 #define RX_UART_BUFF 128
-#define SIMULATE true
+#define SIMULATE false
 
 //!serial stuff
 #define COMM_POLL_RATE 20
