@@ -55,7 +55,8 @@ def generate_launch_description():
     )
     hardware_interface = Node(
         package='rds_hw_interfaces',
-        executable=''
+        executable='vehicle_interface_node',
+        output='screen',
     )
     gps_wgs84_initilizer = Node(
         package='swri_transform_util',
@@ -67,6 +68,7 @@ def generate_launch_description():
     return LaunchDescription([
         main_feed,
         gnss_serial_driver,
+        hardware_interface,
         gps_wgs84_initilizer,
         rear_feed
     ])
