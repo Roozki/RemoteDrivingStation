@@ -42,7 +42,7 @@ void VehicleInterface::CommandCallback(const rds_msgs::msg::VehicleInterface::Sh
     for(int i = 0; i < NUM_LIGHTS; i++){
         curr_vehicle_cmd.lights[i] = msg->lights[i];
     }
-
+    serialTx();
 }
 
 

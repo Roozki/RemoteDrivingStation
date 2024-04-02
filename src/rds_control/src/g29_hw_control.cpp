@@ -50,6 +50,7 @@ private:
     int prev_paddleR = 0;
     int prev_paddleL = 0;
     int prev_signalR = 0;
+    //int prev_lights[]
     bool signalL = false;
     bool curr_signalL = false;
     bool signalR = false;

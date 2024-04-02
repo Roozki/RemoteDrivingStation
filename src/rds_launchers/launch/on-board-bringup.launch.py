@@ -53,6 +53,10 @@ def generate_launch_description():
         parameters=[{'port': '/dev/serial/by-id/usb-u-blox_AG_-_www.u-blox.com_u-blox_7_-_GPS_GNSS_Receiver-if00'}, {'frame_id': 'gps'}],
 
     )
+    hardware_interface = Node(
+        package='rds_hw_interfaces',
+        executable=''
+    )
     gps_wgs84_initilizer = Node(
         package='swri_transform_util',
         executable='initialize_origin.py',
