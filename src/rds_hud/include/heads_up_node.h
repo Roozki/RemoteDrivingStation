@@ -188,7 +188,7 @@ public:
     cv::putText(blackScreen, "control: ", cv::Point(200, 1000), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(235, 235, 235), 3);
     cv::imshow("RDS_HUD", blackScreen);
     cv::waitKey(100);
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 10; i++)
     {
       
       cv::rectangle(blackScreen, cv::Point(600, 650), cv::Point(1079, 1450), cv::Scalar(0, 0, 0), -1);
@@ -226,7 +226,7 @@ public:
     cv::putText(blackScreen, network_status_msg, cv::Point(500, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
     cv::imshow("RDS_HUD", blackScreen);
     cv::waitKey(10);
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 10; i++)
     {
       
       cv::rectangle(blackScreen, cv::Point(600, 750), cv::Point(1080, 1450), cv::Scalar(0, 0, 0), -1);

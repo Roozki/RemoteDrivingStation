@@ -112,15 +112,15 @@ private:
         if(g29){
             paddleR = msg->buttons[4];
             paddleL = msg->buttons[5];
-            lights[0] = msg->buttons[13];
-            lights[1] = msg->buttons[15];
-            lights[2] = msg->buttons[2];
-            lights[3] = msg->buttons[3];
-            lights[4] = msg->buttons[2];
-            curr_
+            // lights[0] = msg->buttons[13];
+            // lights[1] = msg->buttons[15];
+            // lights[2] = msg->buttons[2];
+            // lights[3] = msg->buttons[3];
+            // lights[4] = msg->buttons[2];
+            curr_front_lights = msg->buttons[1]; 
             curr_hazards = msg->buttons[3];
-            curr_signalL = msg->buttons[1];
-            curr_signalR = msg->buttons[2];
+            curr_signalL = msg->buttons[11]; //1
+            curr_signalR = msg->buttons[10]; //2
 
         } else { //use joy_linux not joy
         paddleR = msg->buttons[4];
@@ -130,6 +130,7 @@ private:
             lights[2] = msg->buttons[2];
             lights[3] = msg->buttons[8];
             lights[4] = msg->buttons[7];
+
             curr_hazards = msg->buttons[8];
             curr_signalL = msg->buttons[3];
             curr_signalR = msg->buttons[1];
@@ -216,7 +217,7 @@ private:
             current_gear = -2;
         }
         int max_gear = 5;
-        if(vehicle.manual){
+        if(!vehicle.manual){
             max_gear = 1;
         }
         if(current_gear > max_gear){
@@ -260,6 +261,12 @@ private:
         vehicle_msg.steering_angle = steering_angle;
         vehicle_msg.gas_pedal = gas_pedal;
         vehicle_msg.brake_pedal = brake_pedal;
+        if(brake_pedal > 0.0){
+            vehicle_msg.rear_lights = true;
+        } else {
+            vehicle_msg.rear_lights = false;
+        }
+
         vehicle_msg.clutch = clutch_pedal;
         vehicle_msg.gear = current_gear;
         vehicle_msg.hazards = hazards;

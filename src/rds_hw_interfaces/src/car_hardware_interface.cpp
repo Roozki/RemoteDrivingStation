@@ -38,17 +38,34 @@ void VehicleInterface::CommandCallback(const rds_msgs::msg::VehicleInterface::Sh
     curr_vehicle_cmd.steering_angle = msg->steering_angle;
     curr_vehicle_cmd.gas_pedal = msg->gas_pedal;
     curr_vehicle_cmd.brake_pedal = msg->brake_pedal;
+    curr_vehicle_cmd.gear = msg->gear;
     curr_vehicle_cmd.lights.resize(NUM_LIGHTS);
-    for(int i = 0; i < NUM_LIGHTS; i++){
-        curr_vehicle_cmd.lights[i] = msg->lights[i];
-    }
+    curr_vehicle_cmd.left_signal = msg->left_signal;
+    curr_vehicle_cmd.right_signal = msg->right_signal;
+    curr_vehicle_cmd.hazards = msg->hazards;
+    curr_vehicle_cmd.front_lights = msg->front_lights;
+    curr_vehicle_cmd.rear_lights = msg->rear_lights;
+    // for(int i = 0; i < NUM_LIGHTS; i++){
+    //     curr_vehicle_cmd.lights[i] = msg->lights[i];
+    // }
     serialTx();
 }
 
 
 void VehicleInterface::serialTx(){
    char tx_msg[TX_UART_BUFF]; 
-   sprintf(tx_msg, "$C(%0.2f, %0.2f, %i, %i, %i, %i, %i)\n", curr_vehicle_cmd.steering_angle, curr_vehicle_cmd.gas_pedal - curr_vehicle_cmd.brake_pedal, curr_vehicle_cmd.lights[0], curr_vehicle_cmd.lights[1], curr_vehicle_cmd.lights[2], curr_vehicle_cmd.lights[3], curr_vehicle_cmd.lights[4]);
+    float vel;
+   if (curr_vehicle_cmd.gear >= GEAR_1){
+    vel = curr_vehicle_cmd.gas_pedal - curr_vehicle_cmd.brake_pedal;
+        if (vel < 0){
+            vel = 0;
+        }
+   } else if(curr_vehicle_cmd.gear == GEAR_REVERSE){
+    vel = -curr_vehicle_cmd.gas_pedal;
+   } else if(curr_vehicle_cmd.gear == GEAR_NEUTRAL || curr_vehicle_cmd.gear == GEAR_PARKING){
+    vel = 0.0;
+   }
+   sprintf(tx_msg, "$C(%0.2f, %0.2f, %i, %i, %i, %i, %i)\n", curr_vehicle_cmd.steering_angle, vel, curr_vehicle_cmd.lights[0], curr_vehicle_cmd.lights[1], curr_vehicle_cmd.lights[2], curr_vehicle_cmd.lights[3], curr_vehicle_cmd.lights[4]);
    esp32.write(tx_msg);
    RCLCPP_ERROR(this->get_logger(), "Sent via serial: %s", tx_msg);
    esp32.flushOutput();
