@@ -112,45 +112,48 @@ void HUDOverlayNode::drawHud(){
           std::ostringstream oss;
           oss << std::fixed << std::setprecision(0) << vehicle_1_current_command.gas_pedal; // Set precision to 0 decimal places
           std::string gas_pedal_string = oss.str();
-          oss.clear();
-          oss << std::fixed << std::setprecision(0) << (vehicle_1_current_status.velocity *(36/10)); // Set precision to 0 decimal places
-          std::string velocity_string = oss.str();
+          
+          std::ostringstream Voss;
+
+          Voss << std::fixed << std::setprecision(0) << (vehicle_1_current_status.velocity *(36/10)); // Set precision to 0 decimal places
+          std::string velocity_string = Voss.str();
 
           cv::rectangle(overlay, cv::Point(0, 0), cv::Point(frame.cols, frame.rows - status_bar_height), cv::Scalar(0, 0, 0), -1);
           cv::addWeighted(overlay, 0.4, roi, 1 - 0.4, 0, roi);
-          switch (vehicle_1_current_command.gear)
-          {
-          case GEAR_REVERSE:
-            current_gear = "R"; // reverse
-            gear_colour = cv::Scalar(10, 10, 200);
-            break;
-          case GEAR_PARK:
-            current_gear = "P"; // Park
-            gear_colour = cv::Scalar(10, 200, 200);
-            break;
-          case GEAR_NEUTRAL:
-            current_gear = "N";
-            gear_colour = cv::Scalar(200, 200, 200);
+          // switch (vehicle_1_current_command.gear)
+          // {
+          // case GEAR_REVERSE:
+          //   current_gear = "R"; // reverse
+          //   gear_colour = cv::Scalar(10, 10, 200);
+          //   break;
+          // case GEAR_PARK:
+          //   current_gear = "P"; // Park
+          //   gear_colour = cv::Scalar(10, 200, 200);
+          //   break;
+          // case GEAR_NEUTRAL:
+          //   current_gear = "N";
+          //   gear_colour = cv::Scalar(200, 200, 200);
 
-            break;
-          case GEAR_DRIVE:
-            if (vehicle_1_current_command.manual)
-            { // TODO SWiTCH TO STATUS
-              current_gear = "1";
-            }
-            else
-            {
-              current_gear = "D";
-              gear_colour = cv::Scalar(20, 200, 20);
-            }
-            break;
-          case NET_ERR: // could just change to converting gear number to
-            current_gear = "NET ERR";
-            break;
-          default:
-            current_gear = std::to_string(vehicle_1_current_command.gear);
-            break;
-          }
+          //   break;
+          // case GEAR_DRIVE:
+          //   if (vehicle_1_current_command.manual)
+          //   { // TODO SWiTCH TO STATUS
+          //     current_gear = "1";
+          //   }
+          //   else
+          //   {
+          //     current_gear = "D";
+          //     gear_colour = cv::Scalar(20, 200, 20);
+          //   }
+          //   break;
+          // case NET_ERR: // could just change to converting gear number to
+          //   current_gear = "NET ERR";
+          //   break;
+          // default:
+          //   current_gear = std::to_string(vehicle_1_current_command.gear);
+          //   break;
+          // }
+
           // TODO add hazards
 
           //! ----------------------------------------//
@@ -159,7 +162,7 @@ void HUDOverlayNode::drawHud(){
 
           
           drawHazardsSign(frame, cv::Point(1400, frame.rows - status_bar_height + 20), vehicle_1_current_command.hazards);
-          drawSignalStatus(frame, cv::Point(400, frame.rows - status_bar_height + 30), vehicle_1_current_command.left_signal, vehicle_1_current_command.right_signal);
+          drawSignalStatus(frame, cv::Point(mid_cols, frame.rows - status_bar_height + 30), vehicle_1_current_command.left_signal, vehicle_1_current_command.right_signal);
 
 
           //! ----------------------------------------//
@@ -220,10 +223,83 @@ void HUDOverlayNode::drawHud(){
           //! ----------------------------------------//
           //!                 GEARS                   //
           //! ----------------------------------------//
+                    //! gears rework
+            cv::Scalar active_gear_colour;
+            int inactive_thickness = 3;
+            int active_thickness = 8;
+            int inactive_font_size = 2;
+            int active_font_size = 4;
+            int P_x = 10;
+            int R_x = 100;
+            int N_x = 190;
+            int D_x = 280;
+            int gear_y = frame.rows - status_bar_height / 7;
+          switch (vehicle_1_current_command.gear)
+          {
+          case GEAR_REVERSE:
+            current_gear = "R"; // reverse
+            active_gear_colour = cv::Scalar(10, 10, 200);
+            gear_colour = cv::Scalar(100, 100, 100);
+          cv::putText(frame, "P", cv::Point(P_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, inactive_font_size, gear_colour, inactive_thickness);
+          cv::putText(frame, "N", cv::Point(N_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, inactive_font_size, gear_colour, inactive_thickness);
+          cv::putText(frame, "D", cv::Point(D_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, inactive_font_size, gear_colour, inactive_thickness);
+          cv::putText(frame, "R", cv::Point(R_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, active_font_size, active_gear_colour, active_thickness);
+
+            break;
+          case GEAR_PARK:
+            current_gear = "P"; // Park
+            active_gear_colour = cv::Scalar(10, 200, 200);
+            gear_colour = cv::Scalar(100, 100, 100);
+          cv::putText(frame, "R", cv::Point(R_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, inactive_font_size,  gear_colour, inactive_thickness);
+          cv::putText(frame, "N", cv::Point(N_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, inactive_font_size, gear_colour, inactive_thickness);
+          cv::putText(frame, "D", cv::Point(D_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, inactive_font_size, gear_colour, inactive_thickness);
+          cv::putText(frame, "P", cv::Point(P_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, active_font_size, active_gear_colour, active_thickness);
+
+            break;
+          case GEAR_NEUTRAL:
+            current_gear = "N";
+            active_gear_colour = cv::Scalar(200, 200, 200);
+        gear_colour = cv::Scalar(100, 100, 100);
+          cv::putText(frame, "P", cv::Point(P_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, inactive_font_size, gear_colour, inactive_thickness);
+          cv::putText(frame, "R", cv::Point(R_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, inactive_font_size,  gear_colour, inactive_thickness);
+          cv::putText(frame, "D", cv::Point(D_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, inactive_font_size, gear_colour, inactive_thickness);
+          cv::putText(frame, "N", cv::Point(N_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, active_font_size, active_gear_colour, active_thickness);
+
+            break;
+          case GEAR_DRIVE:
+            if (vehicle_1_current_command.manual)
+            { // TODO SWiTCH TO STATUS
+              current_gear = "1";
+            }
+            else
+            {
+              current_gear = "D";
+              active_gear_colour = cv::Scalar(20, 200, 20);
+                      gear_colour = cv::Scalar(100, 100, 100);
+          cv::putText(frame, "P", cv::Point(P_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, inactive_font_size, gear_colour, inactive_thickness);
+          cv::putText(frame, "R", cv::Point(R_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, inactive_font_size,  gear_colour, inactive_thickness);
+          cv::putText(frame, "N", cv::Point(N_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, inactive_font_size, gear_colour, inactive_thickness);
+          cv::putText(frame, "D", cv::Point(D_x, gear_y), cv::FONT_HERSHEY_SIMPLEX, active_font_size, active_gear_colour, active_thickness);
+
+            }
+            break;
+          case NET_ERR: // could just change to converting gear number to
+            current_gear = "NET ERR";
+            break;
+          default:
+            current_gear = std::to_string(vehicle_1_current_command.gear);
+            break;
+          }
+          // gear_colour = cv::Scalar(100, 100, 100);
+          // cv::putText(frame, "P", cv::Point(10, frame.rows - status_bar_height / 10), cv::FONT_HERSHEY_SIMPLEX, 3, gear_colour, 3);
+          // cv::putText(frame, "R", cv::Point(60, frame.rows - status_bar_height / 10), cv::FONT_HERSHEY_SIMPLEX, 3, gear_colour, 3);
+          // cv::putText(frame, "N", cv::Point(110, frame.rows - status_bar_height / 10), cv::FONT_HERSHEY_SIMPLEX, 3, gear_colour, 3);
+          // cv::putText(frame, "D", cv::Point(160, frame.rows - status_bar_height / 10), cv::FONT_HERSHEY_SIMPLEX, 3, gear_colour, 3);
+
           // cv::putText(frame, "GEAR", cv::Point(10, frame.rows - status_bar_height/2), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255,255,255), 3);
 
 
-          cv::putText(frame, current_gear, cv::Point(190, frame.rows - status_bar_height / 10), cv::FONT_HERSHEY_SIMPLEX, 5, gear_colour, 3);
+          //cv::putText(frame, current_gear, cv::Point(190, frame.rows - status_bar_height / 10), cv::FONT_HERSHEY_SIMPLEX, 5, gear_colour, 3);
           cv::line(frame, cv::Point(0, frame.rows - status_bar_height), cv::Point(frame.cols, frame.rows - status_bar_height), CV_RGB(0, 0, 0), 4);
         
           //! ----------------------------------------//

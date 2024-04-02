@@ -3,6 +3,7 @@ float64 gas_pedal       #  0 to 1, unless in reverse
 float64 brake_pedal     #  
 float64 clutch
 int16 gear
+bool engine_running
 #gears
 #reverse -> -1
 #park -> 0

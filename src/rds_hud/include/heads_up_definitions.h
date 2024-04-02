@@ -1,5 +1,5 @@
-#define GEAR_REVERSE -2
-#define GEAR_PARK -1
+#define GEAR_REVERSE -1
+#define GEAR_PARK -2
 #define GEAR_NEUTRAL 0
 #define GEAR_DRIVE 1
 #define NET_ERR -15

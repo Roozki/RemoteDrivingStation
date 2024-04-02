@@ -43,6 +43,7 @@ public:
 private:
     struct Vehicle{
         bool manual = false;
+        bool engine_running = false;
     };
     Vehicle vehicle;
     int gears[4] = {GEAR_REVERSE, GEAR_PARKING, GEAR_NEUTRAL, GEAR_1};
@@ -109,6 +110,8 @@ private:
         
         int paddleR = 0;
         int paddleL = 0;
+        bool park_button = false;
+        bool engine_pwr_button = false;
         if(g29){
             paddleR = msg->buttons[4];
             paddleL = msg->buttons[5];
@@ -121,6 +124,8 @@ private:
             curr_hazards = msg->buttons[3];
             curr_signalL = msg->buttons[11]; //1
             curr_signalR = msg->buttons[10]; //2
+            engine_pwr_button = msg->buttons[23];
+            park_button = msg->buttons[24];
 
         } else { //use joy_linux not joy
         paddleR = msg->buttons[4];
@@ -143,7 +148,7 @@ private:
         if(paddleR == 0){
             prev_paddleR = 0;
         }
-
+        
        // if()
       
         // if(prev_signalL != lights[0]){
@@ -165,6 +170,23 @@ private:
         //     lights[0] = 0;
         //     RCLCPP_ERROR(this->get_logger(), "test");
         // }}
+            if(g29){ //16 900
+        steering_angle = -msg->axes[0];
+        //speed = 99.0 - (msg->axes[3] + 1)*100;
+        gas_pedal = (msg->axes[2] + 1.0)/2.0;//// - (msg->axes[3] + 1)*20;
+        brake_pedal = (msg->axes[3] + 1.0)/2.0;
+        clutch_pedal = (msg->axes[1] + 1.0)/2.0;
+       //// jerk = (msg->axes[2] + 1)*20 - (msg->axes[3] + 1)*20;
+
+    }else{
+        steering_angle = msg->axes[0];
+     //   speed = 99.0 - (msg->axes[4] + 1)*100;
+        gas_pedal = (-msg->axes[5] + 1.0)/2.0;//// - (msg->axes[5] + 1)*20;
+        brake_pedal = (-msg->axes[2] + 1.0)/2.0;
+
+        ////jerk = (msg->axes[2] + 1)*20 - (msg->axes[3] + 1)*20;
+
+    }
         //! ----------------------------------------//
         //!                 LIGHTS                  //
         //! ----------------------------------------//
@@ -213,9 +235,10 @@ private:
         }
         }
         
-        if(current_gear < -2){
-            current_gear = -2;
-        }
+        if(current_gear != GEAR_PARKING)
+            if(current_gear < GEAR_REVERSE){
+                current_gear = GEAR_REVERSE;
+            }
         int max_gear = 5;
         if(!vehicle.manual){
             max_gear = 1;
@@ -223,24 +246,19 @@ private:
         if(current_gear > max_gear){
             current_gear = max_gear;
         }
+        if(!vehicle.engine_running){
+            current_gear = GEAR_PARKING;
+            if(brake_pedal > 0.5 && engine_pwr_button){
+                vehicle.engine_running = true;
+                current_gear = GEAR_PARKING;
+            }
+        }
+        if(park_button){
+            current_gear = GEAR_PARKING;
+        }
 
-     if(g29){ //16 900
-        steering_angle = -msg->axes[0];
-        //speed = 99.0 - (msg->axes[3] + 1)*100;
-        gas_pedal = (msg->axes[2] + 1.0)/2.0;//// - (msg->axes[3] + 1)*20;
-        brake_pedal = (msg->axes[3] + 1.0)/2.0;
-        clutch_pedal = (msg->axes[1] + 1.0)/2.0;
-       //// jerk = (msg->axes[2] + 1)*20 - (msg->axes[3] + 1)*20;
 
-    }else{
-        steering_angle = msg->axes[0];
-     //   speed = 99.0 - (msg->axes[4] + 1)*100;
-        gas_pedal = (-msg->axes[5] + 1.0)/2.0;//// - (msg->axes[5] + 1)*20;
-        brake_pedal = (-msg->axes[2] + 1.0)/2.0;
-
-        ////jerk = (msg->axes[2] + 1)*20 - (msg->axes[3] + 1)*20;
-
-    }
+ 
         if (gas_pedal < 0){
             gas_pedal = 0;
         }
@@ -266,7 +284,7 @@ private:
         } else {
             vehicle_msg.rear_lights = false;
         }
-
+        vehicle_msg.engine_running = vehicle.engine_running;
         vehicle_msg.clutch = clutch_pedal;
         vehicle_msg.gear = current_gear;
         vehicle_msg.hazards = hazards;

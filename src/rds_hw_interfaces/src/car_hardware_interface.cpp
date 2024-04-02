@@ -65,6 +65,9 @@ void VehicleInterface::serialTx(){
    } else if(curr_vehicle_cmd.gear == GEAR_NEUTRAL || curr_vehicle_cmd.gear == GEAR_PARKING){
     vel = 0.0;
    }
+   if(curr_vehicle_cmd.engine_running == false){
+    vel = 0.0;
+   }
    sprintf(tx_msg, "$C(%0.2f, %0.2f, %i, %i, %i, %i, %i)\n", curr_vehicle_cmd.steering_angle, vel, curr_vehicle_cmd.lights[0], curr_vehicle_cmd.lights[1], curr_vehicle_cmd.lights[2], curr_vehicle_cmd.lights[3], curr_vehicle_cmd.lights[4]);
    esp32.write(tx_msg);
    RCLCPP_ERROR(this->get_logger(), "Sent via serial: %s", tx_msg);
