@@ -32,6 +32,7 @@ def generate_launch_description():
             # Add more remappings here if needed
         ],
     )
+    #\_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-4c4a:4a55
     main_feed = Node(
         package='camera_ros',
         executable='camera_node',
