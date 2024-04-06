@@ -11,6 +11,8 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 #\_SB_.PCI0.XHC_.RHUB.HS01-1.4:1.0-4c4a:4a55
 #\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55
 
+#rover cam in yellow F:  \_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-05a3:9230
+
 def generate_launch_description():
     rear_feed = Node(
         package='camera_ros',
@@ -37,7 +39,7 @@ def generate_launch_description():
         package='camera_ros',
         executable='camera_node',
         #name='main_feed_node',
-        parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-4c4a:4a55'},
+        parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-05a3:9230'},
                     {'format': 'MJPEG'}], #onboard hub
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT2-2.3:1.0-4c4a:4a55'}], #on g15
 	output='screen',
