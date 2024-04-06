@@ -19,7 +19,7 @@ def generate_launch_description():
         reliability=ReliabilityPolicy.BEST_EFFORT,
         history=HistoryPolicy.KEEP_LAST,
         depth=1,
-        deadline=33_333_333,  # 30 FPS, expressed in nanoseconds (1/30s)
+        deadline=33_333_333  # 30 FPS, expressed in nanoseconds (1/30s)
     )
 
     rear_feed = Node(
