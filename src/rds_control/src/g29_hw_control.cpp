@@ -44,6 +44,8 @@ private:
     struct Vehicle{
         bool manual = false;
         bool engine_running = false;
+        float engine_rpm = 0;
+        int curr_gear = -2;
     };
     Vehicle vehicle;
     int gears[4] = {GEAR_REVERSE, GEAR_PARKING, GEAR_NEUTRAL, GEAR_1};
@@ -281,6 +283,7 @@ private:
         }
      //   
        // vehicle_msg.lights = lights;
+        
         vehicle_msg.left_signal = signalL;
         vehicle_msg.right_signal = signalR;
         vehicle_msg.steering_angle = steering_angle;

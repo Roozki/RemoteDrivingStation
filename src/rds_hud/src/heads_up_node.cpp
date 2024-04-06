@@ -4,8 +4,13 @@
 
 void HUDOverlayNode::drawHud(){
         std::unique_lock<std::mutex> lock(image_mutex_);
+        if(hud.ready){ //indicates if frames have been sent or not
+          frame = cv_bridge::toCvCopy(last_frame_, "bgr8")->image;
 
-        frame = cv_bridge::toCvCopy(last_frame_, "bgr8")->image;
+        }else{
+        frame = cv::Mat(1080, 1920, CV_8UC3, cv::Scalar(100, 100, 100));
+        cv::putText(frame, "MAIN CAM OFFLINE", cv::Point(700, frame.rows/2), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(0,0,0), 3);
+        }
         int mid_cols = frame.cols / 2;
         int mid_rows = frame.rows / 2;
 
@@ -13,6 +18,7 @@ void HUDOverlayNode::drawHud(){
 
         if (hud.initiated)
         {
+          
           latency_refresh_count++;
           if (latency_refresh_count > 90)
           {
@@ -160,7 +166,7 @@ void HUDOverlayNode::drawHud(){
           //!           STATUS INDICATORS             //
           //! ----------------------------------------//
 
-          drawEngineOfflineSign(frame, cv::Point(mid_cols - 500, mid_rows - 50), vehicle_1_current_command.engine_running);
+          drawEngineOfflineSign(frame, cv::Point(mid_cols - 400, mid_rows + 100), vehicle_1_current_command.engine_running);
           drawHazardsSign(frame, cv::Point(1550, frame.rows - status_bar_height + 20), vehicle_1_current_command.hazards);
           drawSignalStatus(frame, cv::Point(mid_cols, frame.rows - status_bar_height + 30), vehicle_1_current_command.left_signal, vehicle_1_current_command.right_signal);
 
@@ -444,6 +450,8 @@ int main(int argc, char** argv) {
     node->drawHud();
 
     }else{
+    node->drawHud();
+
       RCLCPP_ERROR(node->get_logger(), "empty frame");
 
     }

@@ -407,7 +407,9 @@ std::string mp4_path = package_share_directory + "/videos/";
     // quadratic breazear... chatgpt
     //also draws accell
     const int numDriveLinePoints = 100;
-    std::vector<cv::Point> driveLinePoints;
+    std::vector<cv::Point> driveLinePointsL;
+    std::vector<cv::Point> driveLinePointsR;
+
     double rpm_line_percent = (vehicle_1_current_command.gas_pedal * static_cast<double>(numDriveLinePoints));
 
     for (int i = 0; i <= numDriveLinePoints; i++)
@@ -417,23 +419,40 @@ std::string mp4_path = package_share_directory + "/videos/";
       double b = 2.0 * t * (1.0 - t);
       double c = pow(t, 2.0);
 
+      //  double t = i / (1.0 * static_cast<double>(numDriveLinePoints));
+      // double a = pow((1.0 - t), 2.0);
+      // double b = 2.0 * t * (1.0 - t);
+      // double c = pow(t, 2.0);
 
 
-      cv::Point pt;
-      pt.x = static_cast<int>(a * start.x + b * control.x + c * end.x);
-      pt.y = static_cast<int>(a * start.y + b * control.y + c * end.y);
-      driveLinePoints.push_back(pt);
+      cv::Point ptL;
+      cv::Point ptR;
+      ptL.x = static_cast<int>(a * (start.x - 300) + b * (control.x - 250) + c * (end.x - 200));
+      ptR.x = static_cast<int>(a * (start.x + 300) + b * (control.x + 250) + c * (end.x + 200));
+
+      ptL.y = static_cast<int>(a * start.y + b * control.y + c * end.y);
+      ptR.y = ptL.y;
+
+      driveLinePointsL.push_back(ptL);
+      driveLinePointsR.push_back(ptR);
+
+
     }
 
-    for (size_t i = 1; i < driveLinePoints.size(); i++)
+    for (size_t i = 1; i < driveLinePointsL.size(); i++)
     {
       //drawTransparentLine(frame, driveLinePoints[i - 1], driveLinePoints[i], steering_colour, steering_thickness, 0.4);
 
-      cv::line(img, driveLinePoints[i - 1], driveLinePoints[i], steering_colour, steering_thickness);
+      cv::line(img, driveLinePointsL[i - 1], driveLinePointsL[i], steering_colour, steering_thickness);
+      cv::line(img, driveLinePointsR[i - 1], driveLinePointsR[i], steering_colour, steering_thickness);
+
       if(i <= rpm_line_percent){
       //drawTransparentLine(frame, driveLinePoints[i - 1], driveLinePoints[i], rpm_colour, rpm_thickness, 0.2);
   
-      cv::line(img, driveLinePoints[i - 1], driveLinePoints[i], rpm_colour, rpm_thickness);
+    //RPM line, like gas pedal
+      cv::line(img, driveLinePointsL[i - 1], driveLinePointsL[i], rpm_colour, rpm_thickness);
+      cv::line(img, driveLinePointsR[i - 1], driveLinePointsR[i], rpm_colour, rpm_thickness);
+
       }
 
     }

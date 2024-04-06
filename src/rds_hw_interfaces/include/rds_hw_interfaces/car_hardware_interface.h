@@ -10,6 +10,7 @@
 #define TX_UART_BUFF 128
 #define RX_UART_BUFF 128
 #define SIMULATE false
+#define PRO_MODE false //give more control to the user. gas goes forward, brake is reverse. No gear change needed to go reverse.... idk
 
 #define GEAR_REVERSE -1
 #define GEAR_PARKING -2

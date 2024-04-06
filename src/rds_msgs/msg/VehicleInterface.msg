@@ -2,6 +2,7 @@ float64 steering_angle  # -1 to 1
 float64 gas_pedal       #  0 to 1, unless in reverse
 float64 brake_pedal     #  
 float64 clutch
+float64 rpm
 int16 gear
 bool engine_running
 #gears

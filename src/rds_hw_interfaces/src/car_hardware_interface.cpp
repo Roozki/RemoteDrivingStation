@@ -54,9 +54,33 @@ void VehicleInterface::CommandCallback(const rds_msgs::msg::VehicleInterface::Sh
 
 void VehicleInterface::serialTx(){
    char tx_msg[TX_UART_BUFF]; 
+_Float64 out_velocity;
+  switch (curr_vehicle_cmd.gear){
 
-  
-   curr_vehicle_cmd.gas_pedal = curr_vehicle_cmd.gas_pedal - curr_vehicle_cmd.brake_pedal;
+    case GEAR_NEUTRAL:
+        out_velocity = 0;
+        break;
+    case GEAR_REVERSE:
+        out_velocity = -(curr_vehicle_cmd.gas_pedal - curr_vehicle_cmd.brake_pedal);
+        if(out_velocity > 0){
+            out_velocity = 0;
+        }
+        break;
+    case GEAR_PARKING:
+        out_velocity = 0;
+        break;
+    case GEAR_1:
+        out_velocity = curr_vehicle_cmd.gas_pedal - curr_vehicle_cmd.brake_pedal; //usr should never be pushing drive and brake
+        if(out_velocity < 0){
+            out_velocity = 0.0;
+        }
+        break;
+    default:
+        out_velocity = 0;
+        break;
+  }
+//   curr_vehicle_cmd.gas_pedal = curr_vehicle_cmd.gas_pedal - curr_vehicle_cmd.brake_pedal;
+
 
     // if (curr_vehicle_cmd.gas_pedal < 0){
     //      curr_vehicle_cmd.gas_pedal = 0;
@@ -70,10 +94,18 @@ void VehicleInterface::serialTx(){
 //     curr_vehicle_cmd.gas_pedal = 0.0;
 //    }
 
-   sprintf(tx_msg, "$C(%0.2f, %0.2f, %i, %i, %i, %i, %i)\n", curr_vehicle_cmd.steering_angle, curr_vehicle_cmd.gas_pedal, curr_vehicle_cmd.left_signal, curr_vehicle_cmd.right_signal, curr_vehicle_cmd.hazards, curr_vehicle_cmd.front_lights, curr_vehicle_cmd.rear_lights);
-   esp32.write(tx_msg);
-   RCLCPP_ERROR(this->get_logger(), "Sent via serial: %s", tx_msg);
-   esp32.flushOutput();
+   sprintf(tx_msg, "$C(%0.2f, %0.2f, %i, %i, %i, %i, %i)\n", curr_vehicle_cmd.steering_angle, out_velocity, curr_vehicle_cmd.left_signal, curr_vehicle_cmd.right_signal, curr_vehicle_cmd.hazards, curr_vehicle_cmd.front_lights, curr_vehicle_cmd.rear_lights);
+   if(SIMULATE){
+    RCLCPP_ERROR(this->get_logger(), "[SIMULATION MODE] Sent via serial: %s", tx_msg);
+
+   }else{
+    esp32.write(tx_msg);
+    esp32.flushOutput(); 
+    RCLCPP_ERROR(this->get_logger(), "Sent via serial: %s", tx_msg);
+
+   }
+
+
 }
 
 void VehicleInterface::parseUart(std::string buffer){

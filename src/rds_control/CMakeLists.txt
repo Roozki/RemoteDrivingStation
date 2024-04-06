@@ -21,8 +21,11 @@ include_directories(include/)
 #add_executable(g29_control src/g29_control.cpp include/g29_control.h)
 #ament_target_dependencies(g29_control rclcpp autoware_auto_control_msgs autoware_auto_vehicle_msgs joy)
 
+#node to get joy inputs and convert to vehicle_interface
 add_executable(g29_hw_control src/g29_hw_control.cpp include/g29_control.h)
 ament_target_dependencies(g29_hw_control rclcpp rds_msgs joy)
+
+
 
 
 
