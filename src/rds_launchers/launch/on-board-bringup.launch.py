@@ -30,11 +30,12 @@ def generate_launch_description():
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT1-1:1.0-4c4a:4a55'}], #on g15 direct 
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT2-2.3:1.0-4c4a:4a55'}], #on g15 hub 
         #parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55'}],
-        parameters=[
-            {'camera': '\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55'},
-		    {'format': 'MJPEG'},
-		    {'height': 480},
-		    {'width' : 720}], #onboard hub
+        parameters=["../config/rear_cam_params.yaml"],
+        # parameters=[
+        #     {'camera': '\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55'},
+		#     {'format': 'MJPEG'},
+		#     {'height': 480},
+		#     {'width' : 720}], #onboard hub
 	#    parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS04-4:1.0-1bcf:2b8a'},
         #            {'format': 'MJPEG'}], #webcam
         remappings=[
@@ -49,7 +50,7 @@ def generate_launch_description():
         executable='camera_node',
         #qos_overrides=video_qos_profile,
         #name='main_feed_node',
-        parameters=["../config/cam_params.yaml"],
+        parameters=["../config/front_cam_params.yaml"],
         # parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-05a3:9230'},
         #             {'format': 'MJPEG'},
         #             {'height': 1080},
