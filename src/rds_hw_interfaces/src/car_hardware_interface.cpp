@@ -8,7 +8,7 @@ VehicleInterface::VehicleInterface() : Node("VehicleInterfaceNode"){
 
 //TODO add net ping
         if(!SIMULATE){
-        esp32.setPort(port);
+        esp32.setPort(nano_port);
         esp32.open();
     }
     double period = 1.0/COMM_POLL_RATE;
@@ -35,6 +35,7 @@ int main(int argc, char* argv[]){
 
 
 void VehicleInterface::CommandCallback(const rds_msgs::msg::VehicleInterface::SharedPtr msg){
+    curr_vehicle_cmd.header = msg->header;
     curr_vehicle_cmd.steering_angle = msg->steering_angle;
     curr_vehicle_cmd.gas_pedal = msg->gas_pedal;
     curr_vehicle_cmd.brake_pedal = msg->brake_pedal;
