@@ -31,7 +31,6 @@ def generate_launch_description():
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT2-2.3:1.0-4c4a:4a55'}], #on g15 hub 
         #parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55'}],
         parameters=[
-            {'qos_overides'}
             {'camera': '\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55'},
 		    {'format': 'MJPEG'},
 		    {'height': 480},
@@ -50,7 +49,7 @@ def generate_launch_description():
         executable='camera_node',
         #qos_overrides=video_qos_profile,
         #name='main_feed_node',
-        parameters=["../config/cam_params.yaml"]
+        parameters=["../config/cam_params.yaml"],
         # parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-05a3:9230'},
         #             {'format': 'MJPEG'},
         #             {'height': 1080},
