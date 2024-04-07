@@ -15,7 +15,7 @@ rear_camera_node:
     qos_overrides./parameter_events.publisher.reliability: best_effort
     role: video
     use_sim_time: false
-    width: 720
+    width: 640
 
 
 
