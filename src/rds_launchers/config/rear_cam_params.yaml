@@ -6,7 +6,7 @@ rear_camera_node:
     Contrast: 1.0
     #ExposureTime: 15700
     Saturation: 1.0
-    camera: \_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-05a3:9230
+    camera: \_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-090c:337b
     format: MJPEG
     height: 480
     qos_overrides./parameter_events.publisher.depth: 1
@@ -58,3 +58,5 @@ rear_camera_node:
     # Lease Duration
 
     #     Duration: the maximum period of time a publisher has to indicate that it is alive before the system considers it to have lost liveliness (losing liveliness could be an indication of a failure).
+
+
