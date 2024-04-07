@@ -65,7 +65,7 @@ public:
     sound_qos.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
     sound_qos.keep_last(10);
     // Set transport hints for compression
-    image_transport::TransportHints hints(this, "compressed");
+    image_transport::TransportHints hints(this, "raw");
 
     image_transport::ImageTransport it(shared_from_this());
     //    image_transport::ImageTransport it(shared_from_this());
@@ -74,14 +74,14 @@ public:
     //! ----------------------------------------//
 
     hud_sub_ = it.subscribe("/vehicle_1/main_feed/image_raw", 1, &HUDOverlayNode::imageCallback, this, &hints);
-    hud_pub_ = it.advertise("/hud_overalay", 1);
+    //hud_pub_ = it.advertise("/hud_overalay", 1);
     rearview_sub = it.subscribe("/vehicle_1/rear_feed/image_raw", 1, &HUDOverlayNode::rearImageCallback, this, &hints);
     RCLCPP_INFO(this->get_logger(), "meow");
     vehicle_1_control_subscriber_ = this->create_subscription<rds_msgs::msg::VehicleInterface>(
         "/vehicle_1/command", 4, std::bind(&HUDOverlayNode::commandCallback, this, std::placeholders::_1));
     vehicle_1_status_subscriber_ = this->create_subscription<rds_msgs::msg::VehicleStatus>(
         "/vehicle_1/status", 4, std::bind(&HUDOverlayNode::statusCallback, this, std::placeholders::_1));
-    sound_pubber = this->create_publisher<std_msgs::msg::String>("/speaker/command", qos);
+    sound_pubber = this->create_publisher<std_msgs::msg::String>("/speaker/command", sound_qos);
     
     gnss_subber = this->create_subscription<sensor_msgs::msg::NavSatFix>(
       "/fix", 1, std::bind(&HUDOverlayNode::gnssCallback, this, std::placeholders::_1));

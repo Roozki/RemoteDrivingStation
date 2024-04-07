@@ -10,7 +10,7 @@ front_camera_node:
     format: MJPEG
     height: 1080
     qos_overrides./parameter_events.publisher.depth: 1
-    qos_overrides./parameter_events.publisher.durability: transient_local
+    qos_overrides./parameter_events.publisher.durability: volatile
     qos_overrides./parameter_events.publisher.history: keep_last
     qos_overrides./parameter_events.publisher.reliability: best_effort
     role: video
