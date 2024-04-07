@@ -17,11 +17,11 @@ def generate_launch_description():
 
     front_cam_params = os.path.join(
     get_package_share_directory('rds_launchers'),
-    'config', 'front_camera_params.yaml'
+    'config', 'front_cam_params.yaml'
     )
     rear_cam_params = os.path.join(
     get_package_share_directory('rds_launchers'),
-    'config', 'rear_camera_params.yaml'
+    'config', 'rear_cam_params.yaml'
     )
         # Video stream QoS profile
     video_qos_profile = QoSProfile(
