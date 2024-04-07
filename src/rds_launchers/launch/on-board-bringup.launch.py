@@ -34,7 +34,7 @@ def generate_launch_description():
     rear_feed = Node(
         package='camera_ros',
         executable='camera_node',
-        #name='rear_feed_node',
+        name='rear_camera_node',
         output='screen',
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT1-1:1.0-4c4a:4a55'}], #on g15 direct 
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT2-2.3:1.0-4c4a:4a55'}], #on g15 hub 
@@ -58,7 +58,7 @@ def generate_launch_description():
         package='camera_ros',
         executable='camera_node',
         #qos_overrides=video_qos_profile,
-        #name='main_feed_node',
+        name='front_camera_node',
         parameters=[front_cam_params],
         # parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-05a3:9230'},
         #             {'format': 'MJPEG'},
