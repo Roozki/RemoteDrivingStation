@@ -1,4 +1,4 @@
-std_msgs/header header
+std_msgs/Header header
 float64 steering_angle  # -1 to 1
 float64 gas_pedal       #  0 to 1, unless in reverse
 float64 brake_pedal     #  
