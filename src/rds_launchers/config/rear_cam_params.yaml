@@ -1,4 +1,4 @@
-ros_parameters:
+ros__parameters:
   AeEnable: true
   AnalogueGain: 1.0
   Brightness: 0.0
