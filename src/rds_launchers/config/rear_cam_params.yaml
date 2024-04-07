@@ -8,7 +8,7 @@ camera: \_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-05a3:9230
 format: MJPEG
 height: 1080
 qos_overrides./parameter_events.publisher.depth: 10
-qos_overrides./parameter_events.publisher.durability: volatile
+qos_overrides./parameter_events.publisher.durability: best_effort
 qos_overrides./parameter_events.publisher.history: keep_last
 qos_overrides./parameter_events.publisher.reliability: best_effort
 role: video
