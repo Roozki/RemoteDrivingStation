@@ -19,7 +19,7 @@ def generate_launch_description():
         reliability=ReliabilityPolicy.BEST_EFFORT,
         history=HistoryPolicy.KEEP_LAST,
         depth=1,
-        deadline=33_333_333,  # 30 FPS, expressed in nanoseconds (1/30s)
+        #deadline=33_333_333  # 30 FPS, expressed in nanoseconds (1/30s)
     )
 
     rear_feed = Node(
@@ -27,11 +27,11 @@ def generate_launch_description():
         executable='camera_node',
         #name='rear_feed_node',
         output='screen',
-        qos=video_qos_profile,
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT1-1:1.0-4c4a:4a55'}], #on g15 direct 
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT2-2.3:1.0-4c4a:4a55'}], #on g15 hub 
         #parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55'}],
-        parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55'},
+        parameters=[
+            {'camera': '\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55'},
 		    {'format': 'MJPEG'},
 		    {'height': 480},
 		    {'width' : 720}], #onboard hub
@@ -47,7 +47,7 @@ def generate_launch_description():
     main_feed = Node(
         package='camera_ros',
         executable='camera_node',
-        qos=video_qos_profile,
+        #qos_overrides=video_qos_profile,
         #name='main_feed_node',
         parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-05a3:9230'},
                     {'format': 'MJPEG'},
