@@ -1,0 +1,16 @@
+AeEnable: true
+AnalogueGain: 1.0
+Brightness: 0.0
+Contrast: 1.0
+ExposureTime: 15700
+Saturation: 1.0
+camera: \_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-05a3:9230
+format: MJPEG
+height: 1080
+qos_overrides./parameter_events.publisher.depth: 1000
+qos_overrides./parameter_events.publisher.durability: volatile
+qos_overrides./parameter_events.publisher.history: keep_last
+qos_overrides./parameter_events.publisher.reliability: reliable
+role: video
+use_sim_time: false
+width: 1920
