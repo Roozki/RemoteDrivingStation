@@ -14,6 +14,15 @@ from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 #rover cam in yellow F:  \_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-05a3:9230
 
 def generate_launch_description():
+
+    front_cam_params = os.path.join(
+    get_package_share_directory('rds_launchers'),
+    'config', 'front_camera_params.yaml'
+    )
+    rear_cam_params = os.path.join(
+    get_package_share_directory('rds_launchers'),
+    'config', 'rear_camera_params.yaml'
+    )
         # Video stream QoS profile
     video_qos_profile = QoSProfile(
         reliability=ReliabilityPolicy.BEST_EFFORT,
@@ -30,7 +39,7 @@ def generate_launch_description():
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT1-1:1.0-4c4a:4a55'}], #on g15 direct 
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT2-2.3:1.0-4c4a:4a55'}], #on g15 hub 
         #parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55'}],
-        parameters=["../config/rear_cam_params.yaml"],
+        parameters=[rear_cam_params],
         # parameters=[
         #     {'camera': '\_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-4c4a:4a55'},
 		#     {'format': 'MJPEG'},
@@ -50,7 +59,7 @@ def generate_launch_description():
         executable='camera_node',
         #qos_overrides=video_qos_profile,
         #name='main_feed_node',
-        parameters=["../config/front_cam_params.yaml"],
+        parameters=[front_cam_params],
         # parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-05a3:9230'},
         #             {'format': 'MJPEG'},
         #             {'height': 1080},
