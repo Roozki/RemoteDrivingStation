@@ -115,6 +115,8 @@ def generate_launch_description():
             ('/image_raw', '/vehicle_1/main_feed/image_raw'),  
             ('/image_raw/compressed', '/vehicle_1/main_feed/image_raw/compressed'),
             ('/camera_info', '/vehicle_1/main_feed/camera_info'),
+            ('/image_raw/theora', '/vehicle_1/main_feed/image_raw/theora'),
+            ('/image_raw/compressedDepth', '/vehicle_1/main_feed/image_raw/compressedDepth')
 
             # Add more remappings here if needed
         ],
