@@ -1,6 +1,6 @@
 rear_camera_node:
   ros__parameters:
-    video_device: /dev/video1  # Path to the video device
+    video_device: /dev/video4  # Path to the video device
     pixel_format: MPEG        # Pixel format (e.g., 'yuyv', 'mjpeg', etc.)
     camera_frame_id: camera_link  # TF frame ID for the camera
     camera_name: my_camera     # Name of the camera, used for naming topics
