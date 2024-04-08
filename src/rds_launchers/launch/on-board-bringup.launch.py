@@ -105,5 +105,6 @@ def generate_launch_description():
         gnss_serial_driver,
         hardware_interface,
         gps_wgs84_initilizer,
-        rear_feed
+        rear_feed,
+        feed_compression_node
     ])
