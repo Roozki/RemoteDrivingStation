@@ -93,9 +93,9 @@ def generate_launch_description():
 	#    parameters=[{'camera': '\_SB_.PCI0.XHC_.RHUB.HS04-4:1.0-1bcf:2b8a'},
         #            {'format': 'MJPEG'}], #webcam
         remappings=[
-            ('/rear_camera_node/image_raw', '/vehicle_1/rear_feed/image_raw'),  
-            ('/rear_camera_node/image_raw/compressed', '/vehicle_1/rear_feed/image_raw/compressed'),
-            ('/rear_camera_node/camera_info', '/vehicle_1/rear_feed/camera_info'),
+            ('/image_raw', '/vehicle_1/rear_feed/image_raw'),  
+            ('/image_raw/compressed', '/vehicle_1/rear_feed/image_raw/compressed'),
+            ('/camera_info', '/vehicle_1/rear_feed/camera_info'),
             # Add more remappings here if needed
         ],
     )
@@ -112,9 +112,9 @@ def generate_launch_description():
         #parameters=[{'camera': '\_SB_.PCI0.GP17.XHC0.RHUB.PRT2-2.3:1.0-4c4a:4a55'}], #on g15
 	    output='screen',
         remappings=[
-            ('/front_camera_node/image_raw', '/vehicle_1/main_feed/image_raw'),  
-            ('/front_camera_node/image_raw/compressed', '/vehicle_1/main_feed/image_raw/compressed'),
-            ('/front_camera_node/camera_info', '/vehicle_1/main_feed/camera_info'),
+            ('/image_raw', '/vehicle_1/main_feed/image_raw'),  
+            ('/image_raw/compressed', '/vehicle_1/main_feed/image_raw/compressed'),
+            ('/camera_info', '/vehicle_1/main_feed/camera_info'),
 
             # Add more remappings here if needed
         ],
@@ -150,6 +150,6 @@ def generate_launch_description():
         gnss_serial_driver,
         hardware_interface,
         gps_wgs84_initilizer,
-        rear_feed,
-        feed_compression_node
+        rear_feed
+        # feed_compression_node
     ])
