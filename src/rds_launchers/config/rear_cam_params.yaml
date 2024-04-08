@@ -1,21 +1,21 @@
 rear_camera_node:
   ros__parameters:
-    AeEnable: true
+    AeEnable: false
     AnalogueGain: 1.0
     Brightness: 0.0
     Contrast: 1.0
-    #ExposureTime: 15700
+    ExposureTime: 15700
     Saturation: 1.0
     camera: \_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-090c:337b
     format: MJPEG
-    height: 480
+    height: 240
     qos_overrides./parameter_events.publisher.depth: 1
     qos_overrides./parameter_events.publisher.durability: volatile
     qos_overrides./parameter_events.publisher.history: keep_last
     qos_overrides./parameter_events.publisher.reliability: best_effort
     role: video
     use_sim_time: false
-    width: 640
+    width: 320
 
 
 
