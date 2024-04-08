@@ -10,3 +10,6 @@
 [submodule "src/external_pkgs/mapCreator"]
 	path = src/external_pkgs/mapCreator
 	url = https://github.com/sjev/mapCreator.git
+[submodule "src/external_pkgs/h264_image_transport"]
+	path = src/external_pkgs/h264_image_transport
+	url = https://github.com/clydemcqueen/h264_image_transport.git

@@ -75,6 +75,13 @@ def generate_launch_description():
             # Add more remappings here if needed
         ],
     )
+    feed_compression_node = Node(
+                package='image_transport',
+                plugin='image_transport::RepublishNode',
+                executable='image_republisher',
+                parameters=[{'in_transport': 'raw', 'out_transport': 'h264'}],
+                remappings=[('/image_raw', '/camera/image_raw'), ('/image', '/camera/image_compressed')]
+            )
     gnss_serial_driver = Node(
         package='nmea_navsat_driver',
         executable='nmea_serial_driver',
