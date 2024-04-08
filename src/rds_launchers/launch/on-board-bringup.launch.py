@@ -77,7 +77,7 @@ def generate_launch_description():
     )
     feed_compression_node = Node(
         package='image_transport',
-        executable='republish',
+        executable='republish_node',
         parameters=[{'in_transport': 'raw', 'out_transport': 'h264'}],
         remappings=[('/in', '/vehicle_1/main_feed/image_raw'),
                     ('/out', '/vehicle_1/main_feed/image_raw/h264')]
