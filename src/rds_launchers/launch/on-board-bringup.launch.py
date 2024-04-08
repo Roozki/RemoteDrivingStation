@@ -79,7 +79,7 @@ def generate_launch_description():
         package='image_transport',
         executable='image_republisher',
         parameters=[{'in_transport': 'raw', 'out_transport': 'h264'}],
-        remappings=[('/image_raw', '/camera/image_raw'), ('/image', '/camera/image_compressed')]
+        remappings=[('/front_camera_node/image_raw', '/front_camera_node/image_raw/h264')]
     )
     gnss_serial_driver = Node(
         package='nmea_navsat_driver',
