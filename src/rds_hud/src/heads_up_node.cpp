@@ -23,7 +23,7 @@ void HUDOverlayNode::drawHud(){
           if (latency_refresh_count > 90)
           {
             latency_refresh_count = 0;
-            networkCheck();
+            networkCheck(CAR_ADDR);
           }
            //! ----------------------------------------//
           //!             REARVIEW CAM                //

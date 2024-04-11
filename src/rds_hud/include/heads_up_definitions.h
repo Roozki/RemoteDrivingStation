@@ -6,6 +6,9 @@
 #define NUM_NUMS 10 //num nums
 #define NUM_RPM_NUMS 10 //num nums
 
+#define GOOGLE_ADDR 5
+#define CAR_ADDR 6
+
 
 #define _W 1080 //width
 #define _H 1920 //height

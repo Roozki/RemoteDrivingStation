@@ -208,7 +208,7 @@ public:
     }
     //! network check
     // cv::waitKey(100);
-    if (networkCheck() == NETWORK_OK)
+    if (networkCheck(GOOGLE_ADDR) == NETWORK_OK)
     {
       hud.systems_online++;
       network_status_msg = "ONLINE, LATENCY: " + std::to_string(static_cast<int>(hud.vehicle_latency)) + "ms";
@@ -216,14 +216,14 @@ public:
     }
     else
     {
-      network_status_msg = "OFFLINE!!";
+      network_status_msg = "OFFLINE, THIS DEVICE IS DISCONNECTED";
       network_status_colour = cv::Scalar(10, 10, 255);
     }
 
 
     cv::rectangle(blackScreen, cv::Point(599, 650), cv::Point(900, 750), cv::Scalar(0, 0, 0), -1);
 
-    cv::putText(blackScreen, network_status_msg, cv::Point(500, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+    cv::putText(blackScreen, network_status_msg, cv::Point(600, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
     cv::imshow("RDS_HUD", blackScreen);
     cv::waitKey(10);
         for (int i = 0; i < 10; i++)
@@ -258,7 +258,7 @@ public:
       gps_status_colour = cv::Scalar(10, 10, 255);
     }
     cv::rectangle(blackScreen, cv::Point(599, 750), cv::Point(1080, 850), cv::Scalar(0, 0, 0), -1);
-    cv::putText(blackScreen, gps_status_msg, cv::Point(600, 800), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+    cv::putText(blackScreen, gps_status_msg, cv::Point(600, 800), cv::FONT_HERSHEY_SIMPLEX, 2, gps_status_colour, 3);
     cv::imshow("RDS_HUD", blackScreen);
     cv::waitKey(10);
     for (int i = 0; i < 5; i++)
@@ -279,7 +279,7 @@ public:
     }
         //! controls check
     
-    if (vehicle_1_current_status.online == true)
+    if (networkCheck(CAR_ADDR) == true)
     {
       hud.systems_online++; 
 
@@ -293,7 +293,7 @@ public:
     }
     cv::rectangle(blackScreen, cv::Point(599, 850), cv::Point(1080, 950), cv::Scalar(0, 0, 0), -1);
 
-        cv::putText(blackScreen, car_status_msg, cv::Point(600, 900), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+        cv::putText(blackScreen, car_status_msg, cv::Point(600, 900), cv::FONT_HERSHEY_SIMPLEX, 2, car_status_colour, 3);
     cv::imshow("RDS_HUD", blackScreen);
     cv::waitKey(10);
         for (int i = 0; i < 5; i++)
@@ -339,14 +339,14 @@ public:
       cv::putText(blackScreen, "CLIENT IN OFFLINE MODE", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
       sendSoundCommand("AI_welcome_attention.wav");
     }
-    else if (hud.systems_online <=3 && networkCheck() == NETWORK_OK){
+    else if (hud.systems_online <=3 && networkCheck(GOOGLE_ADDR) == NETWORK_OK){
       cv::putText(blackScreen, "WELCOME DRIVER", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(255, 255, 255), 3);
       sendSoundCommand("AI_welcome_attention.wav");
 
     }
     else
     {
-      cv::putText(blackScreen, "SYSTEM RESTART REQUIRED", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+      cv::putText(blackScreen, "SYSTEM RESTART REQUIRED", cv::Point(200, 400), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(0,0,200), 3);
       sendSoundCommand("AI_system_failure.wav");
 
     }
@@ -365,12 +365,13 @@ public:
     if(hud.systems_online > 3){
       
       cv::putText(blackScreen, "ALL SYSTEMS ONLINE", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
-    }else if(networkCheck() == NETWORK_OK){
+    }else if(networkCheck(GOOGLE_ADDR) == NETWORK_OK){
       network_status_colour = cv::Scalar(0, 200, 200);
-      cv::putText(blackScreen, "SOME SYSTEMS NEED ATTENTION", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+      cv::putText(blackScreen, "SOME SYSTEMS NEED ATTENTION", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(0, 200, 200), 3);
 
     }else{
-            cv::putText(blackScreen, "ALL SYSTEMS OFFLINE", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, network_status_colour, 3);
+            //network_status_colour = cv::Scalar(0,)
+            cv::putText(blackScreen, "ALL SYSTEMS OFFLINE", cv::Point(200, 700), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(0, 0, 200), 3);
 
     }
     cv::imshow("RDS_HUD", blackScreen);
@@ -548,12 +549,17 @@ void drawTransparentLine(cv::Mat& image, cv::Point pt1, cv::Point pt2, cv::Scala
 }
 
 
-  int networkCheck()
+  int networkCheck(int address)
   {
     std::string ping_string;
-
+    FILE *_cmd_out_pipe;
     char _buffer[128];
-    FILE *_cmd_out_pipe = popen("ping -c 1 8.8.8.8 | grep 'time=' | awk '{print $7}' | cut -d'=' -f2", "r"); // bash is OP
+    if (address == GOOGLE_ADDR){
+    _cmd_out_pipe = popen("ping -c 1 8.8.8.8 | grep 'time=' | awk '{print $7}' | cut -d'=' -f2", "r"); // bash is OP
+    }else if (address == CAR_ADDR){
+    _cmd_out_pipe = popen("ping -c 1 10.147.20.20 | grep 'time=' | awk '{print $7}' | cut -d'=' -f2", "r"); // bash is OP
+
+    }
     if (fgets(_buffer, 128, _cmd_out_pipe) != NULL)
     {
       ping_string += _buffer;
