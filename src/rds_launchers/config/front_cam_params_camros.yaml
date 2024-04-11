@@ -1,5 +1,6 @@
 front_camera_node:
   ros__parameters:
+    output_encoding: yuv422
     AeEnable: false
     AnalogueGain: 1.0
     Brightness: 0.0
