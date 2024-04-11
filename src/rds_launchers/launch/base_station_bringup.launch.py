@@ -72,7 +72,7 @@ def generate_launch_description():
         # Assuming the encoded data is using H.264, we'll set the subscriber to decode using the appropriate codec.
         # If you used a different codec or have specific decoding needs, you might need to adjust the parameters accordingly.
         parameters=[
-            {'ffmpeg_image_transport.map.libx265': 'hvec_qsv'},  # Map the libx265 encoder to use the h265 decoder
+            {'ffmpeg_image_transport.map.libx265': 'hevc'},  # Map the libx265 encoder to use the h265 decoder
         ],
         arguments=['ffmpeg', 'in:=/vehicle_1/rear_feed/h265', 'raw', 'out:=/vehicle_1/rear_feed/image_decoded']
     )
@@ -87,7 +87,7 @@ def generate_launch_description():
         # Assuming the encoded data is using H.264, we'll set the subscriber to decode using the appropriate codec.
         # If you used a different codec or have specific decoding needs, you might need to adjust the parameters accordingly.
         parameters=[
-            {'ffmpeg_image_transport.map.libx265': 'hvec_qsv'},  # Map the libx265 encoder to use the h265 decoder
+            {'ffmpeg_image_transport.map.libx265': 'hevc'},  # Map the libx265 encoder to use the h265 decoder
         ],
         arguments=['ffmpeg', 'in:=/vehicle_1/main_feed/image_raw/h265', 'raw', 'out:=/vehicle_1/main_feed/image_decoded']
     )
