@@ -66,41 +66,41 @@ def generate_launch_description():
         executable='republish',
         name='ffmpeg_subscriber',
         remappings=[
-            ('in/ffmpeg', '/vehicle_1/rear_feed/image_raw/h264'),
+            ('in/ffmpeg', '/vehicle_1/rear_feed/image_raw/h265'),
             ('out/image_raw', '/vehicle_1/rear_feed/image_decoded'),
         ],
         # Assuming the encoded data is using H.264, we'll set the subscriber to decode using the appropriate codec.
         # If you used a different codec or have specific decoding needs, you might need to adjust the parameters accordingly.
         parameters=[
-            {'ffmpeg_image_transport.map.libx265': 'h265'},  # Map the libx265 encoder to use the h265 decoder
+            {'ffmpeg_image_transport.map.libx265': 'hvec_qsv'},  # Map the libx265 encoder to use the h265 decoder
         ],
-        arguments=['ffmpeg', 'in:=/vehicle_1/rear_feed/h264', 'raw', 'out:=/vehicle_1/rear_feed/image_decoded']
+        arguments=['ffmpeg', 'in:=/vehicle_1/rear_feed/h265', 'raw', 'out:=/vehicle_1/rear_feed/image_decoded']
     )
     main_ffmpeg_subscriber_node = Node(
         package='image_transport',
         executable='republish',
         name='ffmpeg_subscriber',
         remappings=[
-            ('in/ffmpeg', '/vehicle_1/main_feed/image_raw/h264'),
+            ('in/ffmpeg', '/vehicle_1/main_feed/image_raw/h265'),
             ('out/image_raw', '/vehicle_1/main_feed/image_decoded'),
         ],
         # Assuming the encoded data is using H.264, we'll set the subscriber to decode using the appropriate codec.
         # If you used a different codec or have specific decoding needs, you might need to adjust the parameters accordingly.
         parameters=[
-            {'ffmpeg_image_transport.map.libx265': 'h265'},  # Map the libx265 encoder to use the h265 decoder
+            {'ffmpeg_image_transport.map.libx265': 'hvec_qsv'},  # Map the libx265 encoder to use the h265 decoder
         ],
-        arguments=['ffmpeg', 'in:=/vehicle_1/main_feed/image_raw/h264', 'raw', 'out:=/vehicle_1/main_feed/image_decoded']
+        arguments=['ffmpeg', 'in:=/vehicle_1/main_feed/image_raw/h265', 'raw', 'out:=/vehicle_1/main_feed/image_decoded']
     )
 
     return LaunchDescription([
-        gps_accuracy_pubber,
-        robot_gps_marker,
-        rds_g29_control,
-        joy_node,
-        rds_hud_node,
-        map_node,
-        robot_locker,
-        speaker_node,
+        # gps_accuracy_pubber,
+        # robot_gps_marker,
+        # rds_g29_control,
+        # joy_node,
+        # rds_hud_node,
+        # map_node,
+        # robot_locker,
+        # speaker_node,
         rear_ffmpeg_subscriber_node,
         main_ffmpeg_subscriber_node
     ])
