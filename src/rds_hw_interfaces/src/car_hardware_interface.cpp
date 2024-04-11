@@ -8,7 +8,7 @@ VehicleInterface::VehicleInterface() : Node("VehicleInterfaceNode"){
 
 //TODO add net ping
         if(!SIMULATE){
-        esp32.setPort(nano_port);
+        esp32.setPort(port);
         esp32.open();
     }
     double period = 1.0/COMM_POLL_RATE;
