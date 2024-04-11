@@ -81,7 +81,7 @@ def generate_launch_description():
         executable='republish',
         name='ffmpeg_subscriber',
         remappings=[
-            ('in/ffmpeg', '/vehicle_1/main_feed/h264'),
+            ('in/ffmpeg', '/vehicle_1/main_feed/image_raw/h264'),
             ('out/image_raw', '/vehicle_1/main_feed/image_decoded'),
         ],
         # Assuming the encoded data is using H.264, we'll set the subscriber to decode using the appropriate codec.
@@ -89,7 +89,7 @@ def generate_launch_description():
         parameters=[
             {'ffmpeg_image_transport.map.libx264': 'libx264'},  # Map the libx264 encoder to use the libx264 decoder
         ],
-        arguments=['ffmpeg', 'in:=/vehicle_1/main_feed/h264', 'raw', 'out:=/vehicle_1/main_feed/image_decoded']
+        arguments=['ffmpeg', 'in:=/vehicle_1/main_feed/image_raw/h264', 'raw', 'out:=/vehicle_1/main_feed/image_decoded']
     )
 
     return LaunchDescription([
