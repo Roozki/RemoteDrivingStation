@@ -156,7 +156,7 @@ def generate_launch_description():
              'ffmpeg_image_transport.delay' : "4",
              'ffmpeg_image_transport.frame_rate': 30,
              'ffmpeg_image_transport.qmax' : 180,
-             'ffmpeg_image_transport.pixel_format': "yuv420p"
+             'ffmpeg_image_transport.pixel_format': "yuv420p",
              'ffmpeg_image_transport.crf': 28
              }       
         ],
@@ -179,8 +179,8 @@ def generate_launch_description():
              'ffmpeg_image_transport.bit_rate': 2242880,   # Target bitrate
              'ffmpeg_image_transport.frame_rate' : 15,
              'ffmpeg_image_transport.delay': "4",
-             'ffmpeg_image_transport.qmax': 80
-            #  'ffmpeg_image_transport.crf': 28
+             'ffmpeg_image_transport.qmax': 80,
+             'ffmpeg_image_transport.crf': 28
              }       
         ],
         arguments=['raw', 'in:=/vehicle_1/rear_feed/image_raw', 'ffmpeg', 'out:=/vehicle_1/rear_feed/image_raw/h265']
