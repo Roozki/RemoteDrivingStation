@@ -8,9 +8,9 @@ rear_camera_node:
     image_height: 1080           # Height of the image frame
     framerate: 30                # Desired framerate (frames per second)
     # brightness: 100              # Brightness level (0-255 for most cameras)
-    contrast: 128                # Contrast level (0-255 for most cameras)
-    saturation: 128              # Saturation level (0-255 for most cameras)
-    hue: 0                       # Hue level (0-255 for most cameras, if applicable)
+    # contrast: 128                # Contrast level (0-255 for most cameras)
+    # saturation: 128              # Saturation level (0-255 for most cameras)
+    # hue: 0                       # Hue level (0-255 for most cameras, if applicable)
     auto_exposure: 1             # Auto-exposure (1 for auto, 0 for manual)
     exposure: 100                # Exposure time, if auto_exposure is set to 0
     gain: 0                      # Gain level (0-255 for most cameras, if applicable)
