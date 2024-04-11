@@ -61,12 +61,27 @@ def generate_launch_description():
         name='speaker_node',
         output='screen'
     )
-    ffmpeg_subscriber_node = Node(
+    rear_ffmpeg_subscriber_node = Node(
         package='image_transport',
         executable='republish',
         name='ffmpeg_subscriber',
         remappings=[
-            ('in/ffmpeg', '/vehicle_1/main_feed/image_encoded'),
+            ('in/ffmpeg', '/vehicle_1/rear_feed/h264'),
+            ('out/image_raw', '/vehicle_1/rear_feed/image_decoded'),
+        ],
+        # Assuming the encoded data is using H.264, we'll set the subscriber to decode using the appropriate codec.
+        # If you used a different codec or have specific decoding needs, you might need to adjust the parameters accordingly.
+        parameters=[
+            {'ffmpeg_image_transport.map.libx264': 'libx264'},  # Map the libx264 encoder to use the libx264 decoder
+        ],
+        arguments=['ffmpeg', 'in:=/vehicle_1/rear_feed/h264', 'raw', 'out:=/vehicle_1/rear_feed/image_decoded']
+    )
+    main_ffmpeg_subscriber_node = Node(
+        package='image_transport',
+        executable='republish',
+        name='ffmpeg_subscriber',
+        remappings=[
+            ('in/ffmpeg', '/vehicle_1/main_feed/h264'),
             ('out/image_raw', '/vehicle_1/main_feed/image_decoded'),
         ],
         # Assuming the encoded data is using H.264, we'll set the subscriber to decode using the appropriate codec.
@@ -74,7 +89,7 @@ def generate_launch_description():
         parameters=[
             {'ffmpeg_image_transport.map.libx264': 'libx264'},  # Map the libx264 encoder to use the libx264 decoder
         ],
-        arguments=['ffmpeg', 'in:=/vehicle_1/main_feed/image_encoded', 'raw', 'out:=/vehicle_1/main_feed/image_decoded']
+        arguments=['ffmpeg', 'in:=/vehicle_1/main_feed/h264', 'raw', 'out:=/vehicle_1/main_feed/image_decoded']
     )
 
     return LaunchDescription([
@@ -86,5 +101,6 @@ def generate_launch_description():
         # map_node,
         # robot_locker,
         # speaker_node,
-        ffmpeg_subscriber_node
+        rear_ffmpeg_subscriber_node,
+        main_ffmpeg_subscriber_node
     ])

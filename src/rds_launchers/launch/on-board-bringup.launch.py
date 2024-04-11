@@ -138,7 +138,24 @@ def generate_launch_description():
     #     remappings=[('/in', '/vehicle_1/main_feed/image_raw'),
     #                 ('/out', '/vehicle_1/main_feed/image_raw/h264')]
     # )
-    ffmpeg_republisher_node = Node(
+    main_ffmpeg_republisher_node = Node(
+        package='image_transport',
+        executable='republish',
+        name='ffmpeg_republisher',
+        remappings=[
+            ('in/image_raw', '/vehicle_1/main_feed/image_raw'),
+            ('out/ffmpeg', '/vehicle_1/main_feed/image_raw/h264'),
+        ],
+        parameters=[
+            {'ffmpeg_image_transport.encoding': 'libx264',  # Use H.265 encoding with NVENC (if available)
+             'ffmpeg_image_transport.preset': 'ultrafast',            # Low latency preset
+             'ffmpeg_image_transport.tune': 'zerolatency',         # Main profile for compatibility
+             'ffmpeg_image_transport.gop_size': 15,            # GOP size (group of pictures)
+             'ffmpeg_image_transport.bit_rate': 1000000}       # Target bitrate
+        ],
+        arguments=['raw', 'in:=/vehicle_1/main_feed/image_raw', 'ffmpeg', 'out:=/vehicle_1/main_feed/image_raw/h264']
+    )
+    rear_ffmpeg_republisher_node = Node(
         package='image_transport',
         executable='republish',
         name='ffmpeg_republisher',
@@ -184,5 +201,6 @@ def generate_launch_description():
         gps_wgs84_initilizer,
         # rear_feed_v4l2,
         rear_feed,
-        ffmpeg_republisher_node
+        rear_ffmpeg_republisher_node,
+        main_ffmpeg_republisher_node
     ])
