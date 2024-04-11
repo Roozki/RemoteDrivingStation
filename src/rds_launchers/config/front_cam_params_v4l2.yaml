@@ -1,8 +1,9 @@
 front_camera_node:
   ros__parameters:
-    video_device: /dev/video1  # Path to the video device
-    pixel_format: 'MJPEG'        # Pixel format (e.g., 'yuyv', 'mjpeg', etc.)
-    camera_frame_id: camera_link  # TF frame ID for the camera
+    video_device: "/dev/video1"  # Path to the video device
+    pixel_format: "YUYV"        # Pixel format (e.g., 'yuyv', 'mjpeg', etc.)
+    output_encoding: "rgb8"
+    camera_frame_id: front_camera_link  # TF frame ID for the camera
     camera_name: my_camera     # Name of the camera, used for naming topics
     image_width: 1920            # Width of the image frame
     image_height: 1080           # Height of the image frame

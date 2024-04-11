@@ -13,3 +13,9 @@
 [submodule "src/external_pkgs/h264_image_transport"]
 	path = src/external_pkgs/h264_image_transport
 	url = https://github.com/clydemcqueen/h264_image_transport.git
+[submodule "src/external_pkgs/vision_opencv"]
+	path = src/external_pkgs/vision_opencv
+	url = https://github.com/ros-perception/vision_opencv.git
+[submodule "src/external_pkgs/image_transport_plugins"]
+	path = src/external_pkgs/image_transport_plugins
+	url = https://github.com/ros-perception/image_transport_plugins.git
