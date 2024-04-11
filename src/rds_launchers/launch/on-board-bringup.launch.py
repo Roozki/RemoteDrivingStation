@@ -128,16 +128,16 @@ def generate_launch_description():
             # Add more remappings here if needed
         ],
     )
-    main_feed_compression_node = Node(
-        package='image_transport',
-        executable='republish',
-        parameters=[{'ffmpeg_image_transport.encoding': 'hevc_nvenc',
-                'ffmpeg_image_transport.profile': 'main',
-                'ffmpeg_image_transport.preset': 'll',
-                'ffmpeg_image_transport.gop': 15}]
-        remappings=[('/in', '/vehicle_1/main_feed/image_raw'),
-                    ('/out', '/vehicle_1/main_feed/image_raw/h264')]
-    )
+    # main_feed_compression_node = Node(
+    #     package='image_transport',
+    #     executable='republish',
+    #     parameters=[{'ffmpeg_image_transport.encoding': 'hevc_nvenc',
+    #             'ffmpeg_image_transport.profile': 'main',
+    #             'ffmpeg_image_transport.preset': 'll',
+    #             'ffmpeg_image_transport.gop': 15}]
+    #     remappings=[('/in', '/vehicle_1/main_feed/image_raw'),
+    #                 ('/out', '/vehicle_1/main_feed/image_raw/h264')]
+    # )
     ffmpeg_republisher_node = Node(
         package='image_transport',
         executable='republish',
