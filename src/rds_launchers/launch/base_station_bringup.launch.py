@@ -93,14 +93,14 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        # gps_accuracy_pubber,
-        # robot_gps_marker,
-        # rds_g29_control,
-        # joy_node,
-        # rds_hud_node,
-        # map_node,
-        # robot_locker,
-        # speaker_node,
+        gps_accuracy_pubber,
+        robot_gps_marker,
+        rds_g29_control,
+        joy_node,
+        rds_hud_node,
+        map_node,
+        robot_locker,
+        speaker_node,
         rear_ffmpeg_subscriber_node,
         main_ffmpeg_subscriber_node
     ])
