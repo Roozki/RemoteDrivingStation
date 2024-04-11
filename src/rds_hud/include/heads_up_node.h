@@ -69,7 +69,7 @@ public:
 
     image_transport::ImageTransport it(shared_from_this());
     //    image_transport::ImageTransport it(shared_from_this());
-    //! ----------------------------------------//
+    //! ----------------------------------------//,
     //!                 TOPICS                  //
     //! ----------------------------------------//
 
@@ -598,6 +598,7 @@ void drawTransparentLine(cv::Mat& image, cv::Point pt1, cv::Point pt2, cv::Scala
      try
      {
         last_frame_ = *msg; // Assume copy assignment is defined
+        
         //last_frame
         hud.ready = true;
 

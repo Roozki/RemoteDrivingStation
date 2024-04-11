@@ -6,6 +6,7 @@ void HUDOverlayNode::drawHud(){
         std::unique_lock<std::mutex> lock(image_mutex_);
         if(hud.ready){ //indicates if frames have been sent or not
           frame = cv_bridge::toCvCopy(last_frame_, "bgr8")->image;
+          cv::resize(frame, frame, cv::Size(1920, 1080), 0, 0, cv::INTER_LINEAR);
 
         }else{
         frame = cv::Mat(1080, 1920, CV_8UC3, cv::Scalar(100, 100, 100));
