@@ -65,7 +65,7 @@ public:
     sound_qos.history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
     sound_qos.keep_last(10);
     // Set transport hints for compression
-    image_transport::TransportHints hints(this, "compressed");
+    image_transport::TransportHints hints(this, "raw");
 
     image_transport::ImageTransport it(shared_from_this());
     //    image_transport::ImageTransport it(shared_from_this());
@@ -73,9 +73,9 @@ public:
     //!                 TOPICS                  //
     //! ----------------------------------------//
 
-    hud_sub_ = it.subscribe("/vehicle_1/main_feed/image_raw", 1, &HUDOverlayNode::imageCallback, this, &hints);
+    hud_sub_ = it.subscribe("/vehicle_1/main_feed/image_decoded", 1, &HUDOverlayNode::imageCallback, this, &hints);
     //hud_pub_ = it.advertise("/hud_overalay", 1);
-    rearview_sub = it.subscribe("/vehicle_1/rear_feed/image_raw", 1, &HUDOverlayNode::rearImageCallback, this, &hints);
+    rearview_sub = it.subscribe("/vehicle_1/rear_feed/image_decoded", 1, &HUDOverlayNode::rearImageCallback, this, &hints);
     RCLCPP_INFO(this->get_logger(), "meow");
     vehicle_1_control_subscriber_ = this->create_subscription<rds_msgs::msg::VehicleInterface>(
         "/vehicle_1/command", 4, std::bind(&HUDOverlayNode::commandCallback, this, std::placeholders::_1));
@@ -119,7 +119,7 @@ public:
     cv::imshow("RDS_HUD", blackScreen);
     sendSoundCommand("bleep.wav");
     cv::waitKey(10);
-    //playMP4();
+    playMP4();
     // for (int i = 20; i < (blackScreen.cols / 4); i++)
     // {
       //   // cv::putText(frame, ".", cv::Point((frame.cols /2) - 500 + i*35, frame.rows /2), cv::FONT_HERSHEY_SIMPLEX, 7, cv::Scalar(155, 155, 155), 8);
