@@ -66,7 +66,7 @@ def generate_launch_description():
         executable='republish',
         name='ffmpeg_subscriber',
         remappings=[
-            ('in/ffmpeg', '/vehicle_1/rear_feed/h264'),
+            ('in/ffmpeg', '/vehicle_1/rear_feed/image_raw/h264'),
             ('out/image_raw', '/vehicle_1/rear_feed/image_decoded'),
         ],
         # Assuming the encoded data is using H.264, we'll set the subscriber to decode using the appropriate codec.
