@@ -153,7 +153,7 @@ def generate_launch_description():
              'ffmpeg_image_transport.tune': 'zerolatency',         # Main profile for compatibility
              'ffmpeg_image_transport.gop_size': 1,            # GOP size (group of pictures)
              'ffmpeg_image_transport.bit_rate': 8242880,   # Target bitrate
-             'ffmpeg_image_transport.frame_rate' : 20
+             'ffmpeg_image_transport.delay' : 20
             #  'ffmpeg_image_transport.crf': 28
              }       
         ],
@@ -174,7 +174,7 @@ def generate_launch_description():
              'ffmpeg_image_transport.tune': 'zerolatency',         # Main profile for compatibility
              'ffmpeg_image_transport.gop_size': 1,            # GOP size (group of pictures)
              'ffmpeg_image_transport.bit_rate': 2242880,   # Target bitrate
-             'ffmpeg_image_transport.frame_rate': 20
+             'ffmpeg_image_transport.delay': 20
             #  'ffmpeg_image_transport.crf': 28
              }       
         ],
