@@ -128,7 +128,7 @@ def generate_launch_description():
             # Add more remappings here if needed
         ],
     )
-    feed_compression_node = Node(
+    main_feed_compression_node = Node(
         package='image_transport',
         executable='republish',
         parameters=[{'in_transport': 'raw', 'out_transport': 'h264'}],
@@ -161,6 +161,6 @@ def generate_launch_description():
         hardware_interface,
         gps_wgs84_initilizer,
         # rear_feed_v4l2,
-        rear_feed
-        # feed_compression_node
+        rear_feed,
+        main_feed_compression_node
     ])
