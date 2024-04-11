@@ -160,8 +160,8 @@ def generate_launch_description():
         executable='republish',
         name='ffmpeg_republisher',
         remappings=[
-            ('in/image_raw', '/vehicle_1/main_feed/image_raw'),
-            ('out/ffmpeg', '/vehicle_1/main_feed/image_raw/h264'),
+            ('in/image_raw', '/vehicle_1/rear_feed/image_raw'),
+            ('out/ffmpeg', '/vehicle_1/rear_feed/image_raw/h264'),
         ],
         parameters=[
             {'ffmpeg_image_transport.encoding': 'libx264',  # Use H.265 encoding with NVENC (if available)
@@ -170,7 +170,7 @@ def generate_launch_description():
              'ffmpeg_image_transport.gop_size': 15,            # GOP size (group of pictures)
              'ffmpeg_image_transport.bit_rate': 1000000}       # Target bitrate
         ],
-        arguments=['raw', 'in:=/vehicle_1/main_feed/image_raw', 'ffmpeg', 'out:=/vehicle_1/main_feed/image_raw/h264']
+        arguments=['raw', 'in:=/vehicle_1/rear_feed/image_raw', 'ffmpeg', 'out:=/vehicle_1/rear_feed/image_raw/h264']
     )
     gnss_serial_driver = Node(
         package='nmea_navsat_driver',
