@@ -147,7 +147,7 @@ def generate_launch_description():
             ('out/ffmpeg', '/vehicle_1/main_feed/image_raw/h265'),
         ],
         parameters=[
-            {'ffmpeg_image_transport.encoding': 'libx265',  # Use H.265 encoding with NVENC (if available)
+            {'ffmpeg_image_transport.encoding': 'hevc_qsv',  # Use H.265 encoding with NVENC (if available)
              'ffmpeg_image_transport.profile': 'main',
              'ffmpeg_image_transport.preset': 'ultrafast',            # Low latency preset
              'ffmpeg_image_transport.tune': 'zerolatency',         # Main profile for compatibility
@@ -167,7 +167,7 @@ def generate_launch_description():
             ('out/ffmpeg', '/vehicle_1/rear_feed/image_raw/h265'),
         ],
         parameters=[
-            {'ffmpeg_image_transport.encoding': 'libx265',  # Use H.265 encoding with NVENC (if available)
+            {'ffmpeg_image_transport.encoding': 'hevc_qsv',  # Use H.265 encoding with NVENC (if available)
              'ffmpeg_image_transport.profile': 'main',
              'ffmpeg_image_transport.preset': 'ultrafast',            # Low latency preset
              'ffmpeg_image_transport.tune': 'zerolatency',         # Main profile for compatibility
