@@ -7,7 +7,7 @@ rear_camera_node:
     ExposureTime: 15700
     Saturation: 1.0
     camera: \_SB_.PCI0.XHC_.RHUB.HS01-1:1.0-090c:337b
-    format: YUYV
+    format: MJPEG
     height: 240
     qos_overrides./parameter_events.publisher.depth: 1000
     qos_overrides./parameter_events.publisher.durability: volatile
