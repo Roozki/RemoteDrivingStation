@@ -131,9 +131,29 @@ def generate_launch_description():
     main_feed_compression_node = Node(
         package='image_transport',
         executable='republish',
-        parameters=[{'in_transport': 'raw', 'out_transport': 'h264'}],
+        parameters=[{'ffmpeg_image_transport.encoding': 'hevc_nvenc',
+                'ffmpeg_image_transport.profile': 'main',
+                'ffmpeg_image_transport.preset': 'll',
+                'ffmpeg_image_transport.gop': 15}]
         remappings=[('/in', '/vehicle_1/main_feed/image_raw'),
                     ('/out', '/vehicle_1/main_feed/image_raw/h264')]
+    )
+    ffmpeg_republisher_node = Node(
+        package='image_transport',
+        executable='republish',
+        name='ffmpeg_republisher',
+        remappings=[
+            ('in/image_raw', '/vehicle_1/main_feed/image_raw'),
+            ('out/image', '/vehicle_1/main_feed/image_raw/h264'),
+        ],
+        parameters=[
+            {'ffmpeg_image_transport.encoding': 'hevc_nvenc',  # Use H.265 encoding with NVENC (if available)
+             'ffmpeg_image_transport.preset': 'll',            # Low latency preset
+             'ffmpeg_image_transport.profile': 'main',         # Main profile for compatibility
+             'ffmpeg_image_transport.gop_size': 15,            # GOP size (group of pictures)
+             'ffmpeg_image_transport.bit_rate': 1000000}       # Target bitrate
+        ],
+        arguments=['raw', 'in:=/vehicle_1/main_feed/image_raw', 'ffmpeg', 'out:=/vehicle_1/main_feed/image_raw/h264']
     )
     gnss_serial_driver = Node(
         package='nmea_navsat_driver',
@@ -152,6 +172,8 @@ def generate_launch_description():
         executable='initialize_origin.py',
         output='screen',
     )
+
+    
     
 
     return LaunchDescription([
@@ -162,5 +184,5 @@ def generate_launch_description():
         gps_wgs84_initilizer,
         # rear_feed_v4l2,
         rear_feed,
-        main_feed_compression_node
+        ffmpeg_republisher_node
     ])
