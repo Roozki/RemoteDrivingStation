@@ -9,7 +9,7 @@ front_camera_node:
     camera: \_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-090c:337b
     format: YUYV
     height: 720
-    qos_overrides./parameter_events.publisher.depth: 1
+    qos_overrides./parameter_events.publisher.depth: 10
     qos_overrides./parameter_events.publisher.durability: volatile
     qos_overrides./parameter_events.publisher.history: keep_last
     qos_overrides./parameter_events.publisher.reliability: best_effort
