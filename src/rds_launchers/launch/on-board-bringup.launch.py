@@ -152,7 +152,7 @@ def generate_launch_description():
              'ffmpeg_image_transport.tune': 'zerolatency',         # Main profile for compatibility
              'ffmpeg_image_transport.gop_size': 15,            # GOP size (group of pictures)
             #  'ffmpeg_image_transport.bit_rate': 1000000,   # Target bitrate
-             'ffmpeg_image_transport.crf': 23
+             'ffmpeg_image_transport.crf': 28
              }       
         ],
         arguments=['raw', 'in:=/vehicle_1/main_feed/image_raw', 'ffmpeg', 'out:=/vehicle_1/main_feed/image_raw/h265']
@@ -171,7 +171,7 @@ def generate_launch_description():
              'ffmpeg_image_transport.tune': 'zerolatency',         # Main profile for compatibility
              'ffmpeg_image_transport.gop_size': 15,            # GOP size (group of pictures)
             #  'ffmpeg_image_transport.bit_rate': 1000000,   # Target bitrate
-             'ffmpeg_image_transport.crf': 23
+             'ffmpeg_image_transport.crf': 28
              }       
         ],
         arguments=['raw', 'in:=/vehicle_1/rear_feed/image_raw', 'ffmpeg', 'out:=/vehicle_1/rear_feed/image_raw/h265']
