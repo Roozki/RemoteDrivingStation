@@ -8,14 +8,14 @@ front_camera_node:
     Saturation: 1.0
     camera: \_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-090c:337b
     format: YUYV
-    height: 720
+    height: 1080
     qos_overrides./parameter_events.publisher.depth: 5
     qos_overrides./parameter_events.publisher.durability: transient_local
     qos_overrides./parameter_events.publisher.history: keep_last
     qos_overrides./parameter_events.publisher.reliability: best_effort
     role: video
     use_sim_time: false
-    width: 1280
+    width: 1920
 
 
     #1.0-090c:337b new usb cams
