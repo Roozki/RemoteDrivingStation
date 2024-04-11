@@ -144,7 +144,7 @@ def generate_launch_description():
         name='ffmpeg_republisher',
         remappings=[
             ('in/image_raw', '/vehicle_1/main_feed/image_raw'),
-            ('out/image', '/vehicle_1/main_feed/image_raw/h264'),
+            ('out/ffmpeg', '/vehicle_1/main_feed/image_raw/h264'),
         ],
         parameters=[
             {'ffmpeg_image_transport.encoding': 'libx264',  # Use H.265 encoding with NVENC (if available)

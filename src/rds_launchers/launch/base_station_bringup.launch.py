@@ -61,14 +61,30 @@ def generate_launch_description():
         name='speaker_node',
         output='screen'
     )
+    ffmpeg_subscriber_node = Node(
+        package='image_transport',
+        executable='republish',
+        name='ffmpeg_subscriber',
+        remappings=[
+            ('in/ffmpeg', '/vehicle_1/main_feed/image_encoded'),
+            ('out/image_raw', '/vehicle_1/main_feed/image_decoded'),
+        ],
+        # Assuming the encoded data is using H.264, we'll set the subscriber to decode using the appropriate codec.
+        # If you used a different codec or have specific decoding needs, you might need to adjust the parameters accordingly.
+        parameters=[
+            {'ffmpeg_image_transport.map.libx264': 'libx264'},  # Map the libx264 encoder to use the libx264 decoder
+        ],
+        arguments=['ffmpeg', 'in:=/vehicle_1/main_feed/image_encoded', 'raw', 'out:=/vehicle_1/main_feed/image_decoded']
+    )
 
     return LaunchDescription([
-        gps_accuracy_pubber,
-        robot_gps_marker,
-        rds_g29_control,
-        joy_node,
-        rds_hud_node,
-        map_node,
-        robot_locker,
-        speaker_node
+        # gps_accuracy_pubber,
+        # robot_gps_marker,
+        # rds_g29_control,
+        # joy_node,
+        # rds_hud_node,
+        # map_node,
+        # robot_locker,
+        # speaker_node,
+        ffmpeg_subscriber_node
     ])
