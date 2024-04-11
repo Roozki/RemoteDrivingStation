@@ -7,7 +7,7 @@ rear_camera_node:
     image_width: 1920            # Width of the image frame
     image_height: 1080           # Height of the image frame
     framerate: 30                # Desired framerate (frames per second)
-    brightness: 128              # Brightness level (0-255 for most cameras)
+    brightness: 100              # Brightness level (0-255 for most cameras)
     contrast: 128                # Contrast level (0-255 for most cameras)
     saturation: 128              # Saturation level (0-255 for most cameras)
     hue: 0                       # Hue level (0-255 for most cameras, if applicable)
