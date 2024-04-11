@@ -141,7 +141,7 @@ def generate_launch_description():
     main_ffmpeg_republisher_node = Node(
         package='image_transport',
         executable='republish',
-        name='ffmpeg_republisher',
+        name='front_ffmpeg_republisher',
         remappings=[
             ('in/image_raw', '/vehicle_1/main_feed/image_raw'),
             ('out/ffmpeg', '/vehicle_1/main_feed/image_raw/h265'),
@@ -151,9 +151,9 @@ def generate_launch_description():
              'ffmpeg_image_transport.profile': 'baseline',
              'ffmpeg_image_transport.preset': 'ultrafast',            # Low latency preset
              'ffmpeg_image_transport.tune': 'zerolatency',         # Main profile for compatibility
-             'ffmpeg_image_transport.gop_size': 20,            # GOP size (group of pictures)
+             'ffmpeg_image_transport.gop_size': 10,            # GOP size (group of pictures)
              'ffmpeg_image_transport.bit_rate': 2242880,   # Target bitrate
-             'ffmpeg_image_transport.delay' : "2",
+             'ffmpeg_image_transport.delay' : "4",
              'ffmpeg_image_transport.frame_rate': 25,
              'ffmpeg_image_transport.qmax' : 800,
              'ffmpeg_image_transport.pixel_format': "yuv420p",
@@ -165,7 +165,7 @@ def generate_launch_description():
     rear_ffmpeg_republisher_node = Node(
         package='image_transport',
         executable='republish',
-        name='ffmpeg_republisher',
+        name='rear_ffmpeg_republisher',
         remappings=[
             ('in/image_raw', '/vehicle_1/rear_feed/image_raw'),
             ('out/ffmpeg', '/vehicle_1/rear_feed/image_raw/h265'),
