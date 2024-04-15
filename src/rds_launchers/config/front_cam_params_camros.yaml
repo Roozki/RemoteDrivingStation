@@ -6,7 +6,7 @@ front_camera_node:
     Contrast: 1.0
     # ExposureTime: 15700
     Saturation: 1.0
-    camera: \_SB_.PCI0.XHC_.RHUB.HS02-2:1.0-090c:337b
+    camera: \_SB_.PCI0.XHC_.RHUB.HS02-2:1.2-046d:082c
     format: MJPEG
     height: 720
     qos_overrides./parameter_events.publisher.depth: 1000
@@ -21,6 +21,7 @@ front_camera_node:
     #1.0-090c:337b new usb cams
     #1.0-4c4a:4a55 old usb cams
     #1.0-05a3:9230 rover cam
+    #1.2-046d:082c random rover cam
 
 #     [camera]: 
 # >> stream formats:
