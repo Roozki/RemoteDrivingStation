@@ -29,7 +29,7 @@ def generate_launch_description():
         parameters=[{
                       'autorepeat_rate' : 20.0,  
                       'coalesce_interval' : 0.05,
-                      'deadzone'   : 0.1 
+                      'deadzone'   : 0.01 
                       }]
     )
     rds_hud_node = Node(
