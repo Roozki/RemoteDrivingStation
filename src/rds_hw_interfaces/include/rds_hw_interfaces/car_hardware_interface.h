@@ -48,7 +48,7 @@ class VehicleInterface : public rclcpp::Node{
     unsigned long baud = 9600;
     //! set serial port
     std::string port = "/dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_0001-if00-port0";
-    std::string nano_port = "/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0";
+    std::string nano_port = "/dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0";
 
     serial::Serial esp32;
     serial::Timeout timeout_uart = serial::Timeout::simpleTimeout(1000); // E.g., 1000 ms or 1 second
